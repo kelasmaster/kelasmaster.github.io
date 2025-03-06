@@ -1,0 +1,111 @@
+<!-- Responsive Container -->
+<div class="container">
+
+  <!-- Header Section -->
+  <header>
+    <div class="logo">
+      ![Blog Logo](logo.png)
+    </div>
+    <h1>Blog Title</h1>
+    <p class="description">Your blog's tagline or description goes here</p>
+  </header>
+
+  <!-- Main Content -->
+  <main>
+    <!-- Blog Post -->
+    <article>
+      <div class="post-meta">
+        <time datetime="2023-10-01">October 1, 2023</time>
+      </div>
+      <h2>Blog Post Title</h2>
+      <div class="content">
+        <p>This is the first paragraph of your blog post. You can use **Markdown** formatting here.</p>
+        <img src="image.jpg" alt="Description" class="responsive-img">
+        <p>Another paragraph with <a href="#">a link</a>.</p>
+      </div>
+    </article>
+    
+    <!-- More posts would go here -->
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="social-links">
+      <a href="#"><img src="twitter-icon.png" alt="Twitter"></a>
+      <a href="#"><img src="github-icon.png" alt="GitHub"></a>
+      <a href="#"><img src="linkedin-icon.png" alt="LinkedIn"></a>
+    </div>
+    <p class="copyright">© 2023 Your Name</p>
+  </footer>
+
+</div>
+
+<!-- Responsive Styles -->
+<style>
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  line-height: 1.6;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.logo img {
+  max-width: 150px;
+  height: auto;
+}
+
+.description {
+  color: #666;
+  font-style: italic;
+}
+
+.post-meta {
+  color: #999;
+  margin: 20px 0;
+}
+
+.responsive-img {
+  max-width: 100%;
+  height: auto;
+  margin: 20px 0;
+}
+
+.social-links {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin: 40px 0 20px;
+}
+
+.social-links img {
+  width: 32px;
+  height: 32px;
+}
+
+.copyright {
+  text-align: center;
+  color: #999;
+  font-size: 0.9em;
+}
+
+@media (max-width: 600px) {
+  .container {
+    padding: 10px;
+  }
+  
+  .logo img {
+    max-width: 120px;
+  }
+  
+  .social-links {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+</style>
