@@ -4,13 +4,83 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
  <link href="custom.css" rel="stylesheet"></link>
-<script src="https://rawcdn.githack.com/oscarmorrison/md-page/master/md-page.js"></script><noscript>
+    <style>
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  line-height: 1.6;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.logo img {
+  max-width: 150px;
+  height: auto;
+}
+
+.description {
+  color: #666;
+  font-style: italic;
+}
+
+.responsive-img {
+  max-width: 100%;
+  height: auto;
+  margin: 20px 0;
+}
+
+.social-links {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin: 40px 0 20px;
+}
+
+.social-links img {
+  width: 32px;
+  height: 32px;
+}
+
+.copyright {
+  text-align: center;
+  color: #999;
+  font-size: 0.9em;
+}
+
+@media (max-width: 600px) {
+  .container {
+    padding: 10px;
+  }
+  
+  .logo img {
+    max-width: 120px;
+  }
+  
+  .social-links {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+</style>
+<script src="/md.js"></script><noscript>
 <title>Hello World</title>
 </head>
 <body>
-   
-# Header
->Welcome to md-page, the easiest way to make a webpage from just markdown...
+ <div class="container">
+ <header>
+    <div class="logo">
+    </div>
+    <h1>Kelas Master</h1>
+    <p class="description">Dari Newbie Menjadi Master</p>
+  </header>
+  </div>
+# Postingan Pertama
+Ini adalah postingan pertama saya
     
 ## Lists
 ### Unordered
@@ -29,6 +99,16 @@
 [demo page](https://oscarmorrison.com/md-page/)
  
 Thanks for stopping by!
+    <div class="container">
+    <footer>
+    <div class="social-links">
+      <a href="#"><img src="twitter-icon.png" alt="Twitter"></a>
+      <a href="#"><img src="github-icon.png" alt="GitHub"></a>
+      <a href="#"><img src="linkedin-icon.png" alt="LinkedIn"></a>
+    </div>
+    <p class="copyright">© 2023 Your Name</p>
+  </footer>
+   </div>
 </body>
 </html>
 
