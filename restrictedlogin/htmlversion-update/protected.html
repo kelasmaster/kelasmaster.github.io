@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Protected Content</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="protected-container">
+        <h2>Welcome to Protected Content</h2>
+        <div id="userInfo"></div>
+        <div class="content">
+            <h3>Sample Protected Content</h3>
+            <p>This content is only visible to authenticated users.</p>
+            <p>Your session will last <span id="sessionDays"></span> days.</p>
+        </div>
+        <button id="logoutBtn" class="logout-btn">Logout</button>
+    </div>
+
+    <script src="auth.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Check authentication status
+            const user = JSON.parse(localStorage.getItem('authenticatedUser'));
+            
+            if (!user) {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            // Display user info
+            document.getElementById('userInfo').innerHTML = `
+                <p>Logged in as: <strong>${user.email}</strong></p>
+            `;
+            document.getElementById('sessionDays').textContent = user.sessionDays;
+
+            // Logout button
+            document.getElementById('logoutBtn').addEventListener('click', () => {
+                localStorage.removeItem('authenticatedUser');
+                window.location.href = 'index.html';
+            });
+        });
+    </script>
+</body>
+</html>
