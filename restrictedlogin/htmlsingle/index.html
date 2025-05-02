@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Login</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+</head>
+<body>
+    <!-- Login Section (shown by default) -->
+    <div id="loginSection" class="container">
+        <h2>Login</h2>
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" required>
+            </div>
+            <button type="submit">Login</button>
+            <div id="loginError" class="error-message"></div>
+        </form>
+    </div>
+
+    <!-- Protected Content Section (hidden by default) -->
+    <div id="protectedSection" class="container" style="display:none;">
+        <h2>Welcome, <span id="userEmail"></span>!</h2>
+        <div class="protected-content">
+            <h3>Sample Protected Content</h3>
+            <p>Your session will expire in <span id="sessionDays"></span> days.</p>
+            <p>This content is only visible because you're authenticated.</p>
+        </div>
+        <button id="logoutBtn" class="logout-btn">Logout</button>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
