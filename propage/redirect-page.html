@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Protected Page</title>
+  <style>
+    body.protected {
+      text-align: center;
+      margin-top: 20%;
+      font-family: Arial, sans-serif;
+      background: #f8f9fa;
+      color: #333;
+    }
+    .redirect-message {
+      display: none;
+    }
+  </style>
+  <script>
+    (async function () {
+      try {
+        // Load allowed URLs from CSV
+        const response = await fetch('allowed-url.csv');
+        const text = await response.text();
+        const allowedUrls = text
+          .split('\n')
+          .map(url => url.trim())
+          .filter(url => url.length > 0);
+
+        // Get current URL
+        const currentUrl = window.location.href;
+
+        // Check if current URL is allowed
+        const isAllowed = allowedUrls.some(url => currentUrl.startsWith(url));
+
+        if (!isAllowed) {
+          // Redirect URL (fallback page)
+          const redirectUrl = 'https://geocities.ws/wahyudi/';
+
+          // Replace page content with redirect message
+          document.documentElement.innerHTML = `
+            <body class="protected redirect-message">
+              <h2>⚠️ Access Denied</h2>
+              <p>This content is only available on authorized websites.</p>
+              <p>Redirecting to <a href="${redirectUrl}" target="_blank">this page</a> in <span id="countdown">5</span> seconds...</p>
+            </body>
+          `;
+
+          // Countdown logic
+          let timeLeft = 5;
+          const countdown = document.getElementById('countdown');
+
+          const timer = setInterval(() => {
+            timeLeft--;
+            if (countdown) countdown.textContent = timeLeft;
+            if (timeLeft <= 0) {
+              clearInterval(timer);
+              window.location.href = redirectUrl; // Redirect
+            }
+          }, 1000);
+        }
+      } catch (error) {
+        // Handle error (e.g., CSV file not found)
+        document.documentElement.innerHTML = `
+          <body class="protected">
+            <h2>⚠️ Error Loading Content</h2>
+            <p>Unable to verify access permissions. Please try again later.</p>
+          </body>
+        `;
+        console.error("Error fetching allowed URLs:", error);
+      }
+    })();
+  </script>
+</head>
+<body>
+  <!-- Your actual page content goes here -->
+  <h1>Welcome to the Protected Page</h1>
+  <p>This content is only visible on authorized websites.</p>
+</body>
+</html>
