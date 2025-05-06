@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>QR Code Maker</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #f0f0f0;
+    }
+
+    .container {
+      max-width: 500px;
+      margin: auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+
+    canvas {
+      margin-top: 20px;
+      border: 1px solid #ccc;
+      max-width: 100%;
+    }
+
+    input, select, button {
+      display: block;
+      width: 100%;
+      margin: 10px 0;
+      padding: 10px;
+      font-size: 16px;
+    }
+
+    #download-link {
+      display: inline-block;
+      margin-top: 20px;
+      text-decoration: none;
+      color: #007BFF;
+      font-weight: bold;
+      border: 1px solid #007BFF;
+      padding: 10px 20px;
+      border-radius: 5px;
+    }
+
+    #notification {
+      margin-top: 10px;
+      font-weight: bold;
+      color: green;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>QR Code Maker</h1>
+    <form id="qrcode-form">
+      <input type="text" id="url-input" placeholder="Enter URL (e.g. https://wa.me/6285773009666)" required />
+      <select id="background-select">
+        <option value="light">White Background</option>
+        <option value="dark">Black Background</option>
+      </select>
+      <button type="submit">Generate QR Code</button>
+    </form>
+
+    <canvas id="qrcode-canvas" width="300" height="300"></canvas>
+    <a id="download-link" class="hidden" download>Download QR Code</a>
+    <div id="notification">✅ QR Code Saved!</div>
+  </div>
+
+  <!-- QR Code Library -->
+  <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+  <script>
+    (async function () {
+      try {
+        // Load allowed URLs from CSV
+        const response = await fetch('https://kelasmaster.github.io/propage/tool.csv');
+        const text = await response.text();
+        const allowedUrls = text
+          .split('\n')
+          .map(url => url.trim())
+          .filter(url => url.length > 0);
+
+        // Get current URL
+        const currentUrl = window.location.href;
+
+        // Check if current URL is allowed
+        const isAllowed = allowedUrls.some(url => currentUrl.startsWith(url));
+
+        if (!isAllowed) {
+          // Redirect URL (fallback page)
+          const redirectUrl = 'https://geocities.ws/wahyudi/';
+
+          // Replace page content with redirect message
+          document.documentElement.innerHTML = `
+            <body class="protected redirect-message">
+              <h2>⚠️ Access Denied</h2>
+              <p>This content is only available on authorized websites.</p>
+              <p>Redirecting to <a href="${redirectUrl}" target="_blank">this page</a> in <span id="countdown">5</span> seconds...</p>
+            </body>
+          `;
+
+          // Countdown logic
+          let timeLeft = 5;
+          const countdown = document.getElementById('countdown');
+
+          const timer = setInterval(() => {
+            timeLeft--;
+            if (countdown) countdown.textContent = timeLeft;
+            if (timeLeft <= 0) {
+              clearInterval(timer);
+              window.location.href = redirectUrl; // Redirect
+            }
+          }, 1000);
+        }
+      } catch (error) {
+        // Handle error (e.g., CSV file not found)
+        document.documentElement.innerHTML = `
+          <body class="protected">
+            <h2>⚠️ Error Loading Content</h2>
+            <p>Unable to verify access permissions. Please try again later.</p>
+          </body>
+        `;
+        console.error("Error fetching allowed URLs:", error);
+      }
+    })();
+  </script>
+  <script>
+   const _0x478a13=_0x1adc;function _0x2008(){const _0x4b3ddd=['HNAYs','TwzPe','#000000','HNDyX','qrcode-for','oufZd','er\x20a\x20valid','trim','sOTyl','qrcode-can','download','ink','submit','getElement','hVTrA','ById','background','4944212aLIAmE','image/png','clearRect','lWpIA','166384wfViBB','make','WmlYU','click','display','getContext','width','SupTB','download-l','64312sPuyGU','69gGyXBi','582814JcucCc','stener','remove','block','floor','DgLZg','hidden','style','ault','notificati','UwIIA','xuvwd','addData','preventDef','classList','value','fillStyle','url-input','addEventLi','wsDNJ','fillRect','isDark','Please\x20ent','36ZUWQbP','6499312dBRhkJ','9AIRyze','MtwfR','4817870exsOmq','ount','vas','-select','getModuleC','1015600nsuUYm'];_0x2008=function(){return _0x4b3ddd;};return _0x2008();}function _0x1adc(_0x4c9596,_0x1563ff){const _0x290086=_0x2008();return _0x1adc=function(_0x2f5e03,_0x572766){_0x2f5e03=_0x2f5e03-(0x23dd+-0xd43+0x4*-0x560);let _0x3cebc2=_0x290086[_0x2f5e03];return _0x3cebc2;},_0x1adc(_0x4c9596,_0x1563ff);}(function(_0x45561d,_0x4a3687){const _0x299e45=_0x1adc,_0x1d291d=_0x45561d();while(!![]){try{const _0x32a6f0=parseInt(_0x299e45(0x11a))/(-0xae1*-0x1+0x1f04+0x1c*-0x17f)+-parseInt(_0x299e45(0x150))/(-0xe9*-0x12+-0x23e3+0x1383)+parseInt(_0x299e45(0x15a))/(-0x7*0x557+-0xc1*0x2b+-0x1*-0x45cf)*(parseInt(_0x299e45(0x159))/(-0x19f*0x11+-0x1*-0x4cf+0x16c4))+-parseInt(_0x299e45(0x13a))/(-0x8f5*-0x1+0x1465+-0x1d55)*(parseInt(_0x299e45(0x131))/(0x1623+0x19ff*-0x1+0x3e2))+parseInt(_0x299e45(0x14c))/(0x13ef+-0x3*0x83d+0x1*0x4cf)+parseInt(_0x299e45(0x132))/(0x15bb+0x1dd1*0x1+-0x3384)*(parseInt(_0x299e45(0x133))/(0x25d0*-0x1+0x315+0x2*0x1162))+-parseInt(_0x299e45(0x135))/(0x5cb+0x412+-0x9d3);if(_0x32a6f0===_0x4a3687)break;else _0x1d291d['push'](_0x1d291d['shift']());}catch(_0x45597b){_0x1d291d['push'](_0x1d291d['shift']());}}}(_0x2008,0x3d*0x114b+-0x1ed*-0x99+0x53893),document['addEventLi'+_0x478a13(0x11b)]('DOMContent'+'Loaded',()=>{const _0x346a14=_0x478a13,_0x3e0830={'WmlYU':function(_0x1d5609,_0x41b871){return _0x1d5609(_0x41b871);},'TwzPe':function(_0x5824f9,_0x3278e3,_0x3963a0){return _0x5824f9(_0x3278e3,_0x3963a0);},'SupTB':function(_0xa8ec4c,_0x52a639){return _0xa8ec4c-_0x52a639;},'UDECZ':function(_0x1f2c21,_0x1035e6){return _0x1f2c21/_0x1035e6;},'wsDNJ':function(_0x254391,_0x55d5e6){return _0x254391*_0x55d5e6;},'lWpIA':_0x346a14(0x13d),'xuvwd':'#FFFFFF','UwIIA':'dark','JBitt':function(_0xd020e1,_0x4589d5){return _0xd020e1<_0x4589d5;},'tzMFv':function(_0x345aa1,_0xbbcf54){return _0x345aa1<_0xbbcf54;},'DMzWb':function(_0x4bd0a8,_0x1b4be7){return _0x4bd0a8+_0x1b4be7;},'DgLZg':_0x346a14(0x120),'hVTrA':_0x346a14(0x11d),'HNDyX':_0x346a14(0x14b)+_0x346a14(0x138),'sOTyl':_0x346a14(0x144)+_0x346a14(0x137),'HNAYs':_0x346a14(0x158)+_0x346a14(0x146),'oufZd':_0x346a14(0x147),'MtwfR':_0x346a14(0x153)},_0x1e9308=document[_0x346a14(0x148)+_0x346a14(0x14a)](_0x346a14(0x13f)+'m'),_0x5409a3=document['getElement'+_0x346a14(0x14a)](_0x346a14(0x12b)),_0x14c3d7=document[_0x346a14(0x148)+_0x346a14(0x14a)](_0x3e0830[_0x346a14(0x13e)]),_0x281bc4=document[_0x346a14(0x148)+_0x346a14(0x14a)](_0x3e0830[_0x346a14(0x143)]),_0x54d832=_0x281bc4[_0x346a14(0x155)]('2d'),_0x35cf46=document[_0x346a14(0x148)+_0x346a14(0x14a)](_0x3e0830[_0x346a14(0x13b)]),_0x28666d=document['getElement'+'ById'](_0x346a14(0x123)+'on'),_0x5ee8d8=-0x1*-0x19c1+-0x3*0x8dd+0x202,_0xfc35f8=-0xda3*-0x1+0x136b+-0x210e+0.1;_0x1e9308[_0x346a14(0x12c)+_0x346a14(0x11b)](_0x3e0830[_0x346a14(0x140)],_0x3e734f=>{const _0x391aa2=_0x346a14;_0x3e734f[_0x391aa2(0x127)+_0x391aa2(0x122)]();const _0x2d2129=_0x5409a3[_0x391aa2(0x129)][_0x391aa2(0x142)](),_0x5275a0=_0x14c3d7['value'];if(!_0x2d2129){_0x3e0830[_0x391aa2(0x152)](alert,_0x391aa2(0x130)+_0x391aa2(0x141)+'\x20URL.');return;}_0x54d832[_0x391aa2(0x14e)](-0x18bf+-0x15*0x16f+0x3eb*0xe,0x1bed+0x5*0x2a9+0x149d*-0x2,_0x281bc4[_0x391aa2(0x156)],_0x281bc4['height']);const _0x42f1cb=_0x3e0830[_0x391aa2(0x13c)](qrcode,-0x16f3+0x1*-0x254d+0x3c40,'H');_0x42f1cb[_0x391aa2(0x126)](_0x2d2129),_0x42f1cb[_0x391aa2(0x151)]();const _0x430fd0=_0x42f1cb[_0x391aa2(0x139)+_0x391aa2(0x136)](),_0x23c0a8=_0x5ee8d8*_0x3e0830[_0x391aa2(0x157)](0x3*-0x461+0x16*-0x115+0x2*0x1279,_0xfc35f8*(-0x2458+0x67*-0x13+0x2bff)),_0x322126=Math[_0x391aa2(0x11e)](_0x3e0830['UDECZ'](_0x23c0a8,_0x430fd0)),_0x5db355=Math[_0x391aa2(0x11e)](_0x3e0830[_0x391aa2(0x12d)](_0x5ee8d8,_0xfc35f8));let _0x5daa4c=_0x3e0830[_0x391aa2(0x14f)],_0x4abb9d=_0x3e0830[_0x391aa2(0x125)];_0x5275a0===_0x3e0830[_0x391aa2(0x124)]&&(_0x5daa4c=_0x3e0830[_0x391aa2(0x125)],_0x4abb9d=_0x3e0830[_0x391aa2(0x14f)]);_0x54d832['fillStyle']=_0x4abb9d,_0x54d832[_0x391aa2(0x12e)](0x1*-0x11d6+0x1987+-0x1*0x7b1,0x25b6+0x1e5*0xe+-0x4*0x100f,_0x5ee8d8,_0x5ee8d8);for(let _0x3c9fd2=-0x1976*-0x1+-0x1*0x18d5+-0xa1;_0x3e0830['JBitt'](_0x3c9fd2,_0x430fd0);_0x3c9fd2++){for(let _0x413284=-0x2640+-0x377*-0x3+0x1*0x1bdb;_0x3e0830['tzMFv'](_0x413284,_0x430fd0);_0x413284++){_0x54d832[_0x391aa2(0x12a)]=_0x42f1cb[_0x391aa2(0x12f)](_0x413284,_0x3c9fd2)?_0x5daa4c:_0x4abb9d,_0x54d832[_0x391aa2(0x12e)](_0x3e0830['DMzWb'](_0x5db355,_0x413284*_0x322126),_0x5db355+_0x3c9fd2*_0x322126,_0x322126,_0x322126);}}const _0x31d995=Math['floor'](Math['random']()*(0x1*-0x12de+-0x3be7+0x75d5));_0x35cf46['href']=_0x281bc4['toDataURL'](_0x391aa2(0x14d)),_0x35cf46[_0x391aa2(0x145)]='qrcode-why'+'-'+_0x31d995+'.png',_0x35cf46[_0x391aa2(0x128)][_0x391aa2(0x11c)](_0x3e0830[_0x391aa2(0x11f)]);}),_0x35cf46['addEventLi'+_0x346a14(0x11b)](_0x3e0830[_0x346a14(0x134)],()=>{const _0x25a9f0=_0x346a14;_0x28666d['style'][_0x25a9f0(0x154)]=_0x3e0830[_0x25a9f0(0x149)],_0x3e0830[_0x25a9f0(0x13c)](setTimeout,()=>{const _0x557550=_0x25a9f0;_0x28666d[_0x557550(0x121)][_0x557550(0x154)]='none';},-0x6f*0x3b+-0x19d9+0x1d9f*0x2);});}));
+  </script>
+</body>
+</html>
