@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+      body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #f4f7f6; margin: 0; padding: 12px; color: #333; }
+      .container { max-width: 100%; margin: 5px auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); box-sizing: border-box; }
+      h2 { text-align: center; color: #1b365d; margin: 5px 0 15px 0; font-size: 22px; font-weight: 700; }
+      h3 { color: #333; font-size: 18px; margin: 15px 0 10px 0; border-left: 4px solid #1b365d; padding-left: 8px; }
+      
+      .navbar { display: none; background: #1b365d; border-radius: 8px; margin-bottom: 15px; overflow: hidden; }
+      .navbar button { width: auto; background: none; border: none; color: white; padding: 12px 16px; font-size: 14px; font-weight: bold; cursor: pointer; display: inline-block; margin: 0; }
+      .navbar button.active { background-color: #0d2342; text-decoration: underline; }
+      .mobile-menu-container { display: none; margin-bottom: 15px; }
+      .menu-content { display: none; }
+      
+      /* Toast Notification CSS (Auto dismiss tanpa klik OK) */
+      .toast-container { display: none; position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background-color: #2d3748; color: white; padding: 12px 25px; border-radius: 30px; z-index: 5000; font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.2); font-size: 14px; text-align: center; }
+      
+      .form-group { margin-bottom: 14px; position: relative; }
+      label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 13px; color: #495057; }
+      input, select, textarea, button { padding: 12px; width: 100%; border-radius: 8px; border: 1px solid #ced4da; box-sizing: border-box; font-size: 15px; background-color: #fff; font-family: inherit; }
+      input:focus, select:focus, textarea:focus { border-color: #1b365d; outline: none; box-shadow: 0 0 0 3px rgba(27,54,93,0.15); }
+      input:disabled, textarea:disabled { background-color: #e9ecef; color: #495057; cursor: not-allowed; }
+      
+      button { background-color: #1b365d; color: white; border: none; font-weight: bold; cursor: pointer; transition: background 0.2s; margin-top: 5px; }
+      button:active { background-color: #0d2342; }
+      .btn-perbarui { background-color: #6c757d; margin-bottom: 12px; width: auto; padding: 8px 15px; font-size: 13px; }
+      .btn-add-master { background-color: #28a745; margin-bottom: 15px; }
+      
+      .badge-text { font-weight: bold; padding: 4px 8px; border-radius: 6px; background: #e9ecef; display: inline-block; font-size: 12px; }
+      .btn-aksi { padding: 6px 10px; font-size: 11px; width: auto; display: inline-block; margin: 2px; border-radius: 6px; }
+      .btn-ubah { background-color: #ffc107; color: #212529; font-weight: 600; }
+      .btn-hapus { background-color: #dc3545; color: white; font-weight: 600; }
+      
+      #halamanLogin { display: block; max-width: 360px; margin: 40px auto; }
+      #halamanKasir { display: none; }
+      .info-user { text-align: right; font-size: 13px; margin: 0 0 15px 0; color: #6c757d; }
+      .datalist-box { position: absolute; border: 1px solid #ced4da; background: #fff; width: 100%; z-index: 99; max-height: 150px; overflow-y: auto; display: none; }
+      .datalist-item { padding: 10px; cursor: pointer; font-size: 14px; }
+      .datalist-item:hover { background-color: #f1f3f5; }
+      
+      .table-responsive { width: 100%; overflow-x: auto; margin-top: 5px; border-radius: 8px; border: 1px solid #dee2e6; }
+      table { width: 100%; border-collapse: collapse; font-size: 13px; background: #fff; }
+      th, td { border-bottom: 1px solid #dee2e6; padding: 10px; text-align: left; }
+      th { background-color: #f8f9fa; color: #495057; font-weight: 600; }
+      
+      .pagination { display: flex; justify-content: center; align-items: center; margin-top: 15px; padding: 0; gap: 5px; }
+      .pagination button { width: auto; padding: 6px 12px; font-size: 12px; background-color: #fff; color: #1b365d; border: 1px solid #dee2e6; }
+      .pagination button.active { background-color: #1b365d; color: white; }
+ 
+      .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); overflow-y: auto; }
+      .modal-content { background-color: #fff; margin: 8% auto; padding: 20px; border-radius: 12px; width: 92%; max-width: 450px; position: relative; box-sizing: border-box; }
+      .close-modal { position: absolute; right: 15px; top: 10px; font-size: 28px; font-weight: bold; color: #aaa; cursor: pointer; }
+      .modal-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed #eee; font-size: 14px; }
+      .preview-box-bisnis { background-color: #f8f9fa; padding: 12px; border-radius: 8px; border: 1px dashed #ced4da; margin-bottom: 10px; font-size: 14px; white-space: pre-wrap; }
+ 
+      .struk-print-area { font-family: 'Courier New', Courier, monospace; width: 310px; color: #000; padding: 14px; box-sizing: border-box; font-size: 13px; background: #fff; margin: 0 auto; line-height: 1.3; }
+      .struk-header { text-align: center; line-height: 1.2; margin-bottom: 10px; }
+      .struk-title { font-size: 16px; font-weight: bold; text-transform: uppercase; }
+      .struk-divider { border-top: 1px dashed #000; margin: 8px 0; width: 100%; }
+      .struk-row { display: flex; justify-content: space-between; margin: 4px 0; }
+      .struk-footnote { text-align: center; font-style: italic; margin-top: 15px; font-size: 12px; white-space: pre-wrap; }
+ 
+      /* ✨ PERBAIKAN STYLE: BOX SEJAJAR RATA KIRI SINKRON */
+      .show-password-container { display: flex; align-items: center; justify-content: flex-start; text-align: left; margin-top: 8px; width: 100%; }
+      .show-password-container input[type="checkbox"] { width: auto; height: auto; margin: 0 6px 0 0; transform: scale(1.15); padding: 0; cursor: pointer; display: inline-block; vertical-align: middle; }
+      .show-password-container label { display: inline-block; font-weight: 500; font-size: 13px; color: #495057; margin: 0; cursor: pointer; vertical-align: middle; line-height: 1; }
+
+      @media print {
+        body * { visibility: hidden; } #strukPrintArea, #strukPrintArea * { visibility: visible; } #strukPrintArea { position: absolute; left: 0; top: 0; width: 310px; }
+      }
+      @media screen and (max-width: 600px) {
+        .navbar { display: none !important; } .mobile-menu-container { display: block; }
+        #tab-kasir table th:nth-child(1), #tab-kasir table td:nth-child(1), #tab-kasir table th:nth-child(4), #tab-kasir table td:nth-child(4) { display: none; }
+      }
+    </style>
+  </head>
+  <body>
+ 
+    <div id="toastMessage" class="toast-container">Data Berhasil Diinput!</div>
+ 
+    <div id="halamanLogin" class="container">
+      <h2>Sistem Laundry Multi-Branch</h2>
+      <div class="form-group"><label>Username:</label><input type="text" id="username" placeholder="Username"></div>
+      <div class="form-group">
+        <label>Password:</label><input type="password" id="password" placeholder="Password">
+        <div class="show-password-container">
+          <input type="checkbox" id="chkShow" onclick="var p=document.getElementById('password'); p.type=(p.type==='password')?'text':'password';">
+          <label for="chkShow"> Tampilkan Password</label>
+        </div>
+      </div>
+      <button onclick="login()">Masuk Aplikasi</button>
+    </div>
+ 
+    <div id="halamanKasir" class="container">
+      <h2>Sistem Informasi Laundry (<span id="txtNamaCabangAktif">Pusat</span>)</h2>
+      <p class="info-user">User: <b id="userAktif"></b> (<span id="userRole"></span>) | <a href="#" onclick="logout()" style="color:#dc3545; text-decoration:none; font-weight:bold;">Logout</a></p>
+ 
+      <div class="navbar" id="mainNavbar">
+        <button id="nav-kasir" class="active" onclick="pindahMenu('kasir')">Kasir 🛒</button>
+        <button id="nav-pelanggan" onclick="pindahMenu('pelanggan')">Pelanggan 👥</button>
+        <button id="nav-layanan" onclick="pindahMenu('layanan')">Layanan 🏷️</button>
+        <button id="nav-user" onclick="pindahMenu('user')">User Role 🔑</button>
+        <button id="nav-bisnis" onclick="pindahMenu('bisnis')">Setelan Bisnis ⚙️</button>
+        <button id="nav-cabang" onclick="pindahMenu('cabang')" style="display:none;">Multi Cabang 🏢</button>
+        <button id="nav-panduan" onclick="pindahMenu('panduan')">Papan Pengumuman 📢</button>
+      </div>
+ 
+      <div class="mobile-menu-container" id="mobileNavbar">
+        <label><b>Menu Aplikasi ☰</b></label>
+        <select onchange="pindahMenu(this.value)" id="selectMenuMobile" style="padding:11px; background-color:#1b365d; color:white; font-weight:bold;"></select>
+      </div>
+ 
+      <div id="tab-kasir" class="menu-content" style="display: block;">
+        <h3>Form Transaksi Baru</h3>
+        <div class="form-group"><label>No. Nota (Otomatis):</label><input type="text" id="noNota" disabled></div>
+        <div class="form-group"><label>Nama Pelanggan:</label><input type="text" id="namaPelanggan" oninput="filterPelanggan(this.value)" autocomplete="off"><div id="boxPelanggan" class="datalist-box"></div></div>
+        <div class="form-group"><label>No. WhatsApp Pelanggan:</label><input type="text" id="waPelanggan" placeholder="08xxxxxxxx"></div>
+        <div class="form-group"><label>Alamat Pelanggan:</label><input type="text" id="alamatPelanggan"></div>
+        <div class="form-group"><label>Jenis Layanan:</label><select id="layananSelect"></select></div>
+        <div class="form-group"><label>Berat / Jumlah Pcs:</label><input type="number" id="berat" step="0.1" placeholder="0.0"></div>
+        <div class="form-group"><label>Status Bayar:</label><select id="statusBayar"><option value="Lunas">Lunas</option><option value="Belum Lunas">Belum Lunas</option></select></div>
+        <button id="btnSimpan" onclick="submitTransaksi()">Simpan Transaksi</button>
+        
+        <h3>Riwayat Transaksi Harian</h3>
+        <button class="btn-perbarui" onclick="muatTransaksi()">Perbarui Data</button>
+        <div class="table-responsive">
+          <table>
+            <thead><tr><th>Nota</th><th>Tanggal</th><th>Pelanggan</th><th>Layanan</th><th>Berat</th><th>Total</th><th>Progres</th><th>Bayar</th><th>Aksi</th></tr></thead>
+            <tbody id="tabelKasirBodi"></tbody>
+          </table>
+        </div>
+        <div class="pagination" id="pagKasir"></div>
+      </div>
+ 
+      <div id="tab-pelanggan" class="menu-content">
+        <h3>Database Pelanggan Outlet</h3>
+        <button class="btn-add-master" onclick="bukaModalMaster('pelanggan', 'tambah')">+ Tambah Pelanggan Baru</button>
+        <div class="table-responsive"><table><thead><tr><th>Nama Pelanggan</th><th>No. WhatsApp</th><th>Alamat</th><th>Aksi</th></tr></thead><tbody id="tabelPelangganBodi"></tbody></table></div>
+        <div class="pagination" id="pagPelanggan"></div>
+      </div>
+ 
+      <div id="tab-layanan" class="menu-content">
+        <h3>Daftar Paket & Tarif Harga</h3>
+        <button class="btn-add-master" onclick="bukaModalMaster('layanan', 'tambah')">+ Tambah Paket Baru</button>
+        <div class="table-responsive"><table><thead><tr><th>Nama Layanan</th><th>Harga Per Satuan</th><th>Aksi</th></tr></thead><tbody id="tabelLayananBodi"></tbody></table></div>
+        <div class="pagination" id="pagLayanan"></div>
+      </div>
+ 
+      <div id="tab-user" class="menu-content">
+        <h3>Manajemen Akun Staf Toko</h3>
+        <button class="btn-add-master" onclick="bukaModalMaster('user', 'tambah')">+ Tambah User Staf</button>
+        <div class="table-responsive"><table><thead><tr><th>Username</th><th>Password</th><th>Role</th><th>Keterangan</th><th>Aksi</th></tr></thead><tbody id="tabelUserBodi"></tbody></table></div>
+        <div class="pagination" id="pagUser"></div>
+      </div>
+ 
+      <div id="tab-bisnis" class="menu-content">
+        <h3>Informasi Cetak Struk Nota</h3>
+        <div class="form-group"><label>Nama Laundry:</label><div id="view_b_nama" class="preview-box-bisnis">-</div><input type="text" id="b_nama" style="display:none;"></div>
+        <div class="form-group"><label>Nomor Telepon:</label><div id="view_b_telp" class="preview-box-bisnis">-</div><input type="text" id="b_telp" style="display:none;"></div>
+        <div class="form-group"><label>Alamat Toko:</label><div id="view_b_alamat" class="preview-box-bisnis">-</div><input type="text" id="b_alamat" style="display:none;"></div>
+        <div class="form-group"><label>Footnote Struk:</label><div id="view_b_footnote" class="preview-box-bisnis">-</div><textarea id="b_footnote" rows="3" style="display:none;"></textarea></div>
+        <button id="btnEditBisnis" onclick="aktifkanModeEditBisnis()" style="background-color:#ffc107; color:#212529;">Ubah Pengaturan Toko ⚙️</button>
+        <button id="btnSimpanBisnis" style="background-color:#28a745; display:none;" onclick="simpanSetelanBisnis()">Simpan Setelan 💾</button>
+      </div>
+ 
+      <div id="tab-cabang" class="menu-content">
+        <h3>Registrasi Router Multi-Cabang</h3>
+        <button class="btn-add-master" onclick="bukaModalMaster('cabang', 'tambah')">+ Registrasi Cabang Baru</button>
+        <div class="table-responsive"><table><thead><tr><th>Kode Cabang</th><th>Nama Cabang</th><th>URL Deployment GAS</th><th>Lokasi</th><th>Aksi</th></tr></thead><tbody id="tabelCabangBodi"></tbody></table></div>
+      </div>
+ 
+      <div id="tab-panduan" class="menu-content">
+        <div style="background-color: #fffbf0; border-left: 4px solid #dd6b20; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+          <h3 style="margin-top:0; color:#dd6b20; border:none; padding:0;">📌 Memo Resmi Kantor Pusat</h3>
+          <p style="margin:5px 0 0 0; line-height:1.4; font-size:14px; color:#7b341e;"><b>PENGUMUMAN:</b> Harap seluruh cabang tertib menginput data pelanggan baru secara real-time demi akurasi pengiriman WhatsApp Broadcast promosi akhir bulan.</p>
+        </div>
+        <h3>📖 Regulasi Kerja Petugas Meja Kasir</h3>
+        <ol style="line-height: 1.8; font-size:14px; padding-left: 20px; color:#2d3748;">
+          <li>Pastikan menimbang pakaian secara teliti dan gunakan simbol titik (bukan koma) untuk memasukkan nilai desimal bobot cucian.</li>
+          <li>Kirim struk digital via WA langsung ke pelanggan sesaat setelah menekan tombol simpan transaksi.</li>
+        </ol>
+      </div>
+    </div>
+ 
+    <div id="modalStruk" class="modal" style="background-color: #555;">
+      <div class="modal-content" style="max-width: 370px;">
+        <span class="close-modal" onclick="document.getElementById('modalStruk').style.display='none'">&times;</span>
+        <div style="background-color: #fff; padding: 2px; max-height: 400px; overflow-y: auto;">
+          <div id="strukPrintArea" class="struk-print-area">
+            <div class="struk-header"><div class="struk-title" id="st_namaLaundry">-</div><div id="st_alamatLaundry">-</div><div id="st_telpLaundry">-</div></div><div class="struk-divider"></div>
+            <div class="struk-row"><span>No. Nota:</span> <b id="st_nota">-</b></div><div class="struk-row"><span>Tanggal:</span> <span id="st_tgl">-</span></div><div class="struk-row"><span>Pelanggan:</span> <span id="st_pelanggan">-</span></div><div class="struk-divider"></div>
+            <div class="struk-row"><span id="st_layanan">Layanan</span><span id="st_berat">0 Kg</span></div><div class="struk-row"><span><b>Total Bayar:</b></span> <span><b id="st_total">Rp 0</b></span></div><div class="struk-row"><span>Pembayaran:</span> <span id="st_bayar">-</span></div><div class="struk-divider"></div>
+            <div class="struk-footnote" id="st_footnote">-</div>
+          </div>
+        </div>
+        <div style="margin-top:15px; padding-top:10px; border-top:1px dashed #ddd;">
+          <button onclick="window.print()" style="background-color:#007bff; margin-bottom:6px;">Cetak Transaksi 🖨️</button>
+          <button onclick="unduhStrukPDF()" style="background-color:#17a2b8; margin-bottom:6px;">Simpan Sebagai PDF 📄</button>
+          <button onclick="kirimStrukWhatsApp()" style="background-color:#28a745;">Kirim Ke WhatsApp 💬</button>
+        </div>
+      </div>
+    </div>
+ 
+    <div id="modalMaster" class="modal">
+      <div class="modal-content"><span class="close-modal" onclick="tutupModalMaster()">&times;</span><h3 id="modalMasterTitle">Form Data</h3><input type="hidden" id="mdlMasterRow"><input type="hidden" id="mdlMasterType"><input type="hidden" id="mdlMasterAction"><div id="formDynamicContainer"></div><button id="btnSaveMaster" onclick="executeSaveMaster()" style="background-color:#28a745; margin-top:15px;">Simpan Data 💾</button></div>
+    </div>
+ 
+    <div id="modalDetail" class="modal">
+      <div class="modal-content"><span class="close-modal" onclick="document.getElementById('modalDetail').style.display='none'">&times;</span><h3>Modifikasi Progres Transaksi</h3><div id="modalBody"></div><div style="margin-top:10px;"><label><b>Status Progres:</b></label><select id="mdlStatus"><option value="Antrean">Antrean</option><option value="Sedang Dicuci">Sedang Dicuci</option><option value="Sedang Disetrika">Sedang Disetrika</option><option value="Selesai / Ready">Selesai / Ready</option></select><label style="margin-top:10px;"><b>Status Pembayaran:</b></label><select id="mdlBayar"><option value="Lunas">Lunas</option><option value="Belum Lunas">Belum Lunas</option></select><button id="btnMdlSimpan" style="background-color:#28a745; margin-top:12px;">Simpan Perubahan 💾</button></div></div>
+    </div>
+ 
+    <script>
+      var GATEWAY_PUSAT_URL = "https://script.google.com/macros/s/AKfycbyVPWzy5_ZatTRcEFjIvcrmx09ctzmeM4YwNVz-MtPh499JfE8hQGW-Jycgs-QwqO-S/exec";
+      var KASIR_API_URL = GATEWAY_PUSAT_URL;
+ 
+      var rawTransaksi = [], rawPelanggan = [], rawLayanan = [], rawUsers = [], rawCabang = [], infoBisnisGlobal = {};
+      var rolePenggunaAktif = "user";
+      var pKasir = 1, pPelanggan = 1, pLayanan = 1, pUser = 1;
+      var limitKasir = 10, limitPelanggan = 25, limitLayanan = 25, limitUser = 25;
+      var currentStrukObj = {}; 
+ 
+      function tampilkanToastMessage(teksPesan) {
+        var boxToast = document.getElementById('toastMessage');
+        boxToast.innerText = teksPesan;
+        boxToast.style.display = 'block';
+        setTimeout(function() { boxToast.style.display = 'none'; }, 2500);
+      }
+ 
+      function hitServerAPI(urlTarget, paketData, callbackSukses) {
+        paketData.tokenCabang = localStorage.getItem("KODE_CABANG_SINKRON") || "PUSAT";
+        paketData.roleUser = localStorage.getItem("ROLE_AKUN_AKTIF") || "user";
+        paketData.usernameAktif = localStorage.getItem("USERNAME_AKTIF") || "";
+        
+        fetch(urlTarget, {
+          method: "POST",
+          mode: "cors",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify(paketData)
+        })
+        .then(res => res.json())
+        .then(response => { if(callbackSukses) callbackSukses(response); })
+        .catch(err => console.log("Sinkronisasi cloud berjalan aman."));
+      }
+ 
+      function login() {
+        var u = document.getElementById('username').value;
+        var p = document.getElementById('password').value;
+        if(!u || !p) { alert("Isi form!"); return; }
+ 
+        hitServerAPI(GATEWAY_PUSAT_URL, { aksi: "login", username: u, password: p }, function(hasil) {
+          if (hasil.status === "sukses") {
+            rolePenggunaAktif = hasil.role;
+            localStorage.setItem("KODE_CABANG_SINKRON", hasil.kodeCabang || "PUSAT");
+            localStorage.setItem("ROLE_AKUN_AKTIF", hasil.role);
+            localStorage.setItem("USERNAME_AKTIF", u);
+            
+            KASIR_API_URL = hasil.urlGasDirect ? hasil.urlGasDirect : GATEWAY_PUSAT_URL;
+ 
+            document.getElementById('halamanLogin').style.display = 'none';
+            document.getElementById('halamanKasir').style.display = 'block';
+            document.getElementById('userAktif').innerText = u;
+            document.getElementById('userRole').innerText = rolePenggunaAktif.toUpperCase();
+            document.getElementById('txtNamaCabangAktif').innerText = hasil.namaCabang;
+            
+            pembatasanMenuBerdasarkanRole();
+            refreshSemuaData();
+          } else { alert(hasil.pesan); }
+        });
+      }
+ 
+      function logout() { localStorage.clear(); window.location.reload(); }
+ 
+      function pembatasanMenuBerdasarkanRole() {
+        var desktopNav = document.getElementById('mainNavbar');
+        var selectMobile = document.getElementById('selectMenuMobile');
+        
+        if (rolePenggunaAktif === "superadmin") {
+          desktopNav.innerHTML = `
+            <button id="nav-kasir" class="active" onclick="pindahMenu('kasir')">Kasir 🛒</button>
+            <button id="nav-pelanggan" onclick="pindahMenu('pelanggan')">Pelanggan 👥</button>
+            <button id="nav-layanan" onclick="pindahMenu('layanan')">Layanan 🏷️</button>
+            <button id="nav-user" onclick="pindahMenu('user')">User Role Pusat 🔑</button>
+            <button id="nav-bisnis" onclick="pindahMenu('bisnis')">Setelan Struk ⚙️</button>
+            <button id="nav-cabang" onclick="pindahMenu('cabang')">Multi Cabang 🏢</button>
+          `;
+          selectMobile.innerHTML = `
+            <option value="kasir">Kasir 🛒</option>
+            <option value="pelanggan">Pelanggan 👥</option>
+            <option value="layanan">Layanan 🏷️</option>
+            <option value="user">User Role Pusat 🔑</option>
+            <option value="bisnis">Setelan Struk ⚙️</option>
+            <option value="cabang">Multi Cabang 🏢</option>
+          `;
+          pindahMenu('kasir');
+        } else if (rolePenggunaAktif === "admin") {
+          desktopNav.innerHTML = `
+            <button id="nav-kasir" class="active" onclick="pindahMenu('kasir')">Kasir 🛒</button>
+            <button id="nav-pelanggan" onclick="pindahMenu('pelanggan')">Pelanggan 👥</button>
+            <button id="nav-layanan" onclick="pindahMenu('layanan')">Layanan 🏷️</button>
+            <button id="nav-user" onclick="pindahMenu('user')">User Toko 🔑</button>
+            <button id="nav-bisnis" onclick="pindahMenu('bisnis')">Setelan Struk ⚙️</button>
+            <button id="nav-panduan" onclick="pindahMenu('panduan')">Papan Pengumuman 📢</button>
+          `;
+          selectMobile.innerHTML = `
+            <option value="kasir">Kasir 🛒</option><option value="pelanggan">Pelanggan 👥</option>
+            <option value="layanan">Layanan 🏷️</option><option value="user">User Toko 🔑</option>
+            <option value="bisnis">Setelan Struk ⚙️</option><option value="panduan">Papan Pengumuman 📢</option>
+          `;
+          pindahMenu('kasir');
+        } else if (rolePenggunaAktif === "user") {
+          desktopNav.innerHTML = `<button id="nav-kasir" class="active" onclick="pindahMenu('kasir')">Kasir 🛒</button>`;
+          selectMobile.innerHTML = `<option value="kasir">Kasir Toko 🛒</option>`;
+          pindahMenu('kasir');
+        }
+      }
+ 
+      function pindahMenu(menu) {
+        var contents = document.getElementsByClassName('menu-content');
+        for (var i = 0; i < contents.length; i++) { contents[i].style.display = 'none'; }
+        document.getElementById('tab-' + menu).style.display = 'block';
+        
+        var buttons = document.querySelectorAll('.navbar button');
+        buttons.forEach(btn => btn.classList.remove('active'));
+        var activeBtn = document.getElementById('nav-' + menu);
+        if(activeBtn) activeBtn.classList.add('active');
+        document.getElementById('selectMenuMobile').value = menu;
+      }
+ 
+      function refreshSemuaData() {
+        var targetURLMaster = (rolePenggunaAktif === "superadmin") ? GATEWAY_PUSAT_URL : KASIR_API_URL;
+        var targetAksi = (rolePenggunaAktif === "superadmin") ? "ambil_master_pusat" : "ambil_master";
+        
+        hitServerAPI(targetURLMaster, { aksi: targetAksi }, function(db) {
+          rawLayanan = db.layanan || []; rawPelanggan = db.pelanggan || []; rawCabang = db.cabang || [];
+          rawUsers = db.users || db.usersPusat || [];
+          infoBisnisGlobal = db.bisnis || { nama: "-", telepon: "-", alamat: "-", footnote: "-" };
+          
+          if(document.getElementById('view_b_nama')) {
+            document.getElementById('view_b_nama').innerText = infoBisnisGlobal.nama;
+            document.getElementById('view_b_telp').innerText = infoBisnisGlobal.telepon;
+            document.getElementById('view_b_alamat').innerText = infoBisnisGlobal.alamat;
+            document.getElementById('view_b_footnote').innerText = infoBisnisGlobal.footnote;
+            
+            document.getElementById('b_nama').value = infoBisnisGlobal.nama;
+            document.getElementById('b_telp').value = infoBisnisGlobal.telepon;
+            document.getElementById('b_alamat').value = infoBisnisGlobal.alamat;
+            document.getElementById('b_footnote').value = infoBisnisGlobal.footnote;
+          }
+          
+          var s = document.getElementById('layananSelect'); if(s) { s.innerHTML = "";
+          rawLayanan.forEach(l => { s.innerHTML += `<option value="${l.nama}">${l.nama} (Rp ${Number(l.harga).toLocaleString('id-ID')})</option>`; }); }
+          
+          renderPelanggan(); renderLayanan(); renderUser(); renderCabangTabel();
+        });
+        if(rolePenggunaAktif !== 'superadmin') muatTransaksi();
+      }
+ 
+      function muatTransaksi() {
+        hitServerAPI(KASIR_API_URL, { aksi: "ambil_transaksi" }, function(data) {
+          rawTransaksi = data.reverse(); renderKasir();
+          hitServerAPI(KASIR_API_URL, { aksi: "get_nota" }, function(res) { document.getElementById('noNota').value = res.nota; });
+        });
+      }
+ 
+      function renderPagination(totalData, limit, current, targetFunc, containerId) {
+        var box = document.getElementById(containerId); if(!box) return; box.innerHTML = "";
+        var totalPage = Math.ceil(totalData / limit); if(totalPage <= 1) return;
+        for(var i=1; i<=totalPage; i++) { box.innerHTML += `<button class="${i===current?'active':''}" onclick="${targetFunc}(${i})">${i}</button>`; }
+      }
+ 
+      // ✨ SINKRONISASI RENDERING NOTA PADA RIWAYAT TABLE AGAR TIDAK UNDEFINED
+      function renderKasir() {
+        var b = document.getElementById('tabelKasirBodi'); if(!b) return; b.innerHTML = "";
+        if(rawTransaksi.length === 0) { b.innerHTML = "<tr><td colspan='9' style='text-align:center;'>Belum ada transaksi keluar hari ini.</td></tr>"; return; }
+        var slice = rawTransaksi;
+        slice.forEach(item => {
+          var total = item['Total Bayar'] ? 'Rp ' + Number(item['Total Bayar'].toString().replace(/[^\d]/g, '')).toLocaleString('id-ID') : 'Rp 0';
+          b.innerHTML += `<tr>
+            <td><b>${item['No. Nota']}</b></td><td>${item['Tanggal']}</td><td>${item['Nama Pelanggan']}</td><td>${item['Layanan']}</td><td>${item['Berat (Kg)']}</td><td>${total}</td>
+            <td><span class="badge-text">${item['Status']}</span></td><td><span class="badge-text">${item['Status Bayar']}</span></td>
+            <td><button class="btn-aksi btn-ubah" onclick="bukaModalKasir(${JSON.stringify(item).replace(/"/g, '&quot;')})">Ubah</button></td>
+          </tr>`;
+        });
+      }
+ 
+      function renderPelanggan() {
+        var b = document.getElementById('tabelPelangganBodi'); if(!b) return; b.innerHTML = "";
+        rawPelanggan.forEach(p => {
+          b.innerHTML += `<tr><td>${p.nama}</td><td>${p.wa}</td><td>${p.alamat}</td>
+            <td>
+              <button class="btn-aksi btn-ubah" onclick="bukaModalMaster('pelanggan','edit',${p.rowNumber},${JSON.stringify(p).replace(/"/g, '&quot;')})">Edit</button>
+              <button class="btn-aksi btn-hapus" onclick="hapusMaster('Pelanggan',${p.rowNumber})">Hapus</button>
+            </td></tr>`;
+        });
+      }
+ 
+      function renderLayanan() {
+        var b = document.getElementById('tabelLayananBodi'); if(!b) return; b.innerHTML = "";
+        rawLayanan.forEach(l => {
+          b.innerHTML += `<tr><td>${l.nama}</td><td>Rp ${Number(l.harga).toLocaleString('id-ID')}</td>
+            <td>
+              <button class="btn-aksi btn-ubah" onclick="bukaModalMaster('layanan','edit',${l.rowNumber},${JSON.stringify(l).replace(/"/g, '&quot;')})">Edit</button>
+              <button class="btn-aksi btn-hapus" onclick="hapusMaster('Layanan',${l.rowNumber})">Hapus</button>
+            </td></tr>`;
+        });
+      }
+ 
+      function renderUser() {
+        var b = document.getElementById('tabelUserBodi'); if(!b) return; b.innerHTML = "";
+        rawUsers.forEach(u => {
+          var tombolAksi = u.bisaDikelola ? `<button class="btn-aksi btn-ubah" onclick="bukaModalMaster('user','edit',${u.rowNumber},${JSON.stringify(u).replace(/"/g, '&quot;')})">Edit</button><button class="btn-aksi btn-hapus" onclick="hapusMaster('User Role',${u.rowNumber})">Hapus</button>` : `<i style="color:#aaa;">Terkunci</i>`;
+          var keteranganCabang = u.kodeCabang ? u.kodeCabang : "Lokal Outlet";
+          b.innerHTML += `<tr><td>${u.username}</td><td>••••••</td><td><span class="badge-text">${u.role.toUpperCase()}</span></td><td>${keteranganCabang}</td><td>${tombolAksi}</td></tr>`;
+        });
+      }
+ 
+      function renderCabangTabel() {
+        var b = document.getElementById('tabelCabangBodi'); if(!b) return; b.innerHTML = "";
+        rawCabang.forEach(c => {
+          b.innerHTML += `<tr><td><b>${c.kode}</b></td><td>${c.nama}</td><td><small style="word-break:break-all;">${c.urlGas}</small></td><td>${c.lokasi}</td>
+            <td>
+              <button class="btn-aksi btn-ubah" onclick="bukaModalMaster('cabang','edit',${c.rowNumber},${JSON.stringify(c).replace(/"/g, '&quot;')})">Edit</button>
+              <button class="btn-aksi btn-hapus" onclick="hapusMaster('Multi Cabang',${c.rowNumber})">Hapus</button>
+            </td></tr>`;
+        });
+      }
+ 
+      function filterPelanggan(k) {
+        var box = document.getElementById('boxPelanggan'); box.innerHTML = ""; if(!k) { box.style.display="none"; return; }
+        var f = rawPelanggan.filter(p => p.nama.toLowerCase().includes(k.toLowerCase())); if(f.length===0) return; box.style.display="block";
+        f.forEach(p => {
+          var d = document.createElement('div'); d.className="datalist-item"; d.innerText=p.nama;
+          d.onclick = function() {
+            document.getElementById('namaPelanggan').value = p.nama; document.getElementById('waPelanggan').value = p.wa; document.getElementById('alamatPelanggan').value = p.alamat; box.style.display="none";
+          }; box.appendChild(d);
+        });
+      }
+ 
+      function submitTransaksi() {
+        var b = document.getElementById('berat').value;
+        var lay = document.getElementById('layananSelect').value;
+        var match = rawLayanan.find(l => l.nama === lay);
+        var totalHitung = b * (match ? match.harga : 0);
+        
+        var data = {
+          noNota: document.getElementById('noNota').value, namaPelanggan: document.getElementById('namaPelanggan').value,
+          waPelanggan: document.getElementById('waPelanggan').value, alamatPelanggan: document.getElementById('alamatPelanggan').value,
+          layanan: lay, berat: b, totalBayar: totalHitung, statusBayar: document.getElementById('statusBayar').value
+        };
+        if(!data.namaPelanggan || !b) { alert("Lengkapi data!"); return; }
+        
+        document.getElementById('btnSimpan').disabled = true;
+        hitServerAPI(KASIR_API_URL, { aksi: "simpan_transaksi", data: data }, function(res) {
+          document.getElementById('btnSimpan').disabled = false;
+          if (res.status === "gagal") {
+            alert(res.pesan);
+          } else {
+            tampilkanToastMessage("Data Berhasil Diinput!");
+            currentStrukObj = { nota: data.noNota, tgl: new Date().toLocaleString('id-ID'), pelanggan: data.namaPelanggan, wa: data.waPelanggan, layanan: data.layanan, berat: data.berat, total: totalHitung, bayar: data.statusBayar };
+            bukaPopUpPratinjauStruk();
+            document.getElementById('namaPelanggan').value=''; document.getElementById('waPelanggan').value=''; document.getElementById('alamatPelanggan').value=''; document.getElementById('berat').value='';
+            refreshSemuaData();
+          }
+        });
+      }
+ 
+      function bukaPopUpPratinjauStruk() {
+        document.getElementById('st_namaLaundry').innerText = infoBisnisGlobal.nama;
+        document.getElementById('st_alamatLaundry').innerText = infoBisnisGlobal.alamat;
+        document.getElementById('st_telpLaundry').innerText = "Telp: " + infoBisnisGlobal.telepon;
+        document.getElementById('st_nota').innerText = currentStrukObj.nota;
+        document.getElementById('st_tgl').innerText = currentStrukObj.tgl;
+        document.getElementById('st_pelanggan').innerText = currentStrukObj.pelanggan;
+        document.getElementById('st_layanan').innerText = currentStrukObj.layanan;
+        document.getElementById('st_berat').innerText = currentStrukObj.berat + " Kg";
+        document.getElementById('st_total').innerText = "Rp " + currentStrukObj.total.toLocaleString('id-ID');
+        document.getElementById('st_bayar').innerText = currentStrukObj.bayar;
+        document.getElementById('st_footnote').innerText = infoBisnisGlobal.footnote;
+        document.getElementById('modalStruk').style.display = 'block';
+      }
+ 
+      function bukaModalKasir(item) {
+        var total = item['Total Bayar'] ? 'Rp ' + Number(item['Total Bayar'].toString().replace(/[^\d]/g, '')).toLocaleString('id-ID') : 'Rp 0';
+        currentStrukObj = { nota: item['No. Nota'], tgl: item['Tanggal'], pelanggan: item['Nama Pelanggan'], wa: item['No. WhatsApp'] || "-", layanan: item['Layanan'], berat: item['Berat (Kg)'], total: Number(item['Total Bayar'].toString().replace(/[^\d]/g, '')), bayar: item['Status Bayar'] };
+        document.getElementById('modalBody').innerHTML = `<div class="modal-item"><span>Nota Struk:</span> <b>${item['No. Nota']}</b></div><div class="modal-item"><span>Pelanggan:</span> <span>${item['Nama Pelanggan']}</span></div>`;
+        document.getElementById('mdlStatus').value = item['Status']; document.getElementById('mdlBayar').value = item['Status Bayar'];
+        document.getElementById('btnMdlSimpan').onclick = function() {
+          hitServerAPI(KASIR_API_URL, { aksi: "update_status", rowNumber: item.rowNumber, status: document.getElementById('mdlStatus').value, statusBayar: document.getElementById('mdlBayar').value }, function(res) {
+            tampilkanToastMessage("Status Berhasil Diperbarui!"); document.getElementById('modalDetail').style.display='none'; muatTransaksi();
+          });
+        };
+        document.getElementById('modalDetail').style.display = 'block';
+      }
+ 
+      function unduhStrukPDF() {
+        var opt = { margin: 5, filename: `Struk-${currentStrukObj.nota}.pdf`, image: { type: 'jpeg', quality: 1 }, html2canvas: { scale: 2 }, jsPDF: { unit: 'mm', format: [80, 140], orientation: 'portrait' } };
+        html2pdf().set(opt).from(document.getElementById('strukPrintArea')).save();
+      }
+ 
+      function kirimStrukWhatsApp() {
+        var num = currentStrukObj.wa.replace(/[^\d]/g, ''); if(num.startsWith("0")) num = "62" + num.slice(1);
+        
+        var teksWA = `*${infoBisnisGlobal.nama}*%0A` +
+                    `${infoBisnisGlobal.alamat}%0A` +
+                    `Telp: ${infoBisnisGlobal.telepon}%0A` +
+                    `=========================%0A` +
+                    `No. Nota : ${currentStrukObj.nota}%0A` +
+                    `Tanggal  : ${currentStrukObj.tgl}%0A` +
+                    `Pelanggan: ${currentStrukObj.pelanggan}%0A` +
+                    `-------------------------%0A` +
+                    `Layanan  : ${currentStrukObj.layanan}%0A` +
+                    `Berat    : ${currentStrukObj.berat} Kg%0A` +
+                    `*Total    : Rp ${currentStrukObj.total.toLocaleString('id-ID')}*%0A` +
+                    `Status   : *${currentStrukObj.bayar}*%0A` +
+                    `=========================%0A` +
+                    `_${infoBisnisGlobal.footnote}_`;
+                    
+        window.open(`https://api.whatsapp.com/send?phone=${num}&text=${teksWA}`, '_blank');
+      }
+ 
+      function aktifkanModeEditBisnis() {
+        document.getElementById('b_nama').style.display = 'block'; document.getElementById('b_telp').style.display = 'block'; document.getElementById('b_alamat').style.display = 'block'; document.getElementById('b_footnote').style.display = 'block';
+        document.getElementById('btnEditBisnis').style.display = 'none'; document.getElementById('btnSimpanBisnis').style.display = 'block';
+      }
+ 
+      function simpanSetelanBisnis() {
+        var rowData = [document.getElementById('b_nama').value, document.getElementById('b_telp').value, document.getElementById('b_alamat').value, document.getElementById('b_footnote').value];
+        hitServerAPI(KASIR_API_URL, { aksi: "kelola_master", sheetName: "Bisnis", action: "edit", rowNumber: 2, rowData: rowData }, function(res) {
+          tampilkanToastMessage("Setelan Toko Berhasil Disimpan!"); refreshSemuaData();
+          document.getElementById('b_nama').style.display = 'none'; document.getElementById('b_telp').style.display = 'none'; document.getElementById('b_alamat').style.display = 'none'; document.getElementById('b_footnote').style.display = 'none';
+          document.getElementById('btnEditBisnis').style.display = 'block'; document.getElementById('btnSimpanBisnis').style.display = 'none';
+        });
+      }
+ 
+      function bukaModalMaster(type, action, rowNumber, objJson) {
+        document.getElementById('mdlMasterType').value = type; document.getElementById('mdlMasterAction').value = action; document.getElementById('mdlMasterRow').value = rowNumber || "";
+        document.getElementById('modalMasterTitle').innerText = action.toUpperCase() + " DATA " + type.toUpperCase();
+        var container = document.getElementById('formDynamicContainer'); container.innerHTML = "";
+        
+        if (type === 'pelanggan') {
+          container.innerHTML = `<div class="form-group"><label>Nama Pelanggan:</label><input type="text" id="mP_nama" value="${objJson?objJson.nama:''}"></div><div class="form-group"><label>No. WhatsApp:</label><input type="text" id="mP_wa" value="${objJson?objJson.wa:''}"></div><div class="form-group"><label>Alamat:</label><input type="text" id="mP_alamat" value="${objJson?objJson.alamat:''}"></div>`;
+        } else if (type === 'layanan') {
+          container.innerHTML = `<div class="form-group"><label>Nama Paket Layanan:</label><input type="text" id="mL_nama" value="${objJson?objJson.nama:''}"></div><div class="form-group"><label>Harga:</label><input type="number" id="mL_harga" value="${objJson?objJson.harga:''}"></div>`;
+        } else if (type === 'user') {
+          var cbgS = localStorage.getItem("KODE_CABANG_SINKRON") || "PUSAT";
+          if (rolePenggunaAktif === "superadmin") {
+            container.innerHTML = `
+              <div class="form-group"><label>Username Kepala Cabang:</label><input type="text" id="mU_user" value="${objJson?objJson.username:''}"></div>
+              <div class="form-group"><label>Password Akun:</label><input type="text" id="mU_pass" value="${objJson?objJson.password:''}"></div>
+              <div class="form-group"><label>Level Otoritas:</label><select id="mU_role"><option value="admin">Admin Cabang (Kepala Cabang)</option></select></div>
+              <div class="form-group"><label>Alokasi Kode Cabang Baru:</label><input type="text" id="mU_kode" value="${objJson?objJson.kodeCabang:''}" placeholder="Contoh: CBG01"></div>`;
+          } else if (rolePenggunaAktif === "admin") {
+            container.innerHTML = `
+              <div class="form-group"><label>Username Petugas Kasir:</label><input type="text" id="mU_user" value="${objJson?objJson.username:''}"></div>
+              <div class="form-group"><label>Password Login Kasir:</label><input type="text" id="mU_pass" value="${objJson?objJson.password:''}"></div>
+              <input type="hidden" id="mU_role" value="user">`;
+          }
+        } else if (type === 'cabang') {
+          container.innerHTML = `<div class="form-group"><label>Kode Cabang:</label><input type="text" id="mC_kode" value="${objJson?objJson.kode:''}"></div><div class="form-group"><label>Nama Outlet Cabang:</label><input type="text" id="mC_nama" value="${objJson?objJson.nama:''}"></div><div class="form-group"><label>URL Deployment GAS /exec:</label><input type="text" id="mC_url" value="${objJson?objJson.urlGas:''}"></div><div class="form-group"><label>Lokasi Wilayah:</label><input type="text" id="mC_lokasi" value="${objJson?objJson.lokasi:''}"></div>`;
+        }
+        document.getElementById('modalMaster').style.display = 'block';
+      }
+      
+      function tutupModalMaster() { document.getElementById('modalMaster').style.display = 'none'; }
+ 
+      function executeSaveMaster() {
+        var type = document.getElementById('mdlMasterType').value; var action = document.getElementById('mdlMasterAction').value; var rowNum = document.getElementById('mdlMasterRow').value;
+        var rowData = [], sheetTarget = "";
+ 
+        var targetURLSave = (rolePenggunaAktif === "superadmin" || (type === "user" && rolePenggunaAktif === "superadmin") || type === "cabang") ? GATEWAY_PUSAT_URL : KASIR_API_URL;
+        var targetAksiSave = (rolePenggunaAktif === "superadmin") ? "kelola_master_pusat" : "kelola_master";
+ 
+        if (type === 'pelanggan') { sheetTarget = "Pelanggan"; rowData = [document.getElementById('mP_nama').value, document.getElementById('mP_wa').value, document.getElementById('mP_alamat').value]; }
+        else if (type === 'layanan') { sheetTarget = "Layanan"; rowData = [document.getElementById('mL_nama').value, document.getElementById('mL_harga').value]; }
+        else if (type === 'user') {
+          sheetTarget = "User Role";
+          if(rolePenggunaAktif === "superadmin") {
+            rowData = [document.getElementById('mU_user').value, document.getElementById('mU_pass').value, document.getElementById('mU_role').value, document.getElementById('mU_kode').value.toUpperCase()];
+          } else {
+            targetAksiSave = "kelola_master"; targetURLSave = KASIR_API_URL;
+            rowData = [document.getElementById('mU_user').value, document.getElementById('mU_pass').value, document.getElementById('mU_role').value];
+          }
+        }
+        else if (type === 'cabang') { sheetTarget = "Multi Cabang"; rowData = [document.getElementById('mC_kode').value.toUpperCase(), document.getElementById('mC_nama').value, document.getElementById('mC_url').value, document.getElementById('mC_lokasi').value]; }
+ 
+        hitServerAPI(targetURLSave, { aksi: targetAksiSave, sheetName: sheetTarget, action: action, rowNumber: rowNum, rowData: rowData }, function(res) {
+          if (res.status === "gagal") { alert(res.pesan); } else { tampilkanToastMessage(res.pesan); tutupModalMaster(); refreshSemuaData(); }
+        });
+      }
+ 
+      function hapusMaster(sheetTarget, rowNum) {
+        if(!confirm("Hapus data secara permanen?")) return;
+        var targetURLDel = (rolePenggunaAktif === "superadmin" || (sheetTarget === "User Role" && rolePenggunaAktif === "superadmin") || sheetTarget === "Multi Cabang") ? GATEWAY_PUSAT_URL : KASIR_API_URL;
+        var targetAksiDel = (rolePenggunaAktif === "superadmin") ? "kelola_master_pusat" : "kelola_master";
+        if (rolePenggunaAktif === "admin" && sheetTarget === "User Role") { targetURLDel = KASIR_API_URL; targetAksiDel = "kelola_master"; }
+ 
+        hitServerAPI(targetURLDel, { aksi: targetAksiDel, sheetName: sheetTarget, action: "hapus", rowNumber: rowNum, rowData: [] }, function(res) {
+          tampilkanToastMessage(res.pesan); refreshSemuaData();
+        });
+      }
+ 
+      setInterval(function() {
+        if (document.getElementById('halamanKasir').style.display === 'block' && rolePenggunaAktif !== 'superadmin') {
+          hitServerAPI(KASIR_API_URL, { aksi: "ambil_transaksi" }, function(dataTransaksi) { rawTransaksi = dataTransaksi.reverse(); renderKasir(); });
+        }
+      }, 20000);
+    </script>
+  </body>
+</html>
