@@ -10,19 +10,21 @@
     body { background-color: #f8f9fa; font-family: sans-serif; }
     #reader { width: 100%; max-width: 500px; margin: auto; background: white; border-radius: 8px; overflow: hidden; }
     .card-dashboard { border-left: 5px solid #0d6efd; }
+    /* Memastikan video kamera pas di dalam container */
+    #reader video { object-fit: cover !important; }
   </style>
 </head>
 <body>
 
   <div class="container py-4">
-    <h2 class="text-center mb-4 fw-bold text-primary">Scan to DB App (Hosted)</h2>
+    <h2 class="text-center mb-4 fw-bold text-primary">Scan to DB App</h2>
     
     <div class="row g-4">
       <div class="col-md-6 text-center">
         <div class="card shadow-sm p-3 mb-3 bg-white rounded">
-          <h5 class="card-title mb-3">Arahkan Kamera ke Barcode Resi</h5>
+          <h5 class="card-title mb-3">Arahkan Kamera Belakang ke Barcode Resi</h5>
           <div id="reader"></div>
-          <div id="result-scan" class="mt-3 fw-bold"></div>
+          <div id="result-scan" class="mt-3 fw-bold fs-5"></div>
         </div>
       </div>
       
@@ -59,8 +61,10 @@
   </div>
 
   <script>
-    // MASUKKAN URL GOOGLE APPS SCRIPT ANDA DI SINI
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyMRZPXpgf4vKuX2Q12n39LkfKV23WA9APIHPKoVSRdUx-zEi2LHdfp9PJ4iMlQMnc6/exec";
+    // ========================================================
+    // TEMPELKAN URL GOOGLE APPS SCRIPT (WEB APP) ANDA DI SINI v5
+    // ========================================================
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxdBX59qL9kaquYxGsePCTwR1PHABtP_50eXi9c1s2bBe5Dlgpani_UlKgg7Nef0YKN/exec";
 
     document.addEventListener("DOMContentLoaded", function() {
       muatDashboard();
@@ -68,16 +72,48 @@
     });
 
     function mulaiScanner() {
-      const html5QrcodeScanner = new Html5QrcodeScanner(
-        "reader", { fps: 10, qrbox: { width: 250, height: 150 } }
-      );
-      html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+      // Menggunakan Html5Qrcode langsung untuk kontrol kamera yang lebih ketat
+      const html5QrCode = new Html5Qrcode("reader");
+      
+      const config = { 
+        fps: 15, // Ditingkatkan agar pembacaan sensor garis lebih sensitif
+        qrbox: function(viewfinderWidth, viewfinderHeight) {
+          // Membuat area scan persegi panjang (lebar dan pipih) khusus untuk barcode resi
+          const desiredWidth = Math.floor(viewfinderWidth * 0.85);
+          const desiredHeight = Math.floor(viewfinderHeight * 0.35);
+          return {
+            width: desiredWidth,
+            height: desiredHeight
+          };
+        },
+        // Daftarkan format barcode yang dipakai ekspedisi agar mesin scanner fokus & cepat
+        formatsToSupport: [
+          Html5QrcodeSupportedFormats.CODE_128, 
+          Html5QrcodeSupportedFormats.CODE_39,
+          Html5QrcodeSupportedFormats.EAN_13,
+          Html5QrcodeSupportedFormats.QR_CODE // Tetap dukung QR Code (kotak) jika resi memakai QR
+        ]
+      };
+
+      // Memaksa hanya menggunakan kamera belakang (facingMode: "environment")
+      html5QrCode.start(
+        { facingMode: "environment" }, 
+        config,
+        onScanSuccess,
+        onScanFailure
+      )
+      .catch((err) => {
+        document.getElementById('result-scan').innerHTML = 
+          `<span class="text-danger">Gagal akses kamera: ${err}. <br>Pastikan izin browser aktif dan gunakan HTTPS!</span>`;
+      });
     }
 
+    // Aksi ketika barcode/QR code berhasil terdeteksi
     function onScanSuccess(decodedText, decodedResult) {
       const resultDiv = document.getElementById('result-scan');
       resultDiv.innerHTML = `<span class="text-warning">Memproses resi: ${decodedText}...</span>`;
       
+      // Kirim data via POST ke Google Apps Script
       fetch(SCRIPT_URL, {
         method: "POST",
         body: JSON.stringify({ action: "simpanResi", nomorResi: decodedText })
@@ -85,19 +121,22 @@
       .then(res => res.json())
       .then(response => {
         if(response.status === 'success') {
-          resultDiv.innerHTML = `<span class="text-success">${response.message}</span>`;
-          muatDashboard();
+          resultDiv.innerHTML = `<span class="text-success">✅ ${response.message}</span>`;
+          muatDashboard(); // Segera update angka dashboard & tabel
         } else {
-          resultDiv.innerHTML = `<span class="text-danger">${response.message}</span>`;
+          resultDiv.innerHTML = `<span class="text-danger">⚠️ ${response.message}</span>`;
         }
       })
       .catch(err => {
-        resultDiv.innerHTML = `<span class="text-danger">Gagal terhubung ke server!</span>`;
+        resultDiv.innerHTML = `<span class="text-danger">❌ Gagal terhubung ke Google Sheet!</span>`;
       });
     }
 
-    function onScanFailure(error) {}
+    function onScanFailure(error) {
+      // Biarkan kosong agar tidak membebani log browser saat mencari garis barcode
+    }
 
+    // Fungsi untuk mengambil data dan memperbarui tampilan Dashboard
     function muatDashboard() {
       fetch(SCRIPT_URL, {
         method: "POST",
@@ -117,10 +156,13 @@
         data.terakhir.forEach(item => {
           let row = `<tr>
             <td><small class="text-muted">${item.waktu}</small></td>
-            <td class="fw-bold">${item.resi}</td>
+            <td class="fw-bold text-secondary">${item.resi}</td>
           </tr>`;
           tbody.innerHTML += row;
         });
+      })
+      .catch(err => {
+        console.log("Gagal memuat dashboard data.");
       });
     }
   </script>
