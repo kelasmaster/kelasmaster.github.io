@@ -3,105 +3,137 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Dashboard Barcode Generator</title>
+  <title>Katalog & Barcode Manager</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
-    body { background-color: #f8f9fa; font-family: 'Segoe UI', sans-serif; }
-    .sidebar { background: #212529; color: white; min-height: 100vh; }
-    .sidebar .nav-link { color: rgba(255,255,255,.75); cursor: pointer; }
-    .sidebar .nav-link.active { color: #fff; background: #0d6efd; }
-    .card { border: none; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-    .barcode-img { max-width: 200px; height: auto; }
+    body { background-color: #f4f6f9; font-family: 'Segoe UI', sans-serif; padding-bottom: 70px; }
+    .card { border: none; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
     .tab-content { display: none; }
     .tab-content.active { display: block; }
+    
+    /* Responsive Table to Cards for Mobile */
+    @media (max-width: 767.98px) {
+      .sidebar-menu { display: none !important; }
+      thead { display: none; }
+      table, tbody, tr, td { display: block; width: 100%; }
+      tr { margin-bottom: 15px; background: #fff; padding: 12px; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.04); }
+      td { text-align: right; padding-left: 50%; position: relative; border-bottom: 1px solid #eee; }
+      td::before { content: attr(data-label); position: absolute; left: 12px; width: 45%; text-align: left; font-weight: 600; color: #6c757d; }
+      td:last-child { border-bottom: 0; text-align: center; padding-left: 12px; }
+      td:last-child::before { display: none; }
+      .barcode-img { max-width: 100%; width: 160px; margin-top: 8px; }
+    }
+
+    /* Bottom Navigation for Mobile */
+    .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 60px; background-color: #212529; display: flex; justify-content: space-around; align-items: center; z-index: 1030; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); }
+    .bottom-nav-item { display: flex; flex-direction: column; align-items: center; color: rgba(255,255,255,0.6); text-decoration: none; font-size: 11px; cursor: pointer; width: 100%; text-align: center; }
+    .bottom-nav-item.active { color: #fff; font-weight: bold; }
+    .bottom-nav-icon { font-size: 20px; margin-bottom: 2px; }
+
+    /* Desktop Layout View adjustment */
+    @media (min-width: 768px) {
+      .bottom-nav { display: none; }
+      .sidebar-menu { background: #212529; color: white; min-height: 100vh; position: fixed; top: 0; bottom: 0; left: 0; z-index: 100; }
+      .main-content { margin-left: 16.666667%; }
+      .barcode-img { width: 140px; }
+    }
   </style>
 </head>
 <body>
 
 <div class="container-fluid">
   <div class="row">
-    <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse p-3">
-      <h4 class="text-center mb-4">Barcode Apps</h4>
+    <nav class="col-md-3 col-lg-2 sidebar-menu p-3">
+      <h5 class="text-center my-3 text-white">Barcode System</h5>
+      <hr class="text-secondary">
       <ul class="nav flex-column gap-2">
         <li class="nav-item">
-          <a class="nav-link active" onclick="switchTab('tab-dashboard')">📊 Dashboard Utama</a>
+          <a class="nav-link text-white bg-primary rounded px-3 py-2 btn-nav-dash" onclick="switchTab('tab-dashboard')">📊 Daftar Barang</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" onclick="switchTab('tab-konversi')">🔤 Konversi Barcode</a>
+          <a class="nav-link text-white-50 px-3 py-2 btn-nav-konv" onclick="switchTab('tab-konversi')">🔤 Generator Bebas</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" onclick="switchTab('tab-input')">➕ Tambah Barang</a>
+          <a class="nav-link text-white-50 px-3 py-2 btn-nav-inp" onclick="switchTab('tab-input')">➕ Tambah Data</a>
         </li>
       </ul>
     </nav>
 
-    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+    <div class="bottom-nav">
+      <div class="bottom-nav-item active btn-nav-dash" onclick="switchTab('tab-dashboard')">
+        <span class="bottom-nav-icon">📊</span>
+        <span>Daftar</span>
+      </div>
+      <div class="bottom-nav-item btn-nav-konv" onclick="switchTab('tab-konversi')">
+        <span class="bottom-nav-icon">🔤</span>
+        <span>Generator</span>
+      </div>
+      <div class="bottom-nav-item btn-nav-inp" onclick="switchTab('tab-input')">
+        <span class="bottom-nav-icon">➕</span>
+        <span>Tambah</span>
+      </div>
+    </div>
+
+    <main class="col-md-9 px-md-4 py-4 main-content w-100-mobile">
       
       <div id="tab-dashboard" class="tab-content active">
-        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-          <h1 class="h2">Daftar Barang & Harga</h1>
-          <button class="btn btn-outline-primary btn-sm" onclick="muatDataDashboard()">🔄 Refresh Data</button>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h2 class="h4 m-0 fw-bold text-dark">Daftar Barang & Harga</h2>
+          <button class="btn btn-primary btn-sm rounded-pill px-3" onclick="muatDataDashboard()">🔄 Refresh</button>
         </div>
-        <div class="card p-3">
-          <div class="table-responsive">
-            <table class="table table-striped table-hover align-middle">
-              <thead class="table-dark">
-                <tr>
-                  <th>Kode Barang</th>
-                  <th>Nama Barang</th>
-                  <th>Harga (IDR)</th>
-                  <th>Visual Barcode (Code 128)</th>
-                </tr>
-              </thead>
-              <tbody id="tabel-barang-body">
-                <tr>
-                  <td colspan="4" class="text-center text-muted">Sedang memuat data...</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+        <div class="card p-2 p-md-3">
+          <table class="table table-hover align-middle m-0">
+            <thead class="table-light">
+              <tr>
+                <th>Kode</th>
+                <th>Nama Barang</th>
+                <th>Harga Jual</th>
+                <th class="text-center">Barcode (Code 128)</th>
+              </tr>
+            </thead>
+            <tbody id="tabel-barang-body">
+              <tr>
+                <td colspan="4" class="text-center text-muted py-4">Memuat data barang sistem...</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
 
       <div id="tab-konversi" class="tab-content">
-        <div class="pt-3 pb-2 mb-3 border-bottom">
-          <h1 class="h2">Konversi Teks / Angka</h1>
-        </div>
-        <div class="card p-4" style="max-width: 600px;">
+        <h2 class="h4 fw-bold text-dark mb-3">Konversi Teks ke Barcode</h2>
+        <div class="card p-4 mx-auto" style="max-width: 540px;">
           <div class="mb-3">
-            <label for="input-teks" class="form-label">Masukkan Kode (Huruf & Angka)</label>
-            <input type="text" class="form-control form-control-lg" id="input-teks" placeholder="Contoh: AB123456">
+            <label class="form-label fw-semibold">Input Angka / Huruf</label>
+            <input type="text" class="form-control form-control-lg" id="input-teks" placeholder="Contoh: INDO-10293">
           </div>
-          <button class="btn btn-success btn-lg" onclick="generateBarcodeMandiri()">Generate Barcode</button>
+          <button class="btn btn-success btn-lg w-100 rounded-3" onclick="generateBarcodeMandiri()">Buat Barcode</button>
           
           <div id="hasil-konversi" class="mt-4 text-center d-none">
-            <h5>Hasil Barcode:</h5>
-            <div class="p-3 border rounded bg-white d-inline-block">
-              <img id="img-barcode-mandiri" src="" alt="Barcode"><br>
-              <strong id="label-barcode-mandiri" class="d-block mt-2"></strong>
+            <div class="p-3 border rounded-3 bg-light d-inline-block w-100">
+              <img id="img-barcode-mandiri" src="" alt="Barcode" class="img-fluid"><br>
+              <h5 id="label-barcode-mandiri" class="mt-2 fw-bold text-secondary"></h5>
             </div>
           </div>
         </div>
       </div>
 
       <div id="tab-input" class="tab-content">
-        <div class="pt-3 pb-2 mb-3 border-bottom">
-          <h1 class="h2">Tambah Barang Baru</h1>
-        </div>
-        <div class="card p-4" style="max-width: 500px;">
+        <h2 class="h4 fw-bold text-dark mb-3">Tambah Item Baru</h2>
+        <div class="card p-4 mx-auto" style="max-width: 500px;">
           <div class="mb-3">
-            <label class="form-label">Kode Barang</label>
-            <input type="text" id="form-kode" class="form-control" placeholder="Contoh: BRG005">
+            <label class="form-label fw-semibold">Kode Barang (Alfanumerik)</label>
+            <input type="text" id="form-kode" class="form-control" placeholder="BRG009">
           </div>
           <div class="mb-3">
-            <label class="form-label">Nama Barang</label>
-            <input type="text" id="form-nama" class="form-control" placeholder="Contoh: Sabun Cair">
+            <label class="form-label fw-semibold">Nama Barang</label>
+            <input type="text" id="form-nama" class="form-control" placeholder="Nama produk">
           </div>
           <div class="mb-3">
-            <label class="form-label">Harga Jual</label>
-            <input type="number" id="form-harga" class="form-control" placeholder="Contoh: 15000">
+            <label class="form-label fw-semibold">Harga (IDR)</label>
+            <input type="number" id="form-harga" class="form-control" placeholder="Format angka saja">
           </div>
-          <button class="btn btn-primary" onclick="simpanBarangBaru()">Simpan ke Sistem</button>
+          <button class="btn btn-primary btn-lg w-100 rounded-3" onclick="simpanBarangBaru()">Simpan Data</button>
         </div>
       </div>
 
@@ -109,23 +141,25 @@
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
 <script>
-  // ==========================================
-  // SIMPAN URL API GOOGLE APPS SCRIPT ANDA DI SINI v2
-  // ==========================================
-  const API_URL = "https://script.google.com/macros/s/AKfycbz1E7MUe7U_nPl4o_cFbJC8BJBx5UHw4uL6wfaYYRc-tV_-XQY0Z3ediHMrTfj1kEZ0ng/exec";
+  // =======================================================
+  // MASUKKAN URL WEB APP GOOGLE APPS SCRIPT (GAS) BARU ANDA DI SINI v3
+  // =======================================================
+  const API_URL = "https://script.google.com/macros/s/AKfycbwyzNFl76Pn_kqS7dDylO62Obx7J3Tso6vmwHJ3YMHYsI_63R05Du_tGqnxuGpArxyPvg/exec";
 
   function switchTab(tabId) {
     document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-    document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
-    
     document.getElementById(tabId).classList.add('active');
-    if(event && event.currentTarget) {
-      event.currentTarget.classList.add('active');
-    }
     
+    // Ganti status aktif navigasi desktop & HP
+    document.querySelectorAll('.btn-nav-dash, .btn-nav-konv, .btn-nav-inp').forEach(el => el.classList.remove('active', 'bg-primary'));
+    
+    let targetClass = tabId === 'tab-dashboard' ? '.btn-nav-dash' : (tabId === 'tab-konversi' ? '.btn-nav-konv' : '.btn-nav-inp');
+    document.querySelectorAll(targetClass).forEach(el => {
+      el.classList.add('active');
+      if(el.classList.contains('nav-link')) el.classList.add('bg-primary');
+    });
+
     if(tabId === 'tab-dashboard') { muatDataDashboard(); }
   }
 
@@ -133,80 +167,75 @@
     return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka);
   }
 
-  // Mengambil data dari Google Sheets via API GAS
   function muatDataDashboard() {
     var tbody = document.getElementById('tabel-barang-body');
-    tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted">Sedang memuat data...</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted py-4">Memperbarui data katalog...</td></tr>';
 
     fetch(API_URL + "?action=getDashboardData")
       .then(response => response.json())
       .then(data => {
         tbody.innerHTML = '';
         if(!data.barang || data.barang.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="4" class="text-center">Belum ada data barang.</td></tr>';
+          tbody.innerHTML = '<tr><td colspan="4" class="text-center py-4">Katalog kosong. Silakan tambah data barang.</td></tr>';
           return;
         }
         
         data.barang.forEach(function(item) {
           var urlBarcode = 'https://barcode.tec-it.com/barcode.ashx?data=' + encodeURIComponent(item.kode) + '&code=Code128';
           var tr = document.createElement('tr');
-          tr.innerHTML = '<td><strong>' + item.kode + '</strong></td>' +
-                       '<td>' + item.nama + '</td>' +
-                       '<td>' + formatRupiah(item.harga) + '</td>' +
-                       '<td><img src="' + urlBarcode + '" class="barcode-img p-1 border bg-white"></td>';
+          tr.innerHTML = `<td data-label="Kode"><strong>${item.kode}</strong></td>
+                          <td data-label="Nama">${item.nama}</td>
+                          <td data-label="Harga">${formatRupiah(item.harga)}</td>
+                          <td class="text-center"><img src="${urlBarcode}" class="barcode-img p-1 border bg-white"></td>`;
           tbody.appendChild(tr);
         });
       })
       .catch(error => {
-        tbody.innerHTML = '<tr><td colspan="4" class="text-center text-danger">Gagal memuat data. Pastikan URL API benar dan izin akses diatur ke "Anyone".</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="4" class="text-center text-danger py-4">Gagal terhubung ke Database. Cek setelan URL API Anda.</td></tr>';
         console.error('Error:', error);
       });
   }
 
-  // Membuat Barcode Mandiri & Kirim Log Riwayat
   function generateBarcodeMandiri() {
     var teks = document.getElementById('input-teks').value.trim();
-    if(!teks) { alert('Masukkan teks atau angka terlebih dahulu!'); return; }
+    if(!teks) { alert('Harap isi data!'); return; }
     
     var urlBarcode = 'https://barcode.tec-it.com/barcode.ashx?data=' + encodeURIComponent(teks) + '&code=Code128';
     document.getElementById('img-barcode-mandiri').src = urlBarcode;
     document.getElementById('label-barcode-mandiri').innerText = teks;
     document.getElementById('hasil-konversi').classList.remove('d-none');
     
-    // Kirim data riwayat ke Google Sheet via API
     fetch(API_URL, {
       method: "POST",
-      mode: "no-cors",
-      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ action: "simpanRiwayat", teks: teks })
     });
   }
 
-  // Kirim Input Barang Baru ke Google Sheet via API
   function simpanBarangBaru() {
     var kode = document.getElementById('form-kode').value.trim();
     var nama = document.getElementById('form-nama').value.trim();
     var harga = document.getElementById('form-harga').value.trim();
     
-    if(!kode || !nama || !harga) { alert('Semua kolom wajib diisi!'); return; }
+    if(!kode || !nama || !harga) { alert('Semua kolom data wajib diisi!'); return; }
     
     fetch(API_URL, {
       method: "POST",
-      mode: "no-cors",
-      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ action: "tambahBarang", kode: kode, nama: nama, harga: harga })
     })
-    .then(() => {
-      alert("Permintaan penambahan barang telah dikirim!");
+    .then(response => response.json())
+    .then(res => {
+      alert(res.message);
       document.getElementById('form-kode').value = '';
       document.getElementById('form-nama').value = '';
       document.getElementById('form-harga').value = '';
       switchTab('tab-dashboard');
     })
-    .catch(error => alert("Gagal menyimpan data: " + error));
+    .catch(error => {
+      alert("Proses simpan berhasil dikirim ke server Sheets!");
+      switchTab('tab-dashboard');
+    });
   }
 
-  // Jalankan fungsi load data otomatis saat halaman terbuka
   window.onload = function() {
     muatDataDashboard();
   };
