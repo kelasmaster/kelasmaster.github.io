@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Resi Scanner</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+  <style>
+    body { background-color: #f8f9fa; font-family: sans-serif; }
+    #reader { width: 100%; max-width: 500px; margin: auto; background: white; border-radius: 8px; overflow: hidden; }
+    #reader video { object-fit: cover !important; }
+    .card-total { border-left: 5px solid #0d6efd; background-color: #fff; }
+    .card-hari-ini { border-left: 5px solid #198754; background-color: #fff; }
+    .pagination { margin-bottom: 0; }
+  </style>
+</head>
+<body>
+
+  <div class="container py-4">
+    <h2 class="text-center mb-4 fw-bold text-primary">Resi Scanner</h2>
+    
+    <div class="row g-4">
+      <div class="col-md-6 text-center">
+        <div class="card shadow-sm p-3 mb-3 bg-white rounded">
+          <h5 class="card-title mb-3">Arahkan Kamera Belakang ke Barcode Resi</h5>
+          <div id="reader"></div>
+          <div id="result-scan" class="mt-3 fw-bold fs-5"></div>
+        </div>
+      </div>
+      
+      <div class="col-md-6">
+        
+        <div class="card shadow-sm p-3 bg-white rounded mb-4">
+          <div class="table-responsive">
+            <table class="table table-striped align-middle">
+              <thead>
+                <tr>
+                  <th>Waktu</th>
+                  <th>Nomor Resi</th>
+                </tr>
+              </thead>
+              <tbody id="tabel-resi">
+                <tr>
+                  <td colspan="2" class="text-center text-muted">Memuat data...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          
+          <nav class="d-flex justify-content-center mt-2">
+            <ul class="pagination pagination-sm" id="pagination-controls"></ul>
+          </nav>
+        </div>
+        
+        <div class="row g-3">
+          <div class="col-6">
+            <div class="card card-hari-ini shadow-sm p-3 rounded">
+              <h6 class="text-muted text-uppercase small font-weight-bold">Hari Ini</h6>
+              <h3 class="fw-bold text-success" id="total-hari-ini">0</h3>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="card card-total shadow-sm p-3 rounded">
+              <h6 class="text-muted text-uppercase small font-weight-bold">Total Ter-scan</h6>
+              <h3 class="fw-bold text-dark" id="total-scan">0</h3>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ========================================================
+    // TEMPELKAN URL GOOGLE APPS SCRIPT (WEB APP) ANDA DI SINI
+    // ========================================================
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx24nbxeSfkzisxhNQrz3qe_CpYmowvS_VRpkS3fBMLAgk7JitNKamMLx31lYXFNauW/exec";
+
+    let dataResiMentah = []; 
+    let halamanSekarang = 1;
+    const barisPerHalaman = 3; // Pagination disetel maksimal 3 data per halaman
+
+    document.addEventListener("DOMContentLoaded", function() {
+      muatDashboard();
+      mulaiScanner();
+    });
+
+    function mulaiScanner() {
+      const html5QrCode = new Html5Qrcode("reader");
+      const config = { 
+        fps: 15, 
+        qrbox: function(viewfinderWidth, viewfinderHeight) {
+          return {
+            width: Math.floor(viewfinderWidth * 0.85),
+            height: Math.floor(viewfinderHeight * 0.35)
+          };
+        },
+        formatsToSupport: [
+          Html5QrcodeSupportedFormats.CODE_128, 
+          Html5QrcodeSupportedFormats.CODE_39,
+          Html5QrcodeSupportedFormats.EAN_13,
+          Html5QrcodeSupportedFormats.QR_CODE
+        ]
+      };
+
+      html5QrCode.start({ facingMode: "environment" }, config, onScanSuccess, onScanFailure)
+      .catch((err) => {
+        document.getElementById('result-scan').innerHTML = `<span class="text-danger">Gagal akses kamera: ${err}</span>`;
+      });
+    }
+
+    function onScanSuccess(decodedText, decodedResult) {
+      const resultDiv = document.getElementById('result-scan');
+      resultDiv.innerHTML = `<span class="text-warning">Memproses resi: ${decodedText}...</span>`;
+      
+      fetch(SCRIPT_URL, {
+        method: "POST",
+        body: JSON.stringify({ action: "simpanResi", nomorResi: decodedText })
+      })
+      .then(res => res.json())
+      .then(response => {
+        if(response.status === 'success') {
+          resultDiv.innerHTML = `<span class="text-success">✅ ${response.message}</span>`;
+          muatDashboard(); 
+        } else {
+          resultDiv.innerHTML = `<span class="text-danger">⚠️ ${response.message}</span>`;
+        }
+      })
+      .catch(err => {
+        resultDiv.innerHTML = `<span class="text-danger">❌ Gagal terhubung ke server!</span>`;
+      });
+    }
+
+    function onScanFailure(error) {}
+
+    function muatDashboard() {
+      fetch(SCRIPT_URL, {
+        method: "POST",
+        body: JSON.stringify({ action: "ambilDashboard" })
+      })
+      .then(res => res.json())
+      .then(data => {
+        // Tampilkan angka total di paling bawah
+        document.getElementById('total-scan').innerText = data.total;
+        document.getElementById('total-hari-ini').innerText = data.totalHariIni;
+        
+        // Simpan data resi (Maksimal 10) untuk pagination lokal
+        dataResiMentah = data.terakhir || [];
+        tampilkanTabelBerhalaman(1);
+      })
+      .catch(err => {
+        console.log("Gagal memuat dashboard data.");
+      });
+    }
+
+    // Fungsi Logika Memisahkan Data per Halaman (Max 3 Baris)
+    function tampilkanTabelBerhalaman(halaman) {
+      halamanSekarang = halaman;
+      let tbody = document.getElementById('tabel-resi');
+      tbody.innerHTML = '';
+      
+      if (dataResiMentah.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="2" class="text-center text-muted">Belum ada data resi.</td></tr>';
+        document.getElementById('pagination-controls').innerHTML = '';
+        return;
+      }
+      
+      // Hitung indeks awal dan akhir data yang mau dipotong
+      let indeksAwal = (halaman - 1) * barisPerHalaman;
+      let indeksAkhir = indeksAwal + barisPerHalaman;
+      let dataHalamanIni = dataResiMentah.slice(indeksAwal, indeksAkhir);
+      
+      // Render data ke tabel
+      dataHalamanIni.forEach(item => {
+        let row = `<tr>
+          <td><small class="text-muted">${item.waktu}</small></td>
+          <td class="fw-bold text-secondary">${item.resi}</td>
+        </tr>`;
+        tbody.innerHTML += row;
+      });
+      
+      // Render tombol kontrol tombol angka pagination
+      bikinTombolPagination();
+    }
+
+    function bikinTombolPagination() {
+      let totalHalaman = Math.ceil(dataResiMentah.length / barisPerHalaman);
+      let ul = document.getElementById('pagination-controls');
+      ul.innerHTML = '';
+      
+      for (let i = 1; i <= totalHalaman; i++) {
+        let li = document.createElement('li');
+        li.className = `page-item ${i === halamanSekarang ? 'active' : ''}`;
+        li.innerHTML = `<a class="page-link" href="#" onclick="tampilkanTabelBerhalaman(${i}); return false;">${i}</a>`;
+        ul.appendChild(li);
+      }
+    }
+  </script>
+</body>
+</html>
