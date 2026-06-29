@@ -12,7 +12,7 @@
     #reader video { object-fit: cover !important; }
     .card-total { border-left: 5px solid #0d6efd; background-color: #fff; }
     .card-hari-ini { border-left: 5px solid #198754; background-color: #fff; }
-    .pagination { margin-bottom: 0; }
+    .pagination { margin-bottom: 0; flex-wrap: wrap; gap: 2px; }
   </style>
 </head>
 <body>
@@ -74,13 +74,13 @@
 
   <script>
     // ========================================================
-    // TEMPELKAN URL GOOGLE APPS SCRIPT (WEB APP) ANDA DI SINI
+    // TEMPELKAN URL GOOGLE APPS SCRIPT (WEB APP) ANDA DI SINI v7
     // ========================================================
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx24nbxeSfkzisxhNQrz3qe_CpYmowvS_VRpkS3fBMLAgk7JitNKamMLx31lYXFNauW/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyKHfKbKbUbAIapkPqkm_wsfWgQyBYtphe6hbkSXdDvommFm3iCMz7pCDDZ-h-TAVVA/exec";
 
     let dataResiMentah = []; 
     let halamanSekarang = 1;
-    const barisPerHalaman = 3; // Pagination disetel maksimal 3 data per halaman
+    const barisPerHalaman = 3; // Pembatasan visual maksimal 3 baris per halaman
 
     document.addEventListener("DOMContentLoaded", function() {
       muatDashboard();
@@ -123,7 +123,7 @@
       .then(response => {
         if(response.status === 'success') {
           resultDiv.innerHTML = `<span class="text-success">✅ ${response.message}</span>`;
-          muatDashboard(); 
+          muatDashboard(); // Ambil ulang data & reset ke halaman 1 agar resi baru langsung kelihatan
         } else {
           resultDiv.innerHTML = `<span class="text-danger">⚠️ ${response.message}</span>`;
         }
@@ -142,20 +142,17 @@
       })
       .then(res => res.json())
       .then(data => {
-        // Tampilkan angka total di paling bawah
         document.getElementById('total-scan').innerText = data.total;
         document.getElementById('total-hari-ini').innerText = data.totalHariIni;
         
-        // Simpan data resi (Maksimal 10) untuk pagination lokal
-        dataResiMentah = data.terakhir || [];
-        tampilkanTabelBerhalaman(1);
+        dataResiMentah = data.semuaResi || [];
+        tampilkanTabelBerhalaman(1); // Setel otomatis ke halaman 1 saat data masuk
       })
       .catch(err => {
         console.log("Gagal memuat dashboard data.");
       });
     }
 
-    // Fungsi Logika Memisahkan Data per Halaman (Max 3 Baris)
     function tampilkanTabelBerhalaman(halaman) {
       halamanSekarang = halaman;
       let tbody = document.getElementById('tabel-resi');
@@ -167,12 +164,10 @@
         return;
       }
       
-      // Hitung indeks awal dan akhir data yang mau dipotong
       let indeksAwal = (halaman - 1) * barisPerHalaman;
       let indeksAkhir = indeksAwal + barisPerHalaman;
       let dataHalamanIni = dataResiMentah.slice(indeksAwal, indeksAkhir);
       
-      // Render data ke tabel
       dataHalamanIni.forEach(item => {
         let row = `<tr>
           <td><small class="text-muted">${item.waktu}</small></td>
@@ -181,7 +176,6 @@
         tbody.innerHTML += row;
       });
       
-      // Render tombol kontrol tombol angka pagination
       bikinTombolPagination();
     }
 
@@ -190,6 +184,9 @@
       let ul = document.getElementById('pagination-controls');
       ul.innerHTML = '';
       
+      // Tombol tidak akan muncul jika total data kurang dari atau sama dengan 3 baris
+      if (totalHalaman <= 1) return; 
+
       for (let i = 1; i <= totalHalaman; i++) {
         let li = document.createElement('li');
         li.className = `page-item ${i === halamanSekarang ? 'active' : ''}`;
