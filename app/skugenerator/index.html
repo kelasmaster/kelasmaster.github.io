@@ -14,7 +14,6 @@
     .hidden { display: none !important; }
     .card { border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border-radius: 12px; margin-bottom: 15px; }
     
-    /* Style Deretan KODE SKU Saja */
     .sku-list-item { background: #fff; padding: 12px 16px; border-radius: 8px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.03); border-left: 4px solid #0d6efd; }
     .sku-code-text { font-family: 'Courier New', Courier, monospace; font-weight: 700; color: #dc3545; font-size: 15px; letter-spacing: 0.5px; }
     
@@ -36,6 +35,8 @@
       .mobile-table-row td.action-td::before { display: none; }
       thead { display: none; }
       table, tbody, tr { display: block; width: 100%; }
+      .sku-list-item { flex-direction: column !important; align-items: flex-start !important; gap: 8px; }
+      .sku-list-item button { width: 100% !important; }
     }
   </style>
 </head>
@@ -46,7 +47,7 @@
 <div class="container py-3" style="max-width: 800px;">
   <div id="loginPage" class="mx-auto" style="width: 100%; max-width: 360px; margin-top: 50px;">
     <div class="card p-4">
-      <h3 class="text-center fw-bold text-primary mb-4">SKU Bandar Deterjen Product</h3>
+      <h3 class="text-center fw-bold text-primary mb-4">BD-SYSTEM</h3>
       <div class="mb-3"><input type="text" id="user" class="form-control form-control-lg" placeholder="Username"></div>
       <div class="mb-3"><input type="password" id="pass" class="form-control form-control-lg" placeholder="Password"></div>
       <button onclick="handleLogin()" class="btn btn-primary btn-lg w-100 fw-bold">LOGIN</button>
@@ -89,7 +90,7 @@
       <div class="card p-3">
         <div class="input-group mb-3">
           <input type="text" id="q" class="form-control" placeholder="Cari Kode SKU saja..." onkeyup="renderSKU()">
-          <button class="btn btn-outline-secondary" type="button" onclick="triggerScanner()" title="Scan Barcode"><i class="fas fa-camera"></i></button>
+          <button class="btn btn-outline-secondary" type="button" onclick="triggerScanner()" title="Scan Barcode" style="width:auto !important;"><i class="fas fa-camera"></i></button>
         </div>
         <div id="skuList"></div>
         <div id="pagination" class="mt-3 text-center d-flex justify-content-center gap-1"></div>
@@ -147,9 +148,7 @@
           <tr><td class="text-muted fw-bold">Kode SKU</td><td>: <span id="md_sku" class="text-danger fw-bold font-monospace"></span></td></tr>
           <tr><td class="text-muted fw-bold">Harga</td><td>: <span id="md_harga" class="text-success fw-bold"></span></td></tr>
         </table>
-        <div class="barcode-modal-area">
-          <svg id="modalBarcode" class="barcode-img"></svg>
-        </div>
+        <div class="barcode-modal-area"><svg id="modalBarcode" class="barcode-img"></svg></div>
       </div>
       <div class="modal-footer d-flex gap-2">
         <button id="md_btn_edit" class="btn btn-warning flex-fill fw-bold">Edit Data</button>
@@ -158,9 +157,10 @@
     </div>
   </div>
 </div>
-<!-- v11 ->
+
 <script>
-  const API_URL = "https://script.google.com/macros/s/AKfycbw6eN9DGlQkBZaC8cXMgJMR3d1hSBZOYeE2osDz2ewDLwWfgKH4W3D2hV8TCxC7e9Qz/exec"; 
+  // v12
+  const API_URL = "https://script.google.com/macros/s/AKfycbwNA_mT0or0ON1wcitKt4x1cmELZbW2lAYvLupJaMJ6TFbJEzMUpYwtuozX2tPHf8NR/exec"; 
   
   let allSKU = [];
   let currentPage = 1;
@@ -179,10 +179,7 @@
     const box = document.getElementById("toastBox");
     const id = "toast_" + Date.now();
     const bgClass = type === "success" ? "bg-success text-white" : "bg-danger text-white";
-    box.innerHTML += `
-      <div id="${id}" class="toast align-items-center ${bgClass} border-0 show mb-2 shadow" role="alert">
-        <div class="d-flex"><div class="toast-body fw-bold">${message}</div></div>
-      </div>`;
+    box.innerHTML += `<div id="${id}" class="toast align-items-center ${bgClass} border-0 show mb-2 shadow" role="alert"><div class="d-flex"><div class="toast-body fw-bold">${message}</div></div></div>`;
     setTimeout(() => { document.getElementById(id)?.remove(); }, 3000);
   }
 
@@ -202,7 +199,7 @@
         refreshAllMasterData();
         loadSKU();
         showNotification("Selamat datang, " + payload.user);
-      } else showNotification("Login Gagal!", "danger");
+      } else showNotification("Login Gagal! Pastikan setelan akun dan URL API Apps Script Anda benar.", "danger");
     });
   }
 
@@ -225,17 +222,11 @@
     });
   }
 
-  function resetMasterPageState() {
-    currentMasterPage = 1;
-    cancelMasterEdit();
-  }
+  function resetMasterPageState() { currentMasterPage = 1; cancelMasterEdit(); }
 
   function loadMasterTable() {
     const s = document.getElementById('master_choice').value;
-    callAPI({ action: "getMaster", sheet: s }, data => {
-      currentMasterData = data;
-      renderMasterTable();
-    });
+    callAPI({ action: "getMaster", sheet: s }, data => { currentMasterData = data; renderMasterTable(); });
   }
 
   function renderMasterTable() {
@@ -259,9 +250,7 @@
     let totalPages = Math.min(Math.ceil(currentMasterData.length / 10), 3);
     let pBtn = "";
     if(totalPages > 1) {
-      for(let i = 1; i <= totalPages; i++) {
-        pBtn += `<button onclick="setMasterPage(${i})" class="btn btn-md ${i === currentMasterPage ? 'btn-success text-white' : 'btn-light'} px-3 mx-1">${i}</button>`;
-      }
+      for(let i = 1; i <= totalPages; i++) pBtn += `<button onclick="setMasterPage(${i})" class="btn btn-md ${i === currentMasterPage ? 'btn-success text-white' : 'btn-light'} px-3 mx-1">${i}</button>`;
     }
     document.getElementById('masterPagination').innerHTML = pBtn;
   }
@@ -280,9 +269,7 @@
 
   function cancelMasterEdit() {
     document.getElementById('master-form-title').innerText = "Kelola Data Master (Admin Only)";
-    document.getElementById('m_nama').value = '';
-    document.getElementById('m_kode').value = '';
-    document.getElementById('m_index').value = '-1';
+    document.getElementById('m_nama').value = ''; document.getElementById('m_kode').value = ''; document.getElementById('m_index').value = '-1';
     document.getElementById('btn-save-master').className = "btn btn-success fw-bold w-100";
     document.getElementById('btn-save-master').innerText = "SIMPAN DATA";
     document.getElementById('btn-cancel-master-edit').classList.add('hidden');
@@ -308,11 +295,8 @@
     });
   }
 
-  function loadSKU() {
-    callAPI({ action: "getSKU" }, data => { allSKU = data; renderSKU(); });
-  }
+  function loadSKU() { callAPI({ action: "getSKU" }, data => { allSKU = data; renderSKU(); }); }
 
-  // FIXED: Hanya merender deretan kode SKU saja dan memfilter HANYA berdasar kode SKU
   function renderSKU() {
     const q = document.getElementById('q').value.toLowerCase();
     const filtered = allSKU.filter(x => x.sku.toLowerCase().includes(q));
@@ -320,11 +304,7 @@
     const paginated = filtered.slice(start, start + 10);
 
     let html = paginated.map((item, index) => {
-      return `
-      <div class="sku-list-item animate__animated animate__fadeIn">
-        <div class="sku-code-text">${item.sku}</div>
-        <button onclick="openDetailModal(${start + index})" class="btn btn-sm btn-primary px-3 py-1" style="width:auto !important;">Detail</button>
-      </div>`;
+      return `<div class="sku-list-item"><div class="sku-code-text">${item.sku}</div><button onclick="openDetailModal(${start + index})" class="btn btn-sm btn-primary px-3 py-1" style="width:auto !important;">Detail</button></div>`;
     }).join('');
     
     document.getElementById('skuList').innerHTML = html || '<div class="text-center text-muted py-3">Kode SKU tidak ditemukan</div>';
@@ -339,53 +319,36 @@
 
   function setPage(p) { currentPage = p; renderSKU(); }
 
-  // FIXED: Membuka Popup Modal Detail Lengkap & Barcode
   function openDetailModal(globalIndex) {
     const item = allSKU[globalIndex];
     document.getElementById('md_nama').innerText = item.nama;
     document.getElementById('md_sku').innerText = item.sku;
     document.getElementById('md_harga').innerText = "Rp " + parseInt(item.harga).toLocaleString('id-ID');
     
-    // Render Barcode khusus di dalam area Modal Popup
     JsBarcode("#modalBarcode", item.sku, { height: 45, fontSize: 13, margin: 10 });
-    
-    // Konfigurasi aksi tombol di dalam modal
     document.getElementById('md_btn_dl').onclick = () => { downloadBC(item.sku); };
     
     const editBtn = document.getElementById('md_btn_edit');
     if (userRole === "Administrator") {
       editBtn.classList.remove('hidden');
       editBtn.onclick = () => { myModal.hide(); setupEditForm(globalIndex); };
-    } else {
-      editBtn.classList.add('hidden');
-    }
+    } else editBtn.classList.add('hidden');
     
     myModal.show();
   }
 
-  function triggerScanner() {
-    showNotification("Fitur pemindai kamera siap diintegrasikan!", "success");
-  }
+  function triggerScanner() { showNotification("Fitur pemindai kamera siap diintegrasikan!", "success"); }
 
   function setupEditForm(globalIndex) {
     isEditMode = true;
     const item = allSKU[globalIndex];
-    
     document.getElementById('form-title').innerText = "Edit Data Produk & SKU";
     document.getElementById('nama_produk').value = item.nama;
     document.getElementById('harga').value = item.harga;
     document.getElementById('edit_old_sku').value = item.sku;
     document.getElementById('edit_no_urut').value = item.no_urut;
     
-    setSelectByText('sel_Sifat', item.s_txt);
-    setSelectByText('sel_Bentuk', item.b_txt);
-    setSelectByText('sel_Brand', item.br_txt);
-    setSelectByText('sel_Kategori', item.k_txt);
-    setSelectByText('sel_Ukuran', item.u_txt);
-    setSelectByText('sel_Kemasan', item.km_txt);
-    setSelectByText('sel_Aroma', item.a_txt);
-    setSelectByText('sel_Warna', item.w_txt);
-
+    setSelectByText('sel_Sifat', item.s_txt); setSelectByText('sel_Bentuk', item.b_txt); setSelectByText('sel_Brand', item.br_txt); setSelectByText('sel_Kategori', item.k_txt); setSelectByText('sel_Ukuran', item.u_txt); setSelectByText('sel_Kemasan', item.km_txt); setSelectByText('sel_Aroma', item.a_txt); setSelectByText('sel_Warna', item.w_txt);
     document.getElementById('btn-submit-sku').innerText = "SIMPAN PERUBAHAN DATA";
     document.getElementById('btn-cancel-edit').classList.remove('hidden');
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -393,15 +356,12 @@
 
   function setSelectByText(id, txt) {
     const el = document.getElementById(id);
-    for(let i=0; i<el.options.length; i++) {
-      if(el.options[i].text === txt) { el.selectedIndex = i; break; }
-    }
+    for(let i=0; i<el.options.length; i++) { if(el.options[i].text === txt) { el.selectedIndex = i; break; } }
   }
 
   function cancelEdit() {
     isEditMode = false;
-    document.getElementById('nama_produk').value = '';
-    document.getElementById('harga').value = '';
+    document.getElementById('nama_produk').value = ''; document.getElementById('harga').value = '';
     document.getElementById('form-title').innerText = "Input Data Produk Baru";
     document.getElementById('btn-submit-sku').innerText = "GENERATE SKU & SIMPAN";
     document.getElementById('btn-cancel-edit').classList.add('hidden');
@@ -409,33 +369,16 @@
 
   function generate() {
     const data = {
-      nama_produk: document.getElementById('nama_produk').value,
-      harga: document.getElementById('harga').value,
-      sifat: document.getElementById('sel_Sifat').value, s_txt: getTxt('sel_Sifat'),
-      bentuk: document.getElementById('sel_Bentuk').value, b_txt: getTxt('sel_Bentuk'),
-      brand: document.getElementById('sel_Brand').value, br_txt: getTxt('sel_Brand'),
-      kategori: document.getElementById('sel_Kategori').value, k_txt: getTxt('sel_Kategori'),
-      ukuran: document.getElementById('sel_Ukuran').value, u_txt: getTxt('sel_Ukuran'),
-      kemasan: document.getElementById('sel_Kemasan').value, km_txt: getTxt('sel_Kemasan'),
-      aroma: document.getElementById('sel_Aroma').value, a_txt: getTxt('sel_Aroma'),
-      warna: document.getElementById('sel_Warna').value, w_txt: getTxt('sel_Warna')
+      nama_produk: document.getElementById('nama_produk').value, harga: document.getElementById('harga').value,
+      sifat: document.getElementById('sel_Sifat').value, s_txt: getTxt('sel_Sifat'), bentuk: document.getElementById('sel_Bentuk').value, b_txt: getTxt('sel_Bentuk'), brand: document.getElementById('sel_Brand').value, br_txt: getTxt('sel_Brand'), kategori: document.getElementById('sel_Kategori').value, k_txt: getTxt('sel_Kategori'), ukuran: document.getElementById('sel_Ukuran').value, u_txt: getTxt('sel_Ukuran'), kemasan: document.getElementById('sel_Kemasan').value, km_txt: getTxt('sel_Kemasan'), aroma: document.getElementById('sel_Aroma').value, a_txt: getTxt('sel_Aroma'), warna: document.getElementById('sel_Warna').value, w_txt: getTxt('sel_Warna')
     };
-
     if(!data.nama_produk || !data.harga) return showNotification("Lengkapi Nama Produk dan Harga!", "danger");
-
     if(isEditMode) {
       data.no_urut = document.getElementById('edit_no_urut').value;
       const oldSku = document.getElementById('edit_old_sku').value;
-      callAPI({ action: "updateSKU", oldSku: oldSku, data: data }, () => {
-        showNotification("Data & Barcode Berhasil Diperbarui!");
-        cancelEdit(); loadSKU();
-      });
+      callAPI({ action: "updateSKU", oldSku: oldSku, data: data }, () => { showNotification("Data & Barcode Berhasil Diperbarui!"); cancelEdit(); loadSKU(); });
     } else {
-      callAPI({ action: "submitSKU", data: data }, () => {
-        showNotification("SKU Berhasil Disimpan!");
-        document.getElementById('nama_produk').value = ''; document.getElementById('harga').value = '';
-        loadSKU();
-      });
+      callAPI({ action: "submitSKU", data: data }, () => { showNotification("SKU Berhasil Disimpan!"); document.getElementById('nama_produk').value = ''; document.getElementById('harga').value = ''; loadSKU(); });
     }
   }
 
@@ -449,8 +392,7 @@
     img.onload = function() {
       canvas.width = img.width; canvas.height = img.height;
       canvas.getContext("2d").drawImage(img, 0, 0);
-      const a = document.createElement("a");
-      a.href = canvas.toDataURL("image/png"); a.download = `SKU_${sku}.png`; a.click();
+      const a = document.createElement("a"); a.href = canvas.toDataURL("image/png"); a.download = `SKU_${sku}.png`; a.click();
     };
     img.src = "data:image/svg+xml;base64," + btoa(svgData);
   }
