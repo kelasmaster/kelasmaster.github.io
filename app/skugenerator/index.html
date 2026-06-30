@@ -1,34 +1,50 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
-  <title>SKU Generator</title>
+  <title>SKU Product Generator</title>
   <base target="_top">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
   <style>
-    body { background: #f4f7f6; font-family: 'Segoe UI', sans-serif; font-size: 14px; }
+    body { background: #f4f7f6; font-family: 'Segoe UI', system-ui, sans-serif; color: #333; }
     .hidden { display: none !important; }
-    .card { border: none; box-shadow: 0 2px 10px rgba(0,0,0,0.05); border-radius: 12px; }
+    .card { border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border-radius: 12px; margin-bottom: 15px; }
     
-    .sku-card { background: #fff; border-left: 5px solid #0d6efd; margin-bottom: 12px; padding: 12px; border-radius: 8px; }
-    .barcode-container { text-align: center; min-width: 140px; }
+    /* Layout Kartu SKU */
+    .sku-card { background: #fff; border-left: 5px solid #0d6efd; padding: 15px; border-radius: 10px; display: flex; align-items: center; justify-content: space-between; gap: 15px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+    .barcode-container { text-align: center; min-width: 150px; }
     .barcode-img { max-width: 100%; height: auto; }
     
-    .toast-container { position: fixed; top: 15px; right: 15px; z-index: 9999; }
+    .toast-container { position: fixed; top: 15px; right: 15px; z-index: 9999; width: calc(100% - 30px); max-width: 350px; }
     
-    /* Perbaikan Mutlak untuk Tampilan Mobile (HP) */
+    /* MODIFIKASI TOTAL UNTUK LAYAR HP/MOBILE */
     @media (max-width: 767px) {
-      body { font-size: 12px; }
-      .container { padding-left: 8px; padding-right: 8px; }
-      .sku-card { flex-direction: column !important; text-align: center; gap: 10px; padding: 10px; }
+      body { font-size: 14px; }
+      .container { padding-left: 12px; padding-right: 12px; }
+      
+      /* Form di HP menjadi 1 kolom penuh vertikal */
+      .row.g-2 > div { width: 100% !important; }
+      
+      /* Kartu SKU menyusun ke bawah di HP */
+      .sku-card { flex-direction: column !important; text-align: center; padding: 16px; }
       .sku-card > div { width: 100%; text-align: center !important; }
-      .barcode-container { width: 100%; display: flex; flex-direction: column; align-items: center; margin-top: 5px; }
-      .barcode-img { max-width: 180px; }
-      .nav-pills .nav-link { padding: 6px 10px; font-size: 12px; }
-      .master-action-btns { width: 100%; display: flex; gap: 4px; }
-      .master-action-btns button { flex: 1; padding: 4px 0; }
-      .form-control-sm, .form-select-sm { font-size: 12px; height: 34px; }
-      label.small { font-size: 11px; }
+      .barcode-container { width: 100%; display: flex; flex-direction: column; align-items: center; margin-top: 10px; border-top: 1px dashed #ddd; padding-top: 12px; }
+      .barcode-img { max-width: 220px; }
+      
+      /* Tombol di HP dibuat lebih besar dan mudah ditekan */
+      .btn { padding: 10px 12px; font-size: 14px; width: 100% !important; }
+      .nav-pills .nav-link { padding: 12px; font-size: 14px; }
+      
+      /* Transformasi Tabel Master menjadi list kartu di HP agar tidak meluber keluar */
+      .mobile-table-row { display: block; background: #fff; padding: 12px; border-radius: 8px; margin-bottom: 8px; border: 1px solid #e3e6e8; shadow-sm: true; }
+      .mobile-table-row td { display: block; width: 100%; text-align: left !important; padding: 4px 0; border: none; }
+      .mobile-table-row td::before { content: attr(data-label); font-weight: bold; color: #666; display: inline-block; width: 80px; }
+      .mobile-table-row td.action-td { text-align: right !important; border-top: 1px solid #eee; margin-top: 6px; padding-top: 8px; display: flex; gap: 8px; }
+      .mobile-table-row td.action-td::before { display: none; }
+      thead { display: none; } /* Sembunyikan header tabel biasa di HP */
+      table, tbody, tr { display: block; width: 100%; }
     }
   </style>
 </head>
@@ -36,20 +52,24 @@
 
 <div class="toast-container" id="toastBox"></div>
 
-<div class="container py-3">
-  <div id="loginPage" class="mx-auto" style="max-width: 100%; width: 340px; margin-top: 60px;">
+<div class="container py-3" style="max-width: 800px;">
+  <div id="loginPage" class="mx-auto" style="width: 100%; max-width: 360px; margin-top: 50px;">
     <div class="card p-4">
-      <h4 class="text-center fw-bold text-primary mb-4">BD-SYSTEM</h4>
-      <input type="text" id="user" class="form-control mb-3" placeholder="Username">
-      <input type="password" id="pass" class="form-control mb-3" placeholder="Password">
-      <button onclick="handleLogin()" class="btn btn-primary w-100 fw-bold">LOGIN</button>
+      <h3 class="text-center fw-bold text-primary mb-4">BD-SYSTEM</h3>
+      <div class="mb-3">
+        <input type="text" id="user" class="form-control form-control-lg" placeholder="Username">
+      </div>
+      <div class="mb-3">
+        <input type="password" id="pass" class="form-control form-control-lg" placeholder="Password">
+      </div>
+      <button onclick="handleLogin()" class="btn btn-primary btn-lg w-100 fw-bold">LOGIN</button>
     </div>
   </div>
 
   <div id="dashboardPage" class="hidden">
     <div class="d-flex justify-content-between align-items-center mb-3">
-      <h6 class="fw-bold m-0 text-secondary">PRO SKU GENERATOR</h6>
-      <button onclick="location.reload()" class="btn btn-outline-danger btn-sm px-3" style="font-size:12px;">LOGOUT</button>
+      <h5 class="fw-bold m-0 text-secondary">PRO SKU GENERATOR</h5>
+      <button onclick="location.reload()" class="btn btn-sm btn-outline-danger px-3" style="width: auto !important;">LOGOUT</button>
     </div>
 
     <ul class="nav nav-pills mb-3 bg-white p-1 rounded shadow-sm" id="pills-tab">
@@ -61,35 +81,35 @@
       <div class="card p-3 mb-3">
         <h6 id="form-title" class="fw-bold text-primary mb-3">Input Data Produk Baru</h6>
         <div class="row g-2">
-          <div class="col-12"><input type="text" id="nama_produk" class="form-control form-control-sm" placeholder="Nama Produk Lengkap"></div>
-          <div class="col-12"><input type="number" id="harga" class="form-control form-control-sm" placeholder="Harga (Rp)"></div>
+          <div class="col-12 mb-1"><input type="text" id="nama_produk" class="form-control" placeholder="Nama Produk Lengkap"></div>
+          <div class="col-12 mb-2"><input type="number" id="harga" class="form-control" placeholder="Harga (Rp)"></div>
           
-          <div class="col-6 col-md-3"><label class="fw-bold text-muted small">Sifat</label><select id="sel_Sifat" class="form-select form-select-sm"></select></div>
-          <div class="col-6 col-md-3"><label class="fw-bold text-muted small">Bentuk</label><select id="sel_Bentuk" class="form-select form-select-sm"></select></div>
-          <div class="col-6 col-md-3"><label class="fw-bold text-muted small">Brand</label><select id="sel_Brand" class="form-select form-select-sm"></select></div>
-          <div class="col-6 col-md-3"><label class="fw-bold text-muted small">Kategori</label><select id="sel_Kategori" class="form-select form-select-sm"></select></div>
-          <div class="col-6 col-md-3"><label class="fw-bold text-muted small">Ukuran</label><select id="sel_Ukuran" class="form-select form-select-sm"></select></div>
-          <div class="col-6 col-md-3"><label class="fw-bold text-muted small">Kemasan</label><select id="sel_Kemasan" class="form-select form-select-sm"></select></div>
-          <div class="col-6 col-md-3"><label class="fw-bold text-muted small">Aroma</label><select id="sel_Aroma" class="form-select form-select-sm"></select></div>
-          <div class="col-6 col-md-3"><label class="fw-bold text-muted small">Warna</label><select id="sel_Warna" class="form-select form-select-sm"></select></div>
+          <div class="col-6 col-md-3"><label class="fw-bold text-muted small">Sifat</label><select id="sel_Sifat" class="form-select"></select></div>
+          <div class="col-6 col-md-3"><label class="fw-bold text-muted small">Bentuk</label><select id="sel_Bentuk" class="form-select"></select></div>
+          <div class="col-6 col-md-3"><label class="fw-bold text-muted small">Brand</label><select id="sel_Brand" class="form-select"></select></div>
+          <div class="col-6 col-md-3"><label class="fw-bold text-muted small">Kategori</label><select id="sel_Kategori" class="form-select"></select></div>
+          <div class="col-6 col-md-3"><label class="fw-bold text-muted small">Ukuran</label><select id="sel_Ukuran" class="form-select"></select></div>
+          <div class="col-6 col-md-3"><label class="fw-bold text-muted small">Kemasan</label><select id="sel_Kemasan" class="form-select"></select></div>
+          <div class="col-6 col-md-3"><label class="fw-bold text-muted small">Aroma</label><select id="sel_Aroma" class="form-select"></select></div>
+          <div class="col-6 col-md-3"><label class="fw-bold text-muted small">Warna</label><select id="sel_Warna" class="form-select"></select></div>
         </div>
         <input type="hidden" id="edit_old_sku">
         <input type="hidden" id="edit_no_urut">
-        <button id="btn-submit-sku" onclick="generate()" class="btn btn-primary btn-sm mt-3 fw-bold w-100 py-2">GENERATE SKU & SIMPAN</button>
-        <button id="btn-cancel-edit" onclick="cancelEdit()" class="btn btn-secondary btn-sm mt-2 w-100 hidden">Batal Edit</button>
+        <button id="btn-submit-sku" onclick="generate()" class="btn btn-primary mt-3 fw-bold w-100 py-2">GENERATE SKU & SIMPAN</button>
+        <button id="btn-cancel-edit" onclick="cancelEdit()" class="btn btn-secondary mt-2 w-100 hidden">Batal Edit</button>
       </div>
 
       <div class="card p-3">
-        <input type="text" id="q" class="form-control form-control-sm mb-3" placeholder="Cari Nama / Kode SKU..." onkeyup="renderSKU()">
+        <input type="text" id="q" class="form-control mb-3" placeholder="Cari Nama / Kode SKU..." onkeyup="renderSKU()">
         <div id="skuList"></div>
-        <div id="pagination" class="mt-2 text-center"></div>
+        <div id="pagination" class="mt-3 text-center d-flex justify-content-center gap-1"></div>
       </div>
     </div>
 
     <div id="master-tab" class="tab-content hidden">
       <div class="card p-3">
         <h6 id="master-form-title" class="fw-bold text-success mb-2">Kelola Data Master (Admin)</h6>
-        <select id="master_choice" class="form-select form-select-sm mb-3" onchange="resetMasterPageState(); loadMasterTable();">
+        <select id="master_choice" class="form-select mb-3" onchange="resetMasterPageState(); loadMasterTable();">
           <option value="Sifat">Sifat Produk</option>
           <option value="Bentuk">Bentuk</option>
           <option value="Brand">Brand</option>
@@ -100,32 +120,32 @@
           <option value="Warna">Warna</option>
         </select>
         
-        <div class="card bg-light p-2 mb-3">
+        <div class="card bg-light p-3 mb-3">
           <div class="row g-2">
-            <div class="col-12 col-sm-5"><input type="text" id="m_nama" class="form-control form-control-sm" placeholder="Nama Komponen"></div>
-            <div class="col-8 col-sm-4"><input type="text" id="m_kode" class="form-control form-control-sm" placeholder="Kode (Misal: 00)"></div>
+            <div class="col-12 col-md-5"><input type="text" id="m_nama" class="form-control" placeholder="Nama Komponen"></div>
+            <div class="col-12 col-md-4"><input type="text" id="m_kode" class="form-control" placeholder="Kode (Misal: 00)"></div>
             <input type="hidden" id="m_index" value="-1">
-            <div class="col-4 col-sm-3 d-flex gap-1">
-              <button id="btn-save-master" onclick="saveMaster()" class="btn btn-success btn-sm w-100 fw-bold">+</button>
-              <button id="btn-cancel-master-edit" onclick="cancelMasterEdit()" class="btn btn-secondary btn-sm hidden">X</button>
+            <div class="col-12 col-md-3 d-flex gap-2 mt-2 mt-md-0">
+              <button id="btn-save-master" onclick="saveMaster()" class="btn btn-success fw-bold w-100">SIMPAN DATA</button>
+              <button id="btn-cancel-master-edit" onclick="cancelMasterEdit()" class="btn btn-secondary hidden" style="width:auto !important;">X</button>
             </div>
           </div>
         </div>
 
-        <div class="table-responsive">
-          <table class="table table-sm align-middle table-hover" style="min-width: 260px;">
-            <thead><tr class="table-light"><th>Nama</th><th>Kode</th><th class="text-end" style="width:90px">Aksi</th></tr></thead>
+        <div class="table-responsive" style="border: none;">
+          <table class="table align-middle table-hover">
+            <thead><tr class="table-light"><th>Nama</th><th>Kode</th><th class="text-end" style="width:120px">Aksi</th></tr></thead>
             <tbody id="masterTableBody"></tbody>
           </table>
         </div>
-        <div id="masterPagination" class="mt-2 text-center"></div>
+        <div id="masterPagination" class="mt-3 text-center d-flex justify-content-center gap-1"></div>
       </div>
     </div>
   </div>
 </div>
 <!-- v8 -->
 <script>
-  const API_URL = "https://script.google.com/macros/s/AKfycbzK3JEEfimmbkddRcKI8LE_cHJj9Ca6R4cQEbGPmOcm_cVV12tCOHtwdDKm6i7BhIqs/exec"; 
+  const API_URL = "https://script.google.com/macros/s/AKfycbyeUTDfRXx4TIhfZ9cFhK8N7VVR_6fFjzvr_h6pFnwStyvu4aZLc3SczvPxAAYEFXL1/exec"; 
   
   let allSKU = [];
   let currentPage = 1;
@@ -141,7 +161,7 @@
     const bgClass = type === "success" ? "bg-success text-white" : "bg-danger text-white";
     
     box.innerHTML += `
-      <div id="${id}" class="toast align-items-center ${bgClass} border-0 show mb-2 shadow" role="alert">
+      <div id="${id}" class="toast align-items-center ${bgClass} border-0 show mb-2 shadow animate__animated animate__fadeInUp" role="alert">
         <div class="d-flex"><div class="toast-body fw-bold">${message}</div></div>
       </div>`;
     setTimeout(() => { document.getElementById(id)?.remove(); }, 3000);
@@ -173,7 +193,7 @@
     if(id === 'master-tab') { resetMasterPageState(); loadMasterTable(); }
   }
 
-  // FIX RENDERING: Menggunakan nilai kode berbasis string murni agar angka 00 / 0 tidak hilang di pilihan dropdown website
+  // FIXED: Memaksa pembacaan string murni dari nilai dropdown agar angka 00 / 0 di depan tetap tampil di web
   function refreshAllMasterData() {
     masterSheets.forEach(s => {
       callAPI({ action: "getMaster", sheet: s }, data => {
@@ -196,21 +216,21 @@
     });
   }
 
+  // FIXED TAMPILAN: Merender baris tabel konvensional menjadi list-card khusus mobile pada device resolusi kecil
   function renderMasterTable() {
     const start = (currentMasterPage - 1) * 10;
     const paginatedData = currentMasterData.slice(start, start + 10);
     
     document.getElementById('masterTableBody').innerHTML = paginatedData.map((r, i) => {
       const globalIndex = start + i; 
+      const kodeStr = String(r[1]);
       return `
-        <tr>
-          <td class="fw-bold">${r[0]}</td>
-          <td><span class="badge bg-secondary font-monospace">${String(r[1])}</span></td>
-          <td class="text-end">
-            <div class="master-action-btns d-inline-flex gap-1">
-              <button class="btn btn-warning btn-sm py-0 px-2" style="font-size:11px;" onclick="setupMasterEdit('${r[0]}', '${String(r[1])}', ${globalIndex})">Edit</button>
-              <button class="btn btn-danger btn-sm py-0 px-2" style="font-size:11px;" onclick="delMaster(${globalIndex})">Del</button>
-            </div>
+        <tr class="mobile-table-row">
+          <td data-label="Nama" class="fw-bold text-dark">${r[0]}</td>
+          <td data-label="Kode"><span class="badge bg-secondary font-monospace" style="font-size:13px;">${kodeStr}</span></td>
+          <td class="text-end action-td">
+            <button class="btn btn-warning btn-sm fw-bold px-3 py-1" onclick="setupMasterEdit('${r[0]}', '${kodeStr}', ${globalIndex})">Edit</button>
+            <button class="btn btn-danger btn-sm fw-bold px-3 py-1" onclick="delMaster(${globalIndex})">Hapus</button>
           </td>
         </tr>`;
     }).join('');
@@ -219,7 +239,7 @@
     let pBtn = "";
     if(totalPages > 1) {
       for(let i = 1; i <= totalPages; i++) {
-        pBtn += `<button onclick="setMasterPage(${i})" class="btn btn-xs ${i === currentMasterPage ? 'btn-success text-white' : 'btn-light'} mx-1" style="padding: 2px 8px; font-size:11px;">${i}</button>`;
+        pBtn += `<button onclick="setMasterPage(${i})" class="btn btn-md ${i === currentMasterPage ? 'btn-success text-white' : 'btn-light'} px-3 mx-1">${i}</button>`;
       }
     }
     document.getElementById('masterPagination').innerHTML = pBtn;
@@ -233,11 +253,11 @@
   function setupMasterEdit(nama, kode, index) {
     document.getElementById('master-form-title').innerText = "Edit Komponen Master Data";
     document.getElementById('m_nama').value = nama;
-    document.getElementById('m_kode').value = String(code);
+    document.getElementById('m_kode').value = String(kode);
     document.getElementById('m_index').value = index;
     
-    document.getElementById('btn-save-master').className = "btn btn-warning btn-sm w-100 fw-bold";
-    document.getElementById('btn-save-master').innerText = "Save";
+    document.getElementById('btn-save-master').className = "btn btn-warning fw-bold w-100";
+    document.getElementById('btn-save-master').innerText = "SIMPAN PERUBAHAN";
     document.getElementById('btn-cancel-master-edit').classList.remove('hidden');
   }
 
@@ -247,8 +267,8 @@
     document.getElementById('m_kode').value = '';
     document.getElementById('m_index').value = '-1';
     
-    document.getElementById('btn-save-master').className = "btn btn-success btn-sm w-100 fw-bold";
-    document.getElementById('btn-save-master').innerText = "+";
+    document.getElementById('btn-save-master').className = "btn btn-success fw-bold w-100";
+    document.getElementById('btn-save-master').innerText = "SIMPAN DATA";
     document.getElementById('btn-cancel-master-edit').classList.add('hidden');
   }
 
@@ -285,31 +305,33 @@
 
     let html = paginated.map((item, index) => {
       const adminButton = (userRole === "Administrator") ? 
-        `<button onclick="setupEditForm(${start + index})" class="btn btn-outline-warning btn-sm py-0 px-2" style="font-size:11px;"><i class="fas fa-edit"></i> Edit</button>` : '';
+        `<button onclick="setupEditForm(${start + index})" class="btn btn-outline-warning btn-sm py-1 mt-2" style="width: auto !important; font-size:12px;">Edit Data</button>` : '';
 
       return `
-      <div class="sku-card d-flex align-items-center justify-content-between shadow-sm">
+      <div class="sku-card shadow-sm">
         <div style="flex: 1; text-align: left;">
-          <h6 class="fw-bold mb-1" style="font-size: 13px;">${item.nama}</h6>
-          <div class="text-danger small fw-bold font-monospace mb-1" style="font-size: 12px;">${item.sku}</div>
-          <div class="d-flex align-items-center gap-2 mb-1">
-            <span class="text-success fw-bold">Rp ${parseInt(item.harga).toLocaleString()}</span>
+          <h6 class="fw-bold mb-1" style="font-size: 15px; color:#111;">${item.nama}</h6>
+          <div class="text-danger small fw-bold font-monospace mb-1" style="font-size: 13px; letter-spacing: 0.5px;">${item.sku}</div>
+          <div class="d-flex align-items-center justify-content-between justify-content-md-start gap-3 mt-2">
+            <span class="text-success fw-bold" style="font-size:15px;">Rp ${parseInt(item.harga).toLocaleString('id-ID')}</span>
             ${adminButton}
           </div>
         </div>
         <div class="barcode-container">
-          <svg id="bc_${item.sku}" class="barcode-img"></svg><br>
-          <button onclick="downloadBC('${item.sku}')" class="btn btn-dark btn-xs mt-1 w-100" style="font-size:10px; padding: 2px 5px;">Download Sticker</button>
+          <svg id="bc_${item.sku}" class="barcode-img"></svg>
+          <button onclick="downloadBC('${item.sku}')" class="btn btn-dark btn-sm mt-2 w-100" style="font-size:11px; padding: 4px 8px;">Download Sticker</button>
         </div>
       </div>`;
     }).join('');
     
     document.getElementById('skuList').innerHTML = html;
-    paginated.forEach(item => JsBarcode("#bc_" + item.sku, item.sku, { height: 32, fontSize: 10 }));
+    paginated.forEach(item => JsBarcode("#bc_" + item.sku, item.sku, { height: 35, fontSize: 11 }));
     
     let totalP = Math.min(Math.ceil(filtered.length / 10), 3);
     let pBtn = "";
-    for(let i=1; i<=totalP; i++) pBtn += `<button onclick="setPage(${i})" class="btn btn-xs ${i==currentPage?'btn-primary':'btn-light'} mx-1" style="padding: 2px 8px; font-size:11px;">${i}</button>`;
+    if(totalP > 1) {
+      for(let i=1; i<=totalP; i++) pBtn += `<button onclick="setPage(${i})" class="btn btn-md ${i==currentPage?'btn-primary':'btn-light'} px-3 mx-1">${i}</button>`;
+    }
     document.getElementById('pagination').innerHTML = pBtn;
   }
 
