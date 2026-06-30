@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <title>SKU Product Generator</title>
+  <title>SKU Generator</title>
   <base target="_top">
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -12,38 +12,31 @@
     .hidden { display: none !important; }
     .card { border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border-radius: 12px; margin-bottom: 15px; }
     
-    /* Layout Kartu SKU */
     .sku-card { background: #fff; border-left: 5px solid #0d6efd; padding: 15px; border-radius: 10px; display: flex; align-items: center; justify-content: space-between; gap: 15px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
-    .barcode-container { text-align: center; min-width: 150px; }
+    .barcode-container { text-center: center; min-width: 150px; }
     .barcode-img { max-width: 100%; height: auto; }
     
     .toast-container { position: fixed; top: 15px; right: 15px; z-index: 9999; width: calc(100% - 30px); max-width: 350px; }
     
-    /* MODIFIKASI TOTAL UNTUK LAYAR HP/MOBILE */
     @media (max-width: 767px) {
       body { font-size: 14px; }
       .container { padding-left: 12px; padding-right: 12px; }
-      
-      /* Form di HP menjadi 1 kolom penuh vertikal */
       .row.g-2 > div { width: 100% !important; }
       
-      /* Kartu SKU menyusun ke bawah di HP */
       .sku-card { flex-direction: column !important; text-align: center; padding: 16px; }
       .sku-card > div { width: 100%; text-align: center !important; }
       .barcode-container { width: 100%; display: flex; flex-direction: column; align-items: center; margin-top: 10px; border-top: 1px dashed #ddd; padding-top: 12px; }
       .barcode-img { max-width: 220px; }
       
-      /* Tombol di HP dibuat lebih besar dan mudah ditekan */
       .btn { padding: 10px 12px; font-size: 14px; width: 100% !important; }
       .nav-pills .nav-link { padding: 12px; font-size: 14px; }
       
-      /* Transformasi Tabel Master menjadi list kartu di HP agar tidak meluber keluar */
-      .mobile-table-row { display: block; background: #fff; padding: 12px; border-radius: 8px; margin-bottom: 8px; border: 1px solid #e3e6e8; shadow-sm: true; }
+      .mobile-table-row { display: block; background: #fff; padding: 12px; border-radius: 8px; margin-bottom: 8px; border: 1px solid #e3e6e8; }
       .mobile-table-row td { display: block; width: 100%; text-align: left !important; padding: 4px 0; border: none; }
       .mobile-table-row td::before { content: attr(data-label); font-weight: bold; color: #666; display: inline-block; width: 80px; }
       .mobile-table-row td.action-td { text-align: right !important; border-top: 1px solid #eee; margin-top: 6px; padding-top: 8px; display: flex; gap: 8px; }
       .mobile-table-row td.action-td::before { display: none; }
-      thead { display: none; } /* Sembunyikan header tabel biasa di HP */
+      thead { display: none; }
       table, tbody, tr { display: block; width: 100%; }
     }
   </style>
@@ -79,9 +72,9 @@
 
     <div id="sku-tab" class="tab-content">
       <div class="card p-3 mb-3">
-        <h6 id="form-title" class="fw-bold text-primary mb-3">Input Data Produk Baru</h6>
+        <h6 id="form-title" class="fw-bold text-primary mb-3">Input Data Produk Baru / Bahan Baku</h6>
         <div class="row g-2">
-          <div class="col-12 mb-1"><input type="text" id="nama_produk" class="form-control" placeholder="Nama Produk Lengkap"></div>
+          <div class="col-12 mb-1"><input type="text" id="nama_produk" class="form-control" placeholder="Nama Produk / Bahan Baku Lengkap"></div>
           <div class="col-12 mb-2"><input type="number" id="harga" class="form-control" placeholder="Harga (Rp)"></div>
           
           <div class="col-6 col-md-3"><label class="fw-bold text-muted small">Sifat</label><select id="sel_Sifat" class="form-select"></select></div>
@@ -143,9 +136,9 @@
     </div>
   </div>
 </div>
-<!-- v8 -->
+
 <script>
-  const API_URL = "https://script.google.com/macros/s/AKfycbyeUTDfRXx4TIhfZ9cFhK8N7VVR_6fFjzvr_h6pFnwStyvu4aZLc3SczvPxAAYEFXL1/exec"; 
+  const API_URL = "https://script.google.com/macros/s/AKfycbwy7OWhPm1jhHwebA8WX50e32_XAG6NgvXyoKuvF_IhH0Nh_74FxdkYGx5FkSlo87XE/exec"; 
   
   let allSKU = [];
   let currentPage = 1;
@@ -161,7 +154,7 @@
     const bgClass = type === "success" ? "bg-success text-white" : "bg-danger text-white";
     
     box.innerHTML += `
-      <div id="${id}" class="toast align-items-center ${bgClass} border-0 show mb-2 shadow animate__animated animate__fadeInUp" role="alert">
+      <div id="${id}" class="toast align-items-center ${bgClass} border-0 show mb-2 shadow" role="alert">
         <div class="d-flex"><div class="toast-body fw-bold">${message}</div></div>
       </div>`;
     setTimeout(() => { document.getElementById(id)?.remove(); }, 3000);
@@ -193,12 +186,19 @@
     if(id === 'master-tab') { resetMasterPageState(); loadMasterTable(); }
   }
 
-  // FIXED: Memaksa pembacaan string murni dari nilai dropdown agar angka 00 / 0 di depan tetap tampil di web
+  // FIXED: Otomatis menyisipkan opsi "0" / "00" sebagai pilihan default "Tidak Ada" untuk keperluan Bahan Baku
   function refreshAllMasterData() {
     masterSheets.forEach(s => {
       callAPI({ action: "getMaster", sheet: s }, data => {
         const sel = document.getElementById('sel_'+s);
-        if(sel) sel.innerHTML = data.map(r => `<option value="${String(r[1])}">${r[0]} (${String(r[1])})</option>`).join('');
+        if(sel) {
+          // Buat opsi default kosong berdasarkan jenis kolomnya
+          let defaultKode = (s === "Brand" || s === "Kategori" || s === "Aroma" || s === "Warna") ? "00" : "0";
+          let defaultOption = `<option value="${defaultKode}">- Tanpa ${s} (${defaultKode}) -</option>`;
+          
+          // Gabungkan opsi default dengan data asli dari Sheets
+          sel.innerHTML = defaultOption + data.map(r => `<option value="${String(r[1])}">${r[0]} (${String(r[1])})</option>`).join('');
+        }
       });
     });
   }
@@ -216,7 +216,6 @@
     });
   }
 
-  // FIXED TAMPILAN: Merender baris tabel konvensional menjadi list-card khusus mobile pada device resolusi kecil
   function renderMasterTable() {
     const start = (currentMasterPage - 1) * 10;
     const paginatedData = currentMasterData.slice(start, start + 10);
