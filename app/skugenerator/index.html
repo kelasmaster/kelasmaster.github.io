@@ -468,15 +468,37 @@
 
   function getTxt(id) { const e = document.getElementById(id); return e ? e.options[e.selectedIndex].text : ''; }
 
-  // Fungsi Unduh Gambar QR Code (.png)
+  // Fungsi Unduh Gambar QR Code (.png) yang Diperbaiki
   function downloadQR(sku) {
-    const imgEl = document.querySelector("#modalQrCode img");
-    if(!imgEl) return showNotification("Gagal mengunduh gambar QR", "danger");
+    // Mencari elemen canvas yang dibuat oleh qrcode.js
+    const canvasEl = document.querySelector("#modalQrCode canvas");
     
-    const a = document.createElement("a");
-    a.href = imgEl.src;
-    a.download = `QR_${sku}.png`;
-    a.click();
+    if (!canvasEl) {
+      // Fallback jika canvas tidak ditemukan, coba ambil dari img
+      const imgEl = document.querySelector("#modalQrCode img");
+      if (!imgEl) return showNotification("Gagal mengunduh gambar QR", "danger");
+      
+      const a = document.createElement("a");
+      a.href = imgEl.src;
+      a.download = `QR_${sku}.png`;
+      a.click();
+      return;
+    }
+    
+    // Mengonversi canvas langsung menjadi URL Data PNG yang valid
+    try {
+      const dataUrl = canvasEl.toDataURL("image/png");
+      const a = document.createElement("a");
+      a.href = dataUrl;
+      a.download = `QR_${sku}.png`; // Memaksa ekstensi .png
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a); // Bersihkan elemen setelah diklik
+      showNotification("QR Code berhasil diunduh sebagai PNG");
+    } catch (err) {
+      console.error(err);
+      showNotification("Gagal mengonversi QR ke PNG", "danger");
+    }
   }
 </script>
 </body>
