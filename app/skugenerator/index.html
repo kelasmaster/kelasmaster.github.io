@@ -10,14 +10,12 @@
     .hidden { display: none !important; }
     .card { border: none; box-shadow: 0 2px 10px rgba(0,0,0,0.05); border-radius: 12px; }
     
-    /* Responsive SKU Cards */
     .sku-card { background: #fff; border-left: 5px solid #0d6efd; margin-bottom: 12px; padding: 15px; border-radius: 8px; }
     .barcode-container { text-center: center; min-width: 150px; }
     .barcode-img { max-width: 100%; height: auto; }
     
     .toast-container { position: fixed; top: 15px; right: 15px; z-index: 9999; }
     
-    /* Optimasi Tampilan Mobile (HP) */
     @media (max-width: 767px) {
       body { font-size: 13px; }
       .container { padding-left: 10px; padding-right: 10px; }
@@ -36,7 +34,7 @@
 <div class="container py-3">
   <div id="loginPage" class="mx-auto" style="max-width: 100%; width: 360px; margin-top: 70px;">
     <div class="card p-4">
-      <h3 class="text-center fw-bold text-primary mb-4">BD-SYSTEM</h3>
+      <h3 class="text-center fw-bold text-primary mb-4">SKU Generator</h3>
       <input type="text" id="user" class="form-control mb-3" placeholder="Username">
       <input type="password" id="pass" class="form-control mb-3" placeholder="Password">
       <button onclick="handleLogin()" class="btn btn-primary w-100 fw-bold">LOGIN</button>
@@ -86,7 +84,7 @@
     <div id="master-tab" class="tab-content hidden">
       <div class="card p-3">
         <h6 id="master-form-title" class="fw-bold text-success mb-2">Kelola Data Master (Admin)</h6>
-        <select id="master_choice" class="form-select form-select-sm mb-3" onchange="cancelMasterEdit(); loadMasterTable();">
+        <select id="master_choice" class="form-select form-select-sm mb-3" onchange="resetMasterPageState(); loadMasterTable();">
           <option value="Sifat">Sifat Produk</option>
           <option value="Bentuk">Bentuk</option>
           <option value="Brand">Brand</option>
@@ -100,7 +98,7 @@
         <div class="card bg-light p-2 mb-3">
           <div class="row g-2">
             <div class="col-12 col-sm-5"><input type="text" id="m_nama" class="form-control form-control-sm" placeholder="Nama Komponen"></div>
-            <div class="col-8 col-sm-4"><input type="text" id="m_kode" class="form-control form-control-sm" placeholder="Kode (Misal: 01)"></div>
+            <div class="col-8 col-sm-4"><input type="text" id="m_kode" class="form-control form-control-sm" placeholder="Kode (Misal: 00)"></div>
             <input type="hidden" id="m_index" value="-1">
             <div class="col-4 col-sm-3 d-flex gap-1">
               <button id="btn-save-master" onclick="saveMaster()" class="btn btn-success btn-sm w-100 fw-bold">+</button>
@@ -115,17 +113,20 @@
             <tbody id="masterTableBody"></tbody>
           </table>
         </div>
+        <div id="masterPagination" class="mt-2 text-center"></div>
       </div>
     </div>
   </div>
 </div>
 
 <script>
-  // v6
-  const API_URL = "https://script.google.com/macros/s/AKfycbzgyxeqDjFIF-26w8YtlGT8zz67Ivirsh8DQmlVPJ8TRlHOozvFQm3Zw06UeU3y22o/exec"; 
+  <!-- v7 -->
+  const API_URL = "https://script.google.com/macros/s/AKfycbzT4JNLvfCicugFgWWd7cBEb4np5aVgI2YXBs2FYJ0BhpkYx2FwHaKfglNzZ0Eyn65u/exec"; 
   
   let allSKU = [];
   let currentPage = 1;
+  let currentMasterPage = 1; // Halaman aktif Master Data
+  let currentMasterData = []; // Penyimpan data master yang sedang dibuka
   let userRole = "User";
   let isEditMode = false;
   const masterSheets = ["Sifat","Bentuk","Brand","Kategori","Ukuran","Kemasan","Aroma","Warna"];
@@ -165,7 +166,7 @@
   function showTab(id) {
     document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
     document.getElementById(id).classList.remove('hidden');
-    if(id === 'master-tab') loadMasterTable();
+    if(id === 'master-tab') { resetMasterPageState(); loadMasterTable(); }
   }
 
   function refreshAllMasterData() {
@@ -177,22 +178,53 @@
     });
   }
 
+  function resetMasterPageState() {
+    currentMasterPage = 1;
+    cancelMasterEdit();
+  }
+
+  // FIX: Menggunakan Pagination 10 data per halaman & maks 3 halaman untuk master data
   function loadMasterTable() {
     const s = document.getElementById('master_choice').value;
     callAPI({ action: "getMaster", sheet: s }, data => {
-      // Merender seluruh baris tanpa ada batasan data
-      document.getElementById('masterTableBody').innerHTML = data.map((r, i) => `
+      currentMasterData = data;
+      renderMasterTable();
+    });
+  }
+
+  function renderMasterTable() {
+    const start = (currentMasterPage - 1) * 10;
+    const paginatedData = currentMasterData.slice(start, start + 10);
+    
+    document.getElementById('masterTableBody').innerHTML = paginatedData.map((r, i) => {
+      const globalIndex = start + i; // Indeks baris asli untuk keperluan edit/delete
+      return `
         <tr>
           <td class="fw-bold">${r[0]}</td>
           <td><span class="badge bg-secondary font-monospace">${r[1]}</span></td>
           <td class="text-end">
             <div class="master-action-btns d-inline-flex gap-1">
-              <button class="btn btn-warning btn-sm py-0 px-2" onclick="setupMasterEdit('${r[0]}', '${r[1]}', ${i})">Edit</button>
-              <button class="btn btn-danger btn-sm py-0 px-2" onclick="delMaster(${i})">Del</button>
+              <button class="btn btn-warning btn-sm py-0 px-2" onclick="setupMasterEdit('${r[0]}', '${r[1]}', ${globalIndex})">Edit</button>
+              <button class="btn btn-danger btn-sm py-0 px-2" onclick="delMaster(${globalIndex})">Del</button>
             </div>
           </td>
-        </tr>`).join('');
-    });
+        </tr>`;
+    }).join('');
+
+    // Generate Tombol Navigasi Pagination Master Data (Maksimal 3 Halaman)
+    let totalPages = Math.min(Math.ceil(currentMasterData.length / 10), 3);
+    let pBtn = "";
+    if(totalPages > 1) {
+      for(let i = 1; i <= totalPages; i++) {
+        pBtn += `<button onclick="setMasterPage(${i})" class="btn btn-sm ${i === currentMasterPage ? 'btn-success' : 'btn-light'} mx-1">${i}</button>`;
+      }
+    }
+    document.getElementById('masterPagination').innerHTML = pBtn;
+  }
+
+  function setMasterPage(p) { 
+    currentMasterPage = p; 
+    renderMasterTable(); 
   }
 
   function setupMasterEdit(nama, kode, index) {
@@ -222,11 +254,11 @@
     const n = document.getElementById('m_nama').value;
     const k = document.getElementById('m_kode').value;
     const idx = document.getElementById('m_index').value;
-    if(!n || !k) return showNotification("Nama dan Kode tidak boleh kosong!", "danger");
+    if(!n || k === "") return showNotification("Nama dan Kode tidak boleh kosong!", "danger");
     
     callAPI({ action: "saveMaster", sheet: s, nama: n, kode: k, index: idx }, () => {
       showNotification("Data master berhasil diperbarui!");
-      cancelMasterEdit(); loadMasterTable(); refreshAllMasterData();
+      loadMasterTable(); refreshAllMasterData(); cancelMasterEdit();
     });
   }
 
