@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <base target="_top">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>SKU & QR Generator</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+  
+  <style>
+    body { background: #f4f7f6; font-family: 'Segoe UI', system-ui, sans-serif; color: #333; }
+    .hidden { display: none !important; }
+    .card { border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border-radius: 12px; margin-bottom: 15px; }
+    
+    .sku-list-item { background: #fff; padding: 12px 16px; border-radius: 8px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.03); border-left: 4px solid #0d6efd; }
+    .sku-code-text { font-family: 'Courier New', Courier, monospace; font-weight: 700; color: #dc3545; font-size: 15px; letter-spacing: 0.5px; }
+    
+    .toast-container { position: fixed; top: 15px; right: 15px; z-index: 9999; width: calc(100% - 30px); max-width: 350px; }
+    
+    /* Area QR Code di Modal */
+    .qrcode-modal-area { display: flex; justify-content: center; align-items: center; background: #f8f9fa; padding: 20px; border-radius: 8px; margin-top: 15px; min-height: 160px; }
+    .qrcode-modal-area img { max-width: 100%; height: auto; border: 1px solid #ddd; padding: 5px; background: #fff; }
+
+    /* Kotak Scanner Kamera */
+    #reader { width: 100%; background: #000; border-radius: 8px; overflow: hidden; margin-bottom: 15px; box-shadow: inset 0 0 10px rgba(0,0,0,0.5); }
+
+    @media (max-width: 767px) {
+      body { font-size: 14px; }
+      .container { padding-left: 12px; padding-right: 12px; }
+      .row g-2 > div { width: 100% !important; }
+      .btn { padding: 10px 12px; font-size: 14px; }
+      .nav-pills .nav-link { padding: 12px; font-size: 14px; }
+      
+      .mobile-table-row { display: block; background: #fff; padding: 12px; border-radius: 8px; margin-bottom: 8px; border: 1px solid #e3e6e8; }
+      .mobile-table-row td { display: block; width: 100%; text-align: left !important; padding: 4px 0; border: none; }
+      .mobile-table-row td::before { content: attr(data-label); font-weight: bold; color: #666; display: inline-block; width: 80px; }
+      .mobile-table-row td.action-td { text-align: right !important; border-top: 1px solid #eee; margin-top: 6px; padding-top: 8px; display: flex; gap: 8px; }
+      .mobile-table-row td.action-td::before { display: none; }
+      thead { display: none; }
+      table, tbody, tr { display: block; width: 100%; }
+      .sku-list-item { flex-direction: column !important; align-items: flex-start !important; gap: 8px; }
+      .sku-list-item button { width: 100% !important; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="toast-container" id="toastBox"></div>
+
+<div class="container py-3" style="max-width: 800px;">
+  <div id="loginPage" class="mx-auto" style="width: 100%; max-width: 360px; margin-top: 50px;">
+    <div class="card p-4">
+      <h3 class="text-center fw-bold text-primary mb-4">BD-SYSTEM</h3>
+      <div class="mb-3"><input type="text" id="user" class="form-control form-control-lg" placeholder="Username"></div>
+      <div class="mb-3"><input type="password" id="pass" class="form-control form-control-lg" placeholder="Password"></div>
+      <button onclick="handleLogin()" class="btn btn-primary btn-lg w-100 fw-bold">LOGIN</button>
+    </div>
+  </div>
+
+  <div id="dashboardPage" class="hidden">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h5 class="fw-bold m-0 text-secondary">PRO SKU & QR GENERATOR</h5>
+      <button onclick="location.reload()" class="btn btn-sm btn-outline-danger px-3" style="width: auto !important;">LOGOUT</button>
+    </div>
+
+    <ul class="nav nav-pills mb-3 bg-white p-1 rounded shadow-sm" id="pills-tab">
+      <li class="nav-item flex-fill text-center"><button class="nav-link w-100 active" onclick="showTab('sku-tab')">Input SKU</button></li>
+      <li class="nav-item flex-fill text-center" id="menu-master"><button class="nav-link w-100 text-success" onclick="showTab('master-tab')">Master Data</button></li>
+    </ul>
+
+    <div id="sku-tab" class="tab-content">
+      <div class="card p-3 mb-3">
+        <h6 id="form-title" class="fw-bold text-primary mb-3">Input Data Produk Baru / Bahan Baku</h6>
+        <div class="row g-2">
+          <div class="col-12 mb-1"><input type="text" id="nama_produk" class="form-control" placeholder="Nama Produk / Bahan Baku Lengkap"></div>
+          <div class="col-12 mb-2"><input type="number" id="harga" class="form-control" placeholder="Harga (Rp)"></div>
+          
+          <div class="col-6 col-md-3"><label class="fw-bold text-muted small">Sifat</label><select id="sel_Sifat" class="form-select"></select></div>
+          <div class="col-6 col-md-3"><label class="fw-bold text-muted small">Bentuk</label><select id="sel_Bentuk" class="form-select"></select></div>
+          <div class="col-6 col-md-3"><label class="fw-bold text-muted small">Brand</label><select id="sel_Brand" class="form-select"></select></div>
+          <div class="col-6 col-md-3"><label class="fw-bold text-muted small">Kategori</label><select id="sel_Kategori" class="form-select"></select></div>
+          <div class="col-6 col-md-3"><label class="fw-bold text-muted small">Ukuran</label><select id="sel_Ukuran" class="form-select"></select></div>
+          <div class="col-6 col-md-3"><label class="fw-bold text-muted small">Kemasan</label><select id="sel_Kemasan" class="form-select"></select></div>
+          <div class="col-6 col-md-3"><label class="fw-bold text-muted small">Aroma</label><select id="sel_Aroma" class="form-select"></select></div>
+          <div class="col-6 col-md-3"><label class="fw-bold text-muted small">Warna</label><select id="sel_Warna" class="form-select"></select></div>
+        </div>
+        <input type="hidden" id="edit_old_sku">
+        <input type="hidden" id="edit_no_urut">
+        <button id="btn-submit-sku" onclick="generate()" class="btn btn-primary mt-3 fw-bold w-100 py-2">GENERATE SKU & SIMPAN</button>
+        <button id="btn-cancel-edit" onclick="cancelEdit()" class="btn btn-secondary mt-2 w-100 hidden">Batal Edit</button>
+      </div>
+
+      <div class="card p-3">
+        <div class="input-group mb-2">
+          <input type="text" id="q" class="form-control" placeholder="Cari Kode SKU saja..." onkeyup="renderSKU()">
+          <button class="btn btn-outline-primary" type="button" id="btn-toggle-scan" onclick="triggerScanner()" title="Scan QR / Barcode" style="width:auto !important;"><i class="fas fa-camera"></i> Scan</button>
+        </div>
+        
+        <div id="reader" class="hidden"></div>
+        
+        <div id="skuList"></div>
+        <div id="pagination" class="mt-3 text-center d-flex justify-content-center gap-1"></div>
+      </div>
+    </div>
+
+    <div id="master-tab" class="tab-content hidden">
+      <div class="card p-3">
+        <h6 id="master-form-title" class="fw-bold text-success mb-2">Kelola Data Master (Admin)</h6>
+        <select id="master_choice" class="form-select mb-3" onchange="resetMasterPageState(); loadMasterTable();">
+          <option value="Sifat">Sifat Produk</option>
+          <option value="Bentuk">Bentuk</option>
+          <option value="Brand">Brand</option>
+          <option value="Kategori">Kategori</option>
+          <option value="Ukuran">Ukuran</option>
+          <option value="Kemasan">Kemasan</option>
+          <option value="Aroma">Aroma</option>
+          <option value="Warna">Warna</option>
+        </select>
+        
+        <div class="card bg-light p-3 mb-3">
+          <div class="row g-2">
+            <div class="col-12 col-md-5"><input type="text" id="m_nama" class="form-control" placeholder="Nama Komponen"></div>
+            <div class="col-12 col-md-4"><input type="text" id="m_kode" class="form-control" placeholder="Kode (Misal: 00)"></div>
+            <input type="hidden" id="m_index" value="-1">
+            <div class="col-12 col-md-3 d-flex gap-2 mt-2 mt-md-0">
+              <button id="btn-save-master" onclick="saveMaster()" class="btn btn-success fw-bold w-100">SIMPAN DATA</button>
+              <button id="btn-cancel-master-edit" onclick="cancelMasterEdit()" class="btn btn-secondary hidden" style="width:auto !important;">X</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="table-responsive" style="border: none;">
+          <table class="table align-middle table-hover">
+            <thead><tr class="table-light"><th>Nama</th><th>Kode</th><th class="text-end" style="width:120px">Aksi</th></tr></thead>
+            <tbody id="masterTableBody"></tbody>
+          </table>
+        </div>
+        <div id="masterPagination" class="mt-3 text-center d-flex justify-content-center gap-1"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="detailModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title fw-bold text-primary">Detail Produk & QR Code</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="width:auto !important; padding:0.5rem;"></button>
+      </div>
+      <div class="modal-body">
+        <table class="table table-sm table-borderless">
+          <tr><td class="text-muted fw-bold" style="width: 110px;">Nama Produk</td><td>: <span id="md_nama" class="fw-bold"></span></td></tr>
+          <tr><td class="text-muted fw-bold">Kode SKU</td><td>: <span id="md_sku" class="text-danger fw-bold font-monospace"></span></td></tr>
+          <tr><td class="text-muted fw-bold">Harga</td><td>: <span id="md_harga" class="text-success fw-bold"></span></td></tr>
+        </table>
+        
+        <div class="qrcode-modal-area">
+          <div id="modalQrCode"></div>
+        </div>
+      </div>
+      <div class="modal-footer d-flex gap-2">
+        <button id="md_btn_edit" class="btn btn-warning flex-fill fw-bold">Edit Data</button>
+        <button id="md_btn_dl" class="btn btn-dark flex-fill fw-bold">Download Sticker QR</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // v12 dengan qrcode scanner
+  const API_URL = "https://script.google.com/macros/s/AKfycbwNA_mT0or0ON1wcitKt4x1cmELZbW2lAYvLupJaMJ6TFbJEzMUpYwtuozX2tPHf8NR/exec"; 
+  
+  let allSKU = [];
+  let currentPage = 1;
+  let currentMasterPage = 1; 
+  let currentMasterData = []; 
+  let userRole = "User";
+  let isEditMode = false;
+  let myModal;
+  
+  // Objek global QR Code dan Scanner
+  let qrCodeGenerator = null;
+  let html5QrCodeScanner = null;
+  let isScanning = false;
+
+  const masterSheets = ["Sifat","Bentuk","Brand","Kategori","Ukuran","Kemasan","Aroma","Warna"];
+
+  document.addEventListener("DOMContentLoaded", () => {
+    myModal = new bootstrap.Modal(document.getElementById('detailModal'));
+  });
+
+  function showNotification(message, type = "success") {
+    const box = document.getElementById("toastBox");
+    const id = "toast_" + Date.now();
+    const bgClass = type === "success" ? "bg-success text-white" : "bg-danger text-white";
+    box.innerHTML += `<div id="${id}" class="toast align-items-center ${bgClass} border-0 show mb-2 shadow" role="alert"><div class="d-flex"><div class="toast-body fw-bold">${message}</div></div></div>`;
+    setTimeout(() => { document.getElementById(id)?.remove(); }, 3000);
+  }
+
+  function callAPI(payload, callback) {
+    fetch(API_URL, { method: "POST", body: JSON.stringify(payload) })
+    .then(res => res.json()).then(data => callback(data)).catch(err => console.error(err));
+  }
+
+  function handleLogin() {
+    const payload = { action: "login", user: document.getElementById('user').value, pass: document.getElementById('pass').value };
+    callAPI(payload, res => {
+      if(res.success) {
+        userRole = res.role;
+        document.getElementById('loginPage').classList.add('hidden');
+        document.getElementById('dashboardPage').classList.remove('hidden');
+        if(userRole !== "Administrator") document.getElementById('menu-master').classList.add('hidden');
+        refreshAllMasterData();
+        loadSKU();
+        showNotification("Selamat datang, " + payload.user);
+      } else showNotification("Login Gagal! Periksa akun Anda.", "danger");
+    });
+  }
+
+  function showTab(id) {
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+    document.getElementById(id).classList.remove('hidden');
+    if(id === 'master-tab') { resetMasterPageState(); loadMasterTable(); }
+    if(id !== 'sku-tab' && isScanning) { stopScanner(); }
+  }
+
+  function refreshAllMasterData() {
+    masterSheets.forEach(s => {
+      callAPI({ action: "getMaster", sheet: s }, data => {
+        const sel = document.getElementById('sel_'+s);
+        if(sel) {
+          let defaultKode = (s === "Brand" || s === "Kategori" || s === "Aroma" || s === "Warna") ? "00" : "0";
+          let defaultOption = `<option value="${defaultKode}">- Tanpa ${s} (${defaultKode}) -</option>`;
+          sel.innerHTML = defaultOption + data.map(r => `<option value="${String(r[1])}">${r[0]} (${String(r[1])})</option>`).join('');
+        }
+      });
+    });
+  }
+
+  function resetMasterPageState() { currentMasterPage = 1; cancelMasterEdit(); }
+
+  function loadMasterTable() {
+    const s = document.getElementById('master_choice').value;
+    callAPI({ action: "getMaster", sheet: s }, data => { currentMasterData = data; renderMasterTable(); });
+  }
+
+  function renderMasterTable() {
+    const start = (currentMasterPage - 1) * 10;
+    const paginatedData = currentMasterData.slice(start, start + 10);
+    
+    document.getElementById('masterTableBody').innerHTML = paginatedData.map((r, i) => {
+      const globalIndex = start + i; 
+      const kodeStr = String(r[1]);
+      return `
+        <tr class="mobile-table-row">
+          <td data-label="Nama" class="fw-bold text-dark">${r[0]}</td>
+          <td data-label="Kode"><span class="badge bg-secondary font-monospace" style="font-size:13px;">${kodeStr}</span></td>
+          <td class="text-end action-td">
+            <button class="btn btn-warning btn-sm fw-bold px-3 py-1" onclick="setupMasterEdit('${r[0]}', '${kodeStr}', ${globalIndex})">Edit</button>
+            <button class="btn btn-danger btn-sm fw-bold px-3 py-1" onclick="delMaster(${globalIndex})">Hapus</button>
+          </td>
+        </tr>`;
+    }).join('');
+
+    let totalPages = Math.min(Math.ceil(currentMasterData.length / 10), 3);
+    let pBtn = "";
+    if(totalPages > 1) {
+      for(let i = 1; i <= totalPages; i++) pBtn += `<button onclick="setMasterPage(${i})" class="btn btn-md ${i === currentMasterPage ? 'btn-success text-white' : 'btn-light'} px-3 mx-1">${i}</button>`;
+    }
+    document.getElementById('masterPagination').innerHTML = pBtn;
+  }
+
+  function setMasterPage(p) { currentMasterPage = p; renderMasterTable(); }
+
+  function setupMasterEdit(nama, kode, index) {
+    document.getElementById('master-form-title').innerText = "Edit Komponen Master Data";
+    document.getElementById('m_nama').value = nama;
+    document.getElementById('m_kode').value = String(kode);
+    document.getElementById('m_index').value = index;
+    document.getElementById('btn-save-master').className = "btn btn-warning fw-bold w-100";
+    document.getElementById('btn-save-master').innerText = "SIMPAN PERUBAHAN";
+    document.getElementById('btn-cancel-master-edit').classList.remove('hidden');
+  }
+
+  function cancelMasterEdit() {
+    document.getElementById('master-form-title').innerText = "Kelola Data Master (Admin Only)";
+    document.getElementById('m_nama').value = ''; document.getElementById('m_kode').value = ''; document.getElementById('m_index').value = '-1';
+    document.getElementById('btn-save-master').className = "btn btn-success fw-bold w-100";
+    document.getElementById('btn-save-master').innerText = "SIMPAN DATA";
+    document.getElementById('btn-cancel-master-edit').classList.add('hidden');
+  }
+
+  function saveMaster() {
+    const s = document.getElementById('master_choice').value;
+    const n = document.getElementById('m_nama').value;
+    const k = document.getElementById('m_kode').value;
+    const idx = document.getElementById('m_index').value;
+    if(!n || k === "") return showNotification("Nama dan Kode tidak boleh kosong!", "danger");
+    callAPI({ action: "saveMaster", sheet: s, nama: n, kode: k, index: idx }, () => {
+      showNotification("Data master berhasil diperbarui!");
+      loadMasterTable(); refreshAllMasterData(); cancelMasterEdit();
+    });
+  }
+
+  function delMaster(idx) {
+    if(!confirm("Hapus komponen ini?")) return;
+    callAPI({ action: "delMaster", sheet: document.getElementById('master_choice').value, index: idx }, () => {
+      showNotification("Data master berhasil dihapus!");
+      loadMasterTable(); refreshAllMasterData();
+    });
+  }
+
+  function loadSKU() { callAPI({ action: "getSKU" }, data => { allSKU = data; renderSKU(); }); }
+
+  function renderSKU() {
+    const q = document.getElementById('q').value.toLowerCase();
+    const filtered = allSKU.filter(x => x.sku.toLowerCase().includes(q));
+    const start = (currentPage - 1) * 10;
+    const paginated = filtered.slice(start, start + 10);
+
+    let html = paginated.map((item, index) => {
+      return `<div class="sku-list-item"><div class="sku-code-text">${item.sku}</div><button onclick="openDetailModal(${start + index})" class="btn btn-sm btn-primary px-3 py-1" style="width:auto !important;">Detail</button></div>`;
+    }).join('');
+    
+    document.getElementById('skuList').innerHTML = html || '<div class="text-center text-muted py-3">Kode SKU tidak ditemukan</div>';
+    
+    let totalP = Math.min(Math.ceil(filtered.length / 10), 3);
+    let pBtn = "";
+    if(totalP > 1) {
+      for(let i=1; i<=totalP; i++) pBtn += `<button onclick="setPage(${i})" class="btn btn-md ${i==currentPage?'btn-primary':'btn-light'} px-3 mx-1">${i}</button>`;
+    }
+    document.getElementById('pagination').innerHTML = pBtn;
+  }
+
+  function setPage(p) { currentPage = p; renderSKU(); }
+
+  // FIX: Mengubah Pembuatan Kode Menjadi QR Code
+  function openDetailModal(globalIndex) {
+    const item = allSKU[globalIndex];
+    document.getElementById('md_nama').innerText = item.nama;
+    document.getElementById('md_sku').innerText = item.sku;
+    document.getElementById('md_harga').innerText = "Rp " + parseInt(item.harga).toLocaleString('id-ID');
+    
+    // Clear area wadah QR Code terdahulu
+    document.getElementById("modalQrCode").innerHTML = "";
+    
+    // Render QR Code baru secara real-time
+    qrCodeGenerator = new QRCode(document.getElementById("modalQrCode"), {
+      text: item.sku,
+      width: 150,
+      height: 150,
+      colorDark : "#000000",
+      colorLight : "#ffffff",
+      correctLevel : QRCode.CorrectLevel.H
+    });
+
+    document.getElementById('md_btn_dl').onclick = () => { downloadQR(item.sku); };
+    
+    const editBtn = document.getElementById('md_btn_edit');
+    if (userRole === "Administrator") {
+      editBtn.classList.remove('hidden');
+      editBtn.onclick = () => { myModal.hide(); setupEditForm(globalIndex); };
+    } else editBtn.classList.add('hidden');
+    
+    myModal.show();
+  }
+
+  // ENGINE LIVE CAMERA SCANNER (Mendukung QR Code dan Barcode sekaligus)
+  function triggerScanner() {
+    const readerDiv = document.getElementById('reader');
+    const btnScan = document.getElementById('btn-toggle-scan');
+
+    if (isScanning) {
+      stopScanner();
+    } else {
+      readerDiv.classList.remove('hidden');
+      btnScan.innerHTML = `<i class="fas fa-times"></i> Tutup`;
+      btnScan.className = "btn btn-danger";
+      isScanning = true;
+
+      html5QrCodeScanner = new Html5Qrcode("reader");
+      const config = { fps: 15, qrbox: { width: 200, height: 200 } }; // Kotak simetris seimbang untuk QR code
+
+      html5QrCodeScanner.start(
+        { facingMode: "environment" }, 
+        config,
+        (decodedText) => {
+          document.getElementById('q').value = decodedText; 
+          renderSKU(); 
+          showNotification("QR Code sukses terbaca: " + decodedText, "success");
+          stopScanner(); 
+        },
+        (errorMessage) => {
+          // Live tracking scanning bypass
+        }
+      ).catch(err => {
+        showNotification("Gagal mengakses kamera: " + err, "danger");
+        stopScanner();
+      });
+    }
+  }
+
+  function stopScanner() {
+    const readerDiv = document.getElementById('reader');
+    const btnScan = document.getElementById('btn-toggle-scan');
+    
+    if (html5QrCodeScanner) {
+      html5QrCodeScanner.stop().then(() => {
+        html5QrCodeScanner.clear();
+        html5QrCodeScanner = null;
+      }).catch(err => console.error(err));
+    }
+    
+    readerDiv.classList.add('hidden');
+    btnScan.innerHTML = `<i class="fas fa-camera"></i> Scan`;
+    btnScan.className = "btn btn-outline-primary";
+    isScanning = false;
+  }
+
+  function setupEditForm(globalIndex) {
+    isEditMode = true;
+    const item = allSKU[globalIndex];
+    document.getElementById('form-title').innerText = "Edit Data Produk & SKU";
+    document.getElementById('nama_produk').value = item.nama;
+    document.getElementById('harga').value = item.harga;
+    document.getElementById('edit_old_sku').value = item.sku;
+    document.getElementById('edit_no_urut').value = item.no_urut;
+    
+    setSelectByText('sel_Sifat', item.s_txt); setSelectByText('sel_Bentuk', item.b_txt); setSelectByText('sel_Brand', item.br_txt); setSelectByText('sel_Kategori', item.k_txt); setSelectByText('sel_Ukuran', item.u_txt); setSelectByText('sel_Kemasan', item.km_txt); setSelectByText('sel_Aroma', item.a_txt); setSelectByText('sel_Warna', item.w_txt);
+    document.getElementById('btn-submit-sku').innerText = "SIMPAN PERUBAHAN DATA";
+    document.getElementById('btn-cancel-edit').classList.remove('hidden');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function setSelectByText(id, txt) {
+    const el = document.getElementById(id);
+    for(let i=0; i<el.options.length; i++) { if(el.options[i].text === txt) { el.selectedIndex = i; break; } }
+  }
+
+  function cancelEdit() {
+    isEditMode = false;
+    document.getElementById('nama_produk').value = ''; document.getElementById('harga').value = '';
+    document.getElementById('form-title').innerText = "Input Data Produk Baru";
+    document.getElementById('btn-submit-sku').innerText = "GENERATE SKU & SIMPAN";
+    document.getElementById('btn-cancel-edit').classList.add('hidden');
+  }
+
+  function generate() {
+    const data = {
+      nama_produk: document.getElementById('nama_produk').value, harga: document.getElementById('harga').value,
+      sifat: document.getElementById('sel_Sifat').value, s_txt: getTxt('sel_Sifat'), bentuk: document.getElementById('sel_Bentuk').value, b_txt: getTxt('sel_Bentuk'), brand: document.getElementById('sel_Brand').value, br_txt: getTxt('sel_Brand'), kategori: document.getElementById('sel_Kategori').value, k_txt: getTxt('sel_Kategori'), ukuran: document.getElementById('sel_Ukuran').value, u_txt: getTxt('sel_Ukuran'), kemasan: document.getElementById('sel_Kemasan').value, km_txt: getTxt('sel_Kemasan'), aroma: document.getElementById('sel_Aroma').value, a_txt: getTxt('sel_Aroma'), warna: document.getElementById('sel_Warna').value, w_txt: getTxt('sel_Warna')
+    };
+    if(!data.nama_produk || !data.harga) return showNotification("Lengkapi Nama Produk dan Harga!", "danger");
+    if(isEditMode) {
+      data.no_urut = document.getElementById('edit_no_urut').value;
+      const oldSku = document.getElementById('edit_old_sku').value;
+      callAPI({ action: "updateSKU", oldSku: oldSku, data: data }, () => { showNotification("Data & QR Code Berhasil Diperbarui!"); cancelEdit(); loadSKU(); });
+    } else {
+      callAPI({ action: "submitSKU", data: data }, () => { showNotification("SKU Berhasil Disimpan!"); document.getElementById('nama_produk').value = ''; document.getElementById('harga').value = ''; loadSKU(); });
+    }
+  }
+
+  function getTxt(id) { const e = document.getElementById(id); return e ? e.options[e.selectedIndex].text : ''; }
+
+  // Fungsi Unduh Gambar QR Code (.png)
+  function downloadQR(sku) {
+    const imgEl = document.querySelector("#modalQrCode img");
+    if(!imgEl) return showNotification("Gagal mengunduh gambar QR", "danger");
+    
+    const a = document.createElement("a");
+    a.href = imgEl.src;
+    a.download = `QR_${sku}.png`;
+    a.click();
+  }
+</script>
+</body>
+</html>
