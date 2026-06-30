@@ -10,9 +10,13 @@
     .card { border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-radius: 15px; }
     .sku-card { background: #fff; border-left: 5px solid #0d6efd; margin-bottom: 10px; padding: 15px; border-radius: 8px; }
     .barcode-img { max-width: 150px; }
+    /* Toast / Notification Styling */
+    .toast-container { position: fixed; top: 20px; right: 20px; z-index: 9999; }
   </style>
 </head>
 <body>
+
+<div class="toast-container" id="toastBox"></div>
 
 <div class="container py-3">
   <div id="loginPage" class="mx-auto" style="max-width: 400px; margin-top: 100px;">
@@ -66,8 +70,8 @@
 
     <div id="master-tab" class="tab-content hidden">
       <div class="card p-4">
-        <h5>Kelola Data Master (Admin Only)</h5>
-        <select id="master_choice" class="form-select mb-3" onchange="loadMasterTable()">
+        <h5 id="master-form-title" class="fw-bold text-success mb-3">Kelola Data Master (Admin Only)</h5>
+        <select id="master_choice" class="form-select mb-3" onchange="cancelMasterEdit(); loadMasterTable();">
           <option value="Sifat">Sifat Produk</option>
           <option value="Bentuk">Bentuk</option>
           <option value="Brand">Brand</option>
@@ -78,12 +82,16 @@
           <option value="Warna">Warna</option>
         </select>
         <div class="row g-2 mb-3">
-          <div class="col-6"><input type="text" id="m_nama" class="form-control" placeholder="Nama"></div>
+          <div class="col-5"><input type="text" id="m_nama" class="form-control" placeholder="Nama"></div>
           <div class="col-4"><input type="text" id="m_kode" class="form-control" placeholder="Kode"></div>
-          <div class="col-2"><button onclick="saveMaster()" class="btn btn-success w-100">+</button></div>
+          <input type="hidden" id="m_index" value="-1">
+          <div class="col-3 d-flex gap-1">
+            <button id="btn-save-master" onclick="saveMaster()" class="btn btn-success w-100">+</button>
+            <button id="btn-cancel-master-edit" onclick="cancelMasterEdit()" class="btn btn-secondary hidden">X</button>
+          </div>
         </div>
-        <table class="table table-sm">
-          <thead><tr><th>Nama</th><th>Kode</th><th>Aksi</th></tr></thead>
+        <table class="table table-sm align-middle">
+          <thead><tr><th>Nama</th><th>Kode</th><th style="width:120px">Aksi</th></tr></thead>
           <tbody id="masterTableBody"></tbody>
         </table>
       </div>
@@ -92,8 +100,8 @@
 </div>
 
 <script>
-  // v4
-  const API_URL = "https://script.google.com/macros/s/AKfycbwSM5yq4Eea_MEoMTPl2UrlT-ZnZf6NW1s1OZMCs5iEb3yUaDIkHTEQMgCOZd0t2C4o/exec"; 
+  // v5
+  const API_URL = "https://script.google.com/macros/s/AKfycbzdTwoqj-Y7oq38gmnfOyzEepjdZ03AYEFzSU6MaO4WfyHaF9f2D2IToE0aE8Q0TpM/exec"; 
   
   let allSKU = [];
   let currentPage = 1;
@@ -101,7 +109,24 @@
   let isEditMode = false;
   const masterSheets = ["Sifat","Bentuk","Brand","Kategori","Ukuran","Kemasan","Aroma","Warna"];
 
-  // Helper untuk komunikasi Fetch API ke Apps Script
+  // Sistem Notifikasi Otomatis Tanpa Klik OK
+  function showNotification(message, type = "success") {
+    const box = document.getElementById("toastBox");
+    const id = "toast_" + Date.now();
+    const bgClass = type === "success" ? "bg-success text-white" : "bg-danger text-white";
+    
+    box.innerHTML += `
+      <div id="${id}" class="toast align-items-center ${bgClass} border-0 show mb-2" role="alert">
+        <div class="d-flex">
+          <div class="toast-body fw-bold">${message}</div>
+        </div>
+      </div>`;
+      
+    setTimeout(() => {
+      document.getElementById(id)?.remove();
+    }, 3000); // Otomatis hilang dalam 3 detik
+  }
+
   function callAPI(payload, callback) {
     fetch(API_URL, { method: "POST", body: JSON.stringify(payload) })
     .then(res => res.json()).then(data => callback(data)).catch(err => console.error(err));
@@ -114,15 +139,11 @@
         userRole = res.role;
         document.getElementById('loginPage').classList.add('hidden');
         document.getElementById('dashboardPage').classList.remove('hidden');
-        
-        // Proteksi Hak Akses (Jika bukan Admin, sembunyikan menu master data)
-        if(userRole !== "Administrator") {
-          document.getElementById('menu-master').classList.add('hidden');
-        }
-        
+        if(userRole !== "Administrator") document.getElementById('menu-master').classList.add('hidden');
         refreshAllMasterData();
         loadSKU();
-      } else alert("Login Gagal");
+        showNotification("Selamat datang, " + payload.user);
+      } else showNotification("Login Gagal! Periksa kembali akun Anda.", "danger");
     });
   }
 
@@ -145,24 +166,59 @@
     const s = document.getElementById('master_choice').value;
     callAPI({ action: "getMaster", sheet: s }, data => {
       document.getElementById('masterTableBody').innerHTML = data.map((r, i) => `
-        <tr><td>${r[0]}</td><td>${r[1]}</td>
-          <td><button class="btn btn-danger btn-sm" onclick="delMaster(${i})">Del</button></td></tr>`).join('');
+        <tr>
+          <td>${r[0]}</td>
+          <td><span class="badge bg-light text-dark font-monospace">${r[1]}</span></td>
+          <td>
+            <button class="btn btn-warning btn-sm p-1 py-0" onclick="setupMasterEdit('${r[0]}', '${r[1]}', ${i})">Edit</button>
+            <button class="btn btn-danger btn-sm p-1 py-0" onclick="delMaster(${i})">Del</button>
+          </td>
+        </tr>`).join('');
     });
+  }
+
+  // --- LOGIK EDIT MASTER DATA ---
+  function setupMasterEdit(nama, kode, index) {
+    document.getElementById('master-form-title').innerText = "Edit Komponen Master Data";
+    document.getElementById('m_nama').value = nama;
+    document.getElementById('m_kode').value = kode;
+    document.getElementById('m_index').value = index;
+    
+    document.getElementById('btn-save-master').className = "btn btn-warning w-100";
+    document.getElementById('btn-save-master').innerText = "Save";
+    document.getElementById('btn-cancel-master-edit').classList.remove('hidden');
+  }
+
+  function cancelMasterEdit() {
+    document.getElementById('master-form-title').innerText = "Kelola Data Master (Admin Only)";
+    document.getElementById('m_nama').value = '';
+    document.getElementById('m_kode').value = '';
+    document.getElementById('m_index').value = '-1';
+    
+    document.getElementById('btn-save-master').className = "btn btn-success w-100";
+    document.getElementById('btn-save-master').innerText = "+";
+    document.getElementById('btn-cancel-master-edit').classList.add('hidden');
   }
 
   function saveMaster() {
     const s = document.getElementById('master_choice').value;
     const n = document.getElementById('m_nama').value;
     const k = document.getElementById('m_kode').value;
-    callAPI({ action: "saveMaster", sheet: s, nama: n, kode: k, index: -1 }, () => {
-      document.getElementById('m_nama').value = ''; document.getElementById('m_kode').value = '';
-      loadMasterTable(); refreshAllMasterData();
+    const idx = document.getElementById('m_index').value;
+    if(!n || !k) return showNotification("Nama dan Kode tidak boleh kosong!", "danger");
+    
+    callAPI({ action: "saveMaster", sheet: s, nama: n, kode: k, index: idx }, () => {
+      showNotification("Data master berhasil diperbarui!");
+      cancelMasterEdit(); loadMasterTable(); refreshAllMasterData();
     });
   }
 
   function delMaster(idx) {
-    if(!confirm("Hapus?")) return;
-    callAPI({ action: "delMaster", sheet: document.getElementById('master_choice').value, index: idx }, () => loadMasterTable());
+    if(!confirm("Hapus komponen ini?")) return;
+    callAPI({ action: "delMaster", sheet: document.getElementById('master_choice').value, index: idx }, () => {
+      showNotification("Data master berhasil dihapus!");
+      loadMasterTable(); refreshAllMasterData();
+    });
   }
 
   function loadSKU() {
@@ -176,7 +232,6 @@
     const paginated = filtered.slice(start, start + 10);
 
     let html = paginated.map((item, index) => {
-      // Tombol edit hanya tampil jika user ber-role Administrator
       const adminButton = (userRole === "Administrator") ? 
         `<button onclick="setupEditForm(${start + index})" class="btn btn-outline-warning btn-sm py-0 px-2" style="font-size:11px;"><i class="fas fa-edit"></i> Edit Semua Bagian</button>` : '';
 
@@ -208,7 +263,6 @@
 
   function setPage(p) { currentPage = p; renderSKU(); }
 
-  // MASUK KE MODE EDIT (Form ditarik ke atas)
   function setupEditForm(globalIndex) {
     isEditMode = true;
     const item = allSKU[globalIndex];
@@ -219,7 +273,6 @@
     document.getElementById('edit_old_sku').value = item.sku;
     document.getElementById('edit_no_urut').value = item.no_urut;
     
-    // Set Dropdown agar sesuai nilai lama
     setSelectByText('sel_Sifat', item.s_txt);
     setSelectByText('sel_Bentuk', item.b_txt);
     setSelectByText('sel_Brand', item.br_txt);
@@ -243,7 +296,6 @@
 
   function cancelEdit() {
     isEditMode = false;
-    document.getElementById('skuForm')?.reset();
     document.getElementById('nama_produk').value = '';
     document.getElementById('harga').value = '';
     document.getElementById('form-title').innerText = "Input Data Produk Baru";
@@ -265,16 +317,18 @@
       warna: document.getElementById('sel_Warna').value, w_txt: getTxt('sel_Warna')
     };
 
+    if(!data.nama_produk || !data.harga) return showNotification("Lengkapi Nama Produk dan Harga!", "danger");
+
     if(isEditMode) {
       data.no_urut = document.getElementById('edit_no_urut').value;
       const oldSku = document.getElementById('edit_old_sku').value;
       callAPI({ action: "updateSKU", oldSku: oldSku, data: data }, () => {
-        alert("Data & Barcode Berhasil Diperbarui!");
+        showNotification("Data & Barcode Berhasil Diperbarui!");
         cancelEdit(); loadSKU();
       });
     } else {
       callAPI({ action: "submitSKU", data: data }, () => {
-        alert("SKU Berhasil Disimpan!");
+        showNotification("SKU Berhasil Disimpan!");
         document.getElementById('nama_produk').value = ''; document.getElementById('harga').value = '';
         loadSKU();
       });
@@ -297,5 +351,6 @@
     img.src = "data:image/svg+xml;base64," + btoa(svgData);
   }
 </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
 </body>
 </html>
