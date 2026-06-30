@@ -5,13 +5,27 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
   <style>
-    body { background: #f4f7f6; font-family: 'Segoe UI', sans-serif; }
+    body { background: #f4f7f6; font-family: 'Segoe UI', sans-serif; font-size: 14px; }
     .hidden { display: none !important; }
-    .card { border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-radius: 15px; }
-    .sku-card { background: #fff; border-left: 5px solid #0d6efd; margin-bottom: 10px; padding: 15px; border-radius: 8px; }
-    .barcode-img { max-width: 150px; }
-    /* Toast / Notification Styling */
-    .toast-container { position: fixed; top: 20px; right: 20px; z-index: 9999; }
+    .card { border: none; box-shadow: 0 2px 10px rgba(0,0,0,0.05); border-radius: 12px; }
+    
+    /* Responsive SKU Cards */
+    .sku-card { background: #fff; border-left: 5px solid #0d6efd; margin-bottom: 12px; padding: 15px; border-radius: 8px; }
+    .barcode-container { text-center: center; min-width: 150px; }
+    .barcode-img { max-width: 100%; height: auto; }
+    
+    .toast-container { position: fixed; top: 15px; right: 15px; z-index: 9999; }
+    
+    /* Optimasi Tampilan Mobile (HP) */
+    @media (max-width: 767px) {
+      body { font-size: 13px; }
+      .container { padding-left: 10px; padding-right: 10px; }
+      .sku-card { flex-direction: column; text-align: center; gap: 12px; }
+      .barcode-container { width: 100%; display: flex; flex-direction: column; align-items: center; }
+      .nav-pills .nav-link { padding: 8px 12px; font-size: 13px; }
+      .master-action-btns { width: 100%; display: flex; gap: 4px; }
+      .master-action-btns button { flex: 1; }
+    }
   </style>
 </head>
 <body>
@@ -19,7 +33,7 @@
 <div class="toast-container" id="toastBox"></div>
 
 <div class="container py-3">
-  <div id="loginPage" class="mx-auto" style="max-width: 400px; margin-top: 100px;">
+  <div id="loginPage" class="mx-auto" style="max-width: 100%; width: 360px; margin-top: 70px;">
     <div class="card p-4">
       <h3 class="text-center fw-bold text-primary mb-4">BD-SYSTEM</h3>
       <input type="text" id="user" class="form-control mb-3" placeholder="Username">
@@ -29,49 +43,49 @@
   </div>
 
   <div id="dashboardPage" class="hidden">
-    <div class="d-flex justify-content-between mb-3">
-      <h4 class="fw-bold">PRO SKU GENERATOR</h4>
-      <button onclick="location.reload()" class="btn btn-outline-danger btn-sm">LOGOUT</button>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h5 class="fw-bold m-0 text-secondary">PRO SKU GENERATOR</h5>
+      <button onclick="location.reload()" class="btn btn-outline-danger btn-sm px-3">LOGOUT</button>
     </div>
 
-    <ul class="nav nav-pills mb-4 bg-white p-2 rounded shadow-sm" id="pills-tab">
-      <li class="nav-item"><button class="nav-link active" onclick="showTab('sku-tab')">Input SKU</button></li>
-      <li class="nav-item" id="menu-master"><button class="nav-link text-success" onclick="showTab('master-tab')">Master Data</button></li>
+    <ul class="nav nav-pills mb-3 bg-white p-1 rounded shadow-sm" id="pills-tab">
+      <li class="nav-item flex-fill text-center"><button class="nav-link w-100 active" onclick="showTab('sku-tab')">Input SKU</button></li>
+      <li class="nav-item flex-fill text-center" id="menu-master"><button class="nav-link w-100 text-success" onclick="showTab('master-tab')">Master Data</button></li>
     </ul>
 
     <div id="sku-tab" class="tab-content">
-      <div class="card p-4 mb-4">
-        <h5 id="form-title" class="fw-bold text-primary mb-3">Input Data Produk Baru</h5>
-        <div class="row g-3">
-          <div class="col-12"><input type="text" id="nama_produk" class="form-control" placeholder="Nama Produk Lengkap"></div>
-          <div class="col-md-6"><input type="number" id="harga" class="form-control" placeholder="Harga (Rp)"></div>
+      <div class="card p-3 mb-3">
+        <h6 id="form-title" class="fw-bold text-primary mb-3">Input Data Produk Baru</h6>
+        <div class="row g-2">
+          <div class="col-12"><input type="text" id="nama_produk" class="form-control form-control-sm" placeholder="Nama Produk Lengkap"></div>
+          <div class="col-12"><input type="number" id="harga" class="form-control form-control-sm" placeholder="Harga (Rp)"></div>
           
-          <div class="col-6 col-md-3"><label class="small fw-bold">Sifat</label><select id="sel_Sifat" class="form-select"></select></div>
-          <div class="col-6 col-md-3"><label class="small fw-bold">Bentuk</label><select id="sel_Bentuk" class="form-select"></select></div>
-          <div class="col-6 col-md-3"><label class="small fw-bold">Brand</label><select id="sel_Brand" class="form-select"></select></div>
-          <div class="col-6 col-md-3"><label class="small fw-bold">Kategori</label><select id="sel_Kategori" class="form-select"></select></div>
-          <div class="col-6 col-md-3"><label class="small fw-bold">Ukuran</label><select id="sel_Ukuran" class="form-select"></select></div>
-          <div class="col-6 col-md-3"><label class="small fw-bold">Kemasan</label><select id="sel_Kemasan" class="form-select"></select></div>
-          <div class="col-6 col-md-3"><label class="small fw-bold">Aroma</label><select id="sel_Aroma" class="form-select"></select></div>
-          <div class="col-6 col-md-3"><label class="small fw-bold">Warna</label><select id="sel_Warna" class="form-select"></select></div>
+          <div class="col-6 col-md-3"><label class="xs-label fw-bold text-muted small">Sifat</label><select id="sel_Sifat" class="form-select form-select-sm"></select></div>
+          <div class="col-6 col-md-3"><label class="xs-label fw-bold text-muted small">Bentuk</label><select id="sel_Bentuk" class="form-select form-select-sm"></select></div>
+          <div class="col-6 col-md-3"><label class="xs-label fw-bold text-muted small">Brand</label><select id="sel_Brand" class="form-select form-select-sm"></select></div>
+          <div class="col-6 col-md-3"><label class="xs-label fw-bold text-muted small">Kategori</label><select id="sel_Kategori" class="form-select form-select-sm"></select></div>
+          <div class="col-6 col-md-3"><label class="xs-label fw-bold text-muted small">Ukuran</label><select id="sel_Ukuran" class="form-select form-select-sm"></select></div>
+          <div class="col-6 col-md-3"><label class="xs-label fw-bold text-muted small">Kemasan</label><select id="sel_Kemasan" class="form-select form-select-sm"></select></div>
+          <div class="col-6 col-md-3"><label class="xs-label fw-bold text-muted small">Aroma</label><select id="sel_Aroma" class="form-select form-select-sm"></select></div>
+          <div class="col-6 col-md-3"><label class="xs-label fw-bold text-muted small">Warna</label><select id="sel_Warna" class="form-select form-select-sm"></select></div>
         </div>
         <input type="hidden" id="edit_old_sku">
         <input type="hidden" id="edit_no_urut">
-        <button id="btn-submit-sku" onclick="generate()" class="btn btn-primary mt-4 fw-bold w-100">GENERATE SKU & SIMPAN</button>
-        <button id="btn-cancel-edit" onclick="cancelEdit()" class="btn btn-secondary mt-2 w-100 hidden">Batal Edit</button>
+        <button id="btn-submit-sku" onclick="generate()" class="btn btn-primary btn-sm mt-3 fw-bold w-100 py-2">GENERATE SKU & SIMPAN</button>
+        <button id="btn-cancel-edit" onclick="cancelEdit()" class="btn btn-secondary btn-sm mt-2 w-100 hidden">Batal Edit</button>
       </div>
 
-      <div class="card p-4">
-        <input type="text" id="q" class="form-control mb-3" placeholder="Pencarian Pintar..." onkeyup="renderSKU()">
+      <div class="card p-3">
+        <input type="text" id="q" class="form-control form-control-sm mb-3" placeholder="Cari Nama / Kode SKU..." onkeyup="renderSKU()">
         <div id="skuList"></div>
-        <div id="pagination" class="mt-3 text-center"></div>
+        <div id="pagination" class="mt-2 text-center"></div>
       </div>
     </div>
 
     <div id="master-tab" class="tab-content hidden">
-      <div class="card p-4">
-        <h5 id="master-form-title" class="fw-bold text-success mb-3">Kelola Data Master (Admin Only)</h5>
-        <select id="master_choice" class="form-select mb-3" onchange="cancelMasterEdit(); loadMasterTable();">
+      <div class="card p-3">
+        <h6 id="master-form-title" class="fw-bold text-success mb-2">Kelola Data Master (Admin)</h6>
+        <select id="master_choice" class="form-select form-select-sm mb-3" onchange="cancelMasterEdit(); loadMasterTable();">
           <option value="Sifat">Sifat Produk</option>
           <option value="Bentuk">Bentuk</option>
           <option value="Brand">Brand</option>
@@ -81,27 +95,33 @@
           <option value="Aroma">Aroma</option>
           <option value="Warna">Warna</option>
         </select>
-        <div class="row g-2 mb-3">
-          <div class="col-5"><input type="text" id="m_nama" class="form-control" placeholder="Nama"></div>
-          <div class="col-4"><input type="text" id="m_kode" class="form-control" placeholder="Kode"></div>
-          <input type="hidden" id="m_index" value="-1">
-          <div class="col-3 d-flex gap-1">
-            <button id="btn-save-master" onclick="saveMaster()" class="btn btn-success w-100">+</button>
-            <button id="btn-cancel-master-edit" onclick="cancelMasterEdit()" class="btn btn-secondary hidden">X</button>
+        
+        <div class="card bg-light p-2 mb-3">
+          <div class="row g-2">
+            <div class="col-12 col-sm-5"><input type="text" id="m_nama" class="form-control form-control-sm" placeholder="Nama Komponen"></div>
+            <div class="col-8 col-sm-4"><input type="text" id="m_kode" class="form-control form-control-sm" placeholder="Kode (Misal: 01)"></div>
+            <input type="hidden" id="m_index" value="-1">
+            <div class="col-4 col-sm-3 d-flex gap-1">
+              <button id="btn-save-master" onclick="saveMaster()" class="btn btn-success btn-sm w-100 fw-bold">+</button>
+              <button id="btn-cancel-master-edit" onclick="cancelMasterEdit()" class="btn btn-secondary btn-sm hidden">X</button>
+            </div>
           </div>
         </div>
-        <table class="table table-sm align-middle">
-          <thead><tr><th>Nama</th><th>Kode</th><th style="width:120px">Aksi</th></tr></thead>
-          <tbody id="masterTableBody"></tbody>
-        </table>
+
+        <div class="table-responsive">
+          <table class="table table-sm align-middle table-hover" style="min-width: 280px;">
+            <thead><tr class="table-light"><th>Nama</th><th>Kode</th><th class="text-end" style="width:100px">Aksi</th></tr></thead>
+            <tbody id="masterTableBody"></tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>
 </div>
 
 <script>
-  // v5
-  const API_URL = "https://script.google.com/macros/s/AKfycbzdTwoqj-Y7oq38gmnfOyzEepjdZ03AYEFzSU6MaO4WfyHaF9f2D2IToE0aE8Q0TpM/exec"; 
+  // v6
+  const API_URL = "https://script.google.com/macros/s/AKfycbzgyxeqDjFIF-26w8YtlGT8zz67Ivirsh8DQmlVPJ8TRlHOozvFQm3Zw06UeU3y22o/exec"; 
   
   let allSKU = [];
   let currentPage = 1;
@@ -109,22 +129,16 @@
   let isEditMode = false;
   const masterSheets = ["Sifat","Bentuk","Brand","Kategori","Ukuran","Kemasan","Aroma","Warna"];
 
-  // Sistem Notifikasi Otomatis Tanpa Klik OK
   function showNotification(message, type = "success") {
     const box = document.getElementById("toastBox");
     const id = "toast_" + Date.now();
     const bgClass = type === "success" ? "bg-success text-white" : "bg-danger text-white";
     
     box.innerHTML += `
-      <div id="${id}" class="toast align-items-center ${bgClass} border-0 show mb-2" role="alert">
-        <div class="d-flex">
-          <div class="toast-body fw-bold">${message}</div>
-        </div>
+      <div id="${id}" class="toast align-items-center ${bgClass} border-0 show mb-2 shadow" role="alert">
+        <div class="d-flex"><div class="toast-body fw-bold">${message}</div></div>
       </div>`;
-      
-    setTimeout(() => {
-      document.getElementById(id)?.remove();
-    }, 3000); // Otomatis hilang dalam 3 detik
+    setTimeout(() => { document.getElementById(id)?.remove(); }, 3000);
   }
 
   function callAPI(payload, callback) {
@@ -165,26 +179,28 @@
   function loadMasterTable() {
     const s = document.getElementById('master_choice').value;
     callAPI({ action: "getMaster", sheet: s }, data => {
+      // Merender seluruh baris tanpa ada batasan data
       document.getElementById('masterTableBody').innerHTML = data.map((r, i) => `
         <tr>
-          <td>${r[0]}</td>
-          <td><span class="badge bg-light text-dark font-monospace">${r[1]}</span></td>
-          <td>
-            <button class="btn btn-warning btn-sm p-1 py-0" onclick="setupMasterEdit('${r[0]}', '${r[1]}', ${i})">Edit</button>
-            <button class="btn btn-danger btn-sm p-1 py-0" onclick="delMaster(${i})">Del</button>
+          <td class="fw-bold">${r[0]}</td>
+          <td><span class="badge bg-secondary font-monospace">${r[1]}</span></td>
+          <td class="text-end">
+            <div class="master-action-btns d-inline-flex gap-1">
+              <button class="btn btn-warning btn-sm py-0 px-2" onclick="setupMasterEdit('${r[0]}', '${r[1]}', ${i})">Edit</button>
+              <button class="btn btn-danger btn-sm py-0 px-2" onclick="delMaster(${i})">Del</button>
+            </div>
           </td>
         </tr>`).join('');
     });
   }
 
-  // --- LOGIK EDIT MASTER DATA ---
   function setupMasterEdit(nama, kode, index) {
     document.getElementById('master-form-title').innerText = "Edit Komponen Master Data";
     document.getElementById('m_nama').value = nama;
     document.getElementById('m_kode').value = kode;
     document.getElementById('m_index').value = index;
     
-    document.getElementById('btn-save-master').className = "btn btn-warning w-100";
+    document.getElementById('btn-save-master').className = "btn btn-warning btn-sm w-100 fw-bold";
     document.getElementById('btn-save-master').innerText = "Save";
     document.getElementById('btn-cancel-master-edit').classList.remove('hidden');
   }
@@ -195,7 +211,7 @@
     document.getElementById('m_kode').value = '';
     document.getElementById('m_index').value = '-1';
     
-    document.getElementById('btn-save-master').className = "btn btn-success w-100";
+    document.getElementById('btn-save-master').className = "btn btn-success btn-sm w-100 fw-bold";
     document.getElementById('btn-save-master').innerText = "+";
     document.getElementById('btn-cancel-master-edit').classList.add('hidden');
   }
@@ -233,11 +249,11 @@
 
     let html = paginated.map((item, index) => {
       const adminButton = (userRole === "Administrator") ? 
-        `<button onclick="setupEditForm(${start + index})" class="btn btn-outline-warning btn-sm py-0 px-2" style="font-size:11px;"><i class="fas fa-edit"></i> Edit Semua Bagian</button>` : '';
+        `<button onclick="setupEditForm(${start + index})" class="btn btn-outline-warning btn-sm py-0 px-2" style="font-size:11px;"><i class="fas fa-edit"></i> Edit</button>` : '';
 
       return `
       <div class="sku-card d-flex align-items-center justify-content-between shadow-sm">
-        <div>
+        <div style="flex: 1; text-align: left;">
           <h6 class="fw-bold mb-1">${item.nama}</h6>
           <div class="text-danger small fw-bold font-monospace mb-1">${item.sku}</div>
           <div class="d-flex align-items-center gap-2 mb-1">
@@ -245,15 +261,15 @@
             ${adminButton}
           </div>
         </div>
-        <div class="text-center">
+        <div class="barcode-container text-center">
           <svg id="bc_${item.sku}" class="barcode-img"></svg><br>
-          <button onclick="downloadBC('${item.sku}')" class="btn btn-dark btn-sm mt-1" style="font-size:10px">Download Sticker</button>
+          <button onclick="downloadBC('${item.sku}')" class="btn btn-dark btn-xs mt-1 w-100" style="font-size:10px; padding: 2px 5px;">Download Sticker</button>
         </div>
       </div>`;
     }).join('');
     
     document.getElementById('skuList').innerHTML = html;
-    paginated.forEach(item => JsBarcode("#bc_" + item.sku, item.sku, { height: 40, fontSize: 12 }));
+    paginated.forEach(item => JsBarcode("#bc_" + item.sku, item.sku, { height: 35, fontSize: 11 }));
     
     let totalP = Math.min(Math.ceil(filtered.length / 10), 3);
     let pBtn = "";
@@ -267,7 +283,7 @@
     isEditMode = true;
     const item = allSKU[globalIndex];
     
-    document.getElementById('form-title').innerText = "Edit Data Produk & SKU (Barcode Otomatis Berubah)";
+    document.getElementById('form-title').innerText = "Edit Data Produk & SKU";
     document.getElementById('nama_produk').value = item.nama;
     document.getElementById('harga').value = item.harga;
     document.getElementById('edit_old_sku').value = item.sku;
