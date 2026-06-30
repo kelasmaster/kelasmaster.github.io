@@ -10,20 +10,25 @@
     .hidden { display: none !important; }
     .card { border: none; box-shadow: 0 2px 10px rgba(0,0,0,0.05); border-radius: 12px; }
     
-    .sku-card { background: #fff; border-left: 5px solid #0d6efd; margin-bottom: 12px; padding: 15px; border-radius: 8px; }
-    .barcode-container { text-center: center; min-width: 150px; }
+    .sku-card { background: #fff; border-left: 5px solid #0d6efd; margin-bottom: 12px; padding: 12px; border-radius: 8px; }
+    .barcode-container { text-align: center; min-width: 140px; }
     .barcode-img { max-width: 100%; height: auto; }
     
     .toast-container { position: fixed; top: 15px; right: 15px; z-index: 9999; }
     
+    /* Perbaikan Mutlak untuk Tampilan Mobile (HP) */
     @media (max-width: 767px) {
-      body { font-size: 13px; }
-      .container { padding-left: 10px; padding-right: 10px; }
-      .sku-card { flex-direction: column; text-align: center; gap: 12px; }
-      .barcode-container { width: 100%; display: flex; flex-direction: column; align-items: center; }
-      .nav-pills .nav-link { padding: 8px 12px; font-size: 13px; }
+      body { font-size: 12px; }
+      .container { padding-left: 8px; padding-right: 8px; }
+      .sku-card { flex-direction: column !important; text-align: center; gap: 10px; padding: 10px; }
+      .sku-card > div { width: 100%; text-align: center !important; }
+      .barcode-container { width: 100%; display: flex; flex-direction: column; align-items: center; margin-top: 5px; }
+      .barcode-img { max-width: 180px; }
+      .nav-pills .nav-link { padding: 6px 10px; font-size: 12px; }
       .master-action-btns { width: 100%; display: flex; gap: 4px; }
-      .master-action-btns button { flex: 1; }
+      .master-action-btns button { flex: 1; padding: 4px 0; }
+      .form-control-sm, .form-select-sm { font-size: 12px; height: 34px; }
+      label.small { font-size: 11px; }
     }
   </style>
 </head>
@@ -32,9 +37,9 @@
 <div class="toast-container" id="toastBox"></div>
 
 <div class="container py-3">
-  <div id="loginPage" class="mx-auto" style="max-width: 100%; width: 360px; margin-top: 70px;">
+  <div id="loginPage" class="mx-auto" style="max-width: 100%; width: 340px; margin-top: 60px;">
     <div class="card p-4">
-      <h3 class="text-center fw-bold text-primary mb-4">SKU Generator</h3>
+      <h4 class="text-center fw-bold text-primary mb-4">BD-SYSTEM</h4>
       <input type="text" id="user" class="form-control mb-3" placeholder="Username">
       <input type="password" id="pass" class="form-control mb-3" placeholder="Password">
       <button onclick="handleLogin()" class="btn btn-primary w-100 fw-bold">LOGIN</button>
@@ -43,8 +48,8 @@
 
   <div id="dashboardPage" class="hidden">
     <div class="d-flex justify-content-between align-items-center mb-3">
-      <h5 class="fw-bold m-0 text-secondary">PRO SKU GENERATOR</h5>
-      <button onclick="location.reload()" class="btn btn-outline-danger btn-sm px-3">LOGOUT</button>
+      <h6 class="fw-bold m-0 text-secondary">PRO SKU GENERATOR</h6>
+      <button onclick="location.reload()" class="btn btn-outline-danger btn-sm px-3" style="font-size:12px;">LOGOUT</button>
     </div>
 
     <ul class="nav nav-pills mb-3 bg-white p-1 rounded shadow-sm" id="pills-tab">
@@ -59,14 +64,14 @@
           <div class="col-12"><input type="text" id="nama_produk" class="form-control form-control-sm" placeholder="Nama Produk Lengkap"></div>
           <div class="col-12"><input type="number" id="harga" class="form-control form-control-sm" placeholder="Harga (Rp)"></div>
           
-          <div class="col-6 col-md-3"><label class="xs-label fw-bold text-muted small">Sifat</label><select id="sel_Sifat" class="form-select form-select-sm"></select></div>
-          <div class="col-6 col-md-3"><label class="xs-label fw-bold text-muted small">Bentuk</label><select id="sel_Bentuk" class="form-select form-select-sm"></select></div>
-          <div class="col-6 col-md-3"><label class="xs-label fw-bold text-muted small">Brand</label><select id="sel_Brand" class="form-select form-select-sm"></select></div>
-          <div class="col-6 col-md-3"><label class="xs-label fw-bold text-muted small">Kategori</label><select id="sel_Kategori" class="form-select form-select-sm"></select></div>
-          <div class="col-6 col-md-3"><label class="xs-label fw-bold text-muted small">Ukuran</label><select id="sel_Ukuran" class="form-select form-select-sm"></select></div>
-          <div class="col-6 col-md-3"><label class="xs-label fw-bold text-muted small">Kemasan</label><select id="sel_Kemasan" class="form-select form-select-sm"></select></div>
-          <div class="col-6 col-md-3"><label class="xs-label fw-bold text-muted small">Aroma</label><select id="sel_Aroma" class="form-select form-select-sm"></select></div>
-          <div class="col-6 col-md-3"><label class="xs-label fw-bold text-muted small">Warna</label><select id="sel_Warna" class="form-select form-select-sm"></select></div>
+          <div class="col-6 col-md-3"><label class="fw-bold text-muted small">Sifat</label><select id="sel_Sifat" class="form-select form-select-sm"></select></div>
+          <div class="col-6 col-md-3"><label class="fw-bold text-muted small">Bentuk</label><select id="sel_Bentuk" class="form-select form-select-sm"></select></div>
+          <div class="col-6 col-md-3"><label class="fw-bold text-muted small">Brand</label><select id="sel_Brand" class="form-select form-select-sm"></select></div>
+          <div class="col-6 col-md-3"><label class="fw-bold text-muted small">Kategori</label><select id="sel_Kategori" class="form-select form-select-sm"></select></div>
+          <div class="col-6 col-md-3"><label class="fw-bold text-muted small">Ukuran</label><select id="sel_Ukuran" class="form-select form-select-sm"></select></div>
+          <div class="col-6 col-md-3"><label class="fw-bold text-muted small">Kemasan</label><select id="sel_Kemasan" class="form-select form-select-sm"></select></div>
+          <div class="col-6 col-md-3"><label class="fw-bold text-muted small">Aroma</label><select id="sel_Aroma" class="form-select form-select-sm"></select></div>
+          <div class="col-6 col-md-3"><label class="fw-bold text-muted small">Warna</label><select id="sel_Warna" class="form-select form-select-sm"></select></div>
         </div>
         <input type="hidden" id="edit_old_sku">
         <input type="hidden" id="edit_no_urut">
@@ -108,8 +113,8 @@
         </div>
 
         <div class="table-responsive">
-          <table class="table table-sm align-middle table-hover" style="min-width: 280px;">
-            <thead><tr class="table-light"><th>Nama</th><th>Kode</th><th class="text-end" style="width:100px">Aksi</th></tr></thead>
+          <table class="table table-sm align-middle table-hover" style="min-width: 260px;">
+            <thead><tr class="table-light"><th>Nama</th><th>Kode</th><th class="text-end" style="width:90px">Aksi</th></tr></thead>
             <tbody id="masterTableBody"></tbody>
           </table>
         </div>
@@ -118,15 +123,14 @@
     </div>
   </div>
 </div>
-
+<!-- v8 -->
 <script>
-  <!-- v7 -->
-  const API_URL = "https://script.google.com/macros/s/AKfycbzT4JNLvfCicugFgWWd7cBEb4np5aVgI2YXBs2FYJ0BhpkYx2FwHaKfglNzZ0Eyn65u/exec"; 
+  const API_URL = "https://script.google.com/macros/s/AKfycbzK3JEEfimmbkddRcKI8LE_cHJj9Ca6R4cQEbGPmOcm_cVV12tCOHtwdDKm6i7BhIqs/exec"; 
   
   let allSKU = [];
   let currentPage = 1;
-  let currentMasterPage = 1; // Halaman aktif Master Data
-  let currentMasterData = []; // Penyimpan data master yang sedang dibuka
+  let currentMasterPage = 1; 
+  let currentMasterData = []; 
   let userRole = "User";
   let isEditMode = false;
   const masterSheets = ["Sifat","Bentuk","Brand","Kategori","Ukuran","Kemasan","Aroma","Warna"];
@@ -159,7 +163,7 @@
         refreshAllMasterData();
         loadSKU();
         showNotification("Selamat datang, " + payload.user);
-      } else showNotification("Login Gagal! Periksa kembali akun Anda.", "danger");
+      } else showNotification("Login Gagal!", "danger");
     });
   }
 
@@ -169,11 +173,12 @@
     if(id === 'master-tab') { resetMasterPageState(); loadMasterTable(); }
   }
 
+  // FIX RENDERING: Menggunakan nilai kode berbasis string murni agar angka 00 / 0 tidak hilang di pilihan dropdown website
   function refreshAllMasterData() {
     masterSheets.forEach(s => {
       callAPI({ action: "getMaster", sheet: s }, data => {
         const sel = document.getElementById('sel_'+s);
-        if(sel) sel.innerHTML = data.map(r => `<option value="${r[1]}">${r[0]} (${r[1]})</option>`).join('');
+        if(sel) sel.innerHTML = data.map(r => `<option value="${String(r[1])}">${r[0]} (${String(r[1])})</option>`).join('');
       });
     });
   }
@@ -183,7 +188,6 @@
     cancelMasterEdit();
   }
 
-  // FIX: Menggunakan Pagination 10 data per halaman & maks 3 halaman untuk master data
   function loadMasterTable() {
     const s = document.getElementById('master_choice').value;
     callAPI({ action: "getMaster", sheet: s }, data => {
@@ -197,26 +201,25 @@
     const paginatedData = currentMasterData.slice(start, start + 10);
     
     document.getElementById('masterTableBody').innerHTML = paginatedData.map((r, i) => {
-      const globalIndex = start + i; // Indeks baris asli untuk keperluan edit/delete
+      const globalIndex = start + i; 
       return `
         <tr>
           <td class="fw-bold">${r[0]}</td>
-          <td><span class="badge bg-secondary font-monospace">${r[1]}</span></td>
+          <td><span class="badge bg-secondary font-monospace">${String(r[1])}</span></td>
           <td class="text-end">
             <div class="master-action-btns d-inline-flex gap-1">
-              <button class="btn btn-warning btn-sm py-0 px-2" onclick="setupMasterEdit('${r[0]}', '${r[1]}', ${globalIndex})">Edit</button>
-              <button class="btn btn-danger btn-sm py-0 px-2" onclick="delMaster(${globalIndex})">Del</button>
+              <button class="btn btn-warning btn-sm py-0 px-2" style="font-size:11px;" onclick="setupMasterEdit('${r[0]}', '${String(r[1])}', ${globalIndex})">Edit</button>
+              <button class="btn btn-danger btn-sm py-0 px-2" style="font-size:11px;" onclick="delMaster(${globalIndex})">Del</button>
             </div>
           </td>
         </tr>`;
     }).join('');
 
-    // Generate Tombol Navigasi Pagination Master Data (Maksimal 3 Halaman)
     let totalPages = Math.min(Math.ceil(currentMasterData.length / 10), 3);
     let pBtn = "";
     if(totalPages > 1) {
       for(let i = 1; i <= totalPages; i++) {
-        pBtn += `<button onclick="setMasterPage(${i})" class="btn btn-sm ${i === currentMasterPage ? 'btn-success' : 'btn-light'} mx-1">${i}</button>`;
+        pBtn += `<button onclick="setMasterPage(${i})" class="btn btn-xs ${i === currentMasterPage ? 'btn-success text-white' : 'btn-light'} mx-1" style="padding: 2px 8px; font-size:11px;">${i}</button>`;
       }
     }
     document.getElementById('masterPagination').innerHTML = pBtn;
@@ -230,7 +233,7 @@
   function setupMasterEdit(nama, kode, index) {
     document.getElementById('master-form-title').innerText = "Edit Komponen Master Data";
     document.getElementById('m_nama').value = nama;
-    document.getElementById('m_kode').value = kode;
+    document.getElementById('m_kode').value = String(code);
     document.getElementById('m_index').value = index;
     
     document.getElementById('btn-save-master').className = "btn btn-warning btn-sm w-100 fw-bold";
@@ -287,14 +290,14 @@
       return `
       <div class="sku-card d-flex align-items-center justify-content-between shadow-sm">
         <div style="flex: 1; text-align: left;">
-          <h6 class="fw-bold mb-1">${item.nama}</h6>
-          <div class="text-danger small fw-bold font-monospace mb-1">${item.sku}</div>
+          <h6 class="fw-bold mb-1" style="font-size: 13px;">${item.nama}</h6>
+          <div class="text-danger small fw-bold font-monospace mb-1" style="font-size: 12px;">${item.sku}</div>
           <div class="d-flex align-items-center gap-2 mb-1">
             <span class="text-success fw-bold">Rp ${parseInt(item.harga).toLocaleString()}</span>
             ${adminButton}
           </div>
         </div>
-        <div class="barcode-container text-center">
+        <div class="barcode-container">
           <svg id="bc_${item.sku}" class="barcode-img"></svg><br>
           <button onclick="downloadBC('${item.sku}')" class="btn btn-dark btn-xs mt-1 w-100" style="font-size:10px; padding: 2px 5px;">Download Sticker</button>
         </div>
@@ -302,11 +305,11 @@
     }).join('');
     
     document.getElementById('skuList').innerHTML = html;
-    paginated.forEach(item => JsBarcode("#bc_" + item.sku, item.sku, { height: 35, fontSize: 11 }));
+    paginated.forEach(item => JsBarcode("#bc_" + item.sku, item.sku, { height: 32, fontSize: 10 }));
     
     let totalP = Math.min(Math.ceil(filtered.length / 10), 3);
     let pBtn = "";
-    for(let i=1; i<=totalP; i++) pBtn += `<button onclick="setPage(${i})" class="btn btn-sm ${i==currentPage?'btn-primary':'btn-light'} mx-1">${i}</button>`;
+    for(let i=1; i<=totalP; i++) pBtn += `<button onclick="setPage(${i})" class="btn btn-xs ${i==currentPage?'btn-primary':'btn-light'} mx-1" style="padding: 2px 8px; font-size:11px;">${i}</button>`;
     document.getElementById('pagination').innerHTML = pBtn;
   }
 
