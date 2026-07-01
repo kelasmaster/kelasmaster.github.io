@@ -4,12 +4,14 @@
   <base target="_top">
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>SKU & QR Generator</title>
+  <title>SKU Generator</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   
+  <!-- Library QR Code Generator -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <!-- Library HTML5-QRCode untuk Barcode/QR Scanner via Kamera -->
   <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
   
   <style>
@@ -21,8 +23,6 @@
     .sku-code-text { font-family: 'Courier New', Courier, monospace; font-weight: 700; color: #dc3545; font-size: 15px; letter-spacing: 0.5px; }
     
     .toast-container { position: fixed; top: 15px; right: 15px; z-index: 9999; width: calc(100% - 30px); max-width: 350px; }
-    
-    /* Area QR Code di Modal */
     .qrcode-modal-area { display: flex; justify-content: center; align-items: center; background: #f8f9fa; padding: 20px; border-radius: 8px; margin-top: 15px; min-height: 160px; }
     .qrcode-modal-area img { max-width: 100%; height: auto; border: 1px solid #ddd; padding: 5px; background: #fff; }
 
@@ -32,7 +32,7 @@
     @media (max-width: 767px) {
       body { font-size: 14px; }
       .container { padding-left: 12px; padding-right: 12px; }
-      .row g-2 > div { width: 100% !important; }
+      .row.g-2 > div { width: 100% !important; }
       .btn { padding: 10px 12px; font-size: 14px; }
       .nav-pills .nav-link { padding: 12px; font-size: 14px; }
       
@@ -53,15 +53,17 @@
 <div class="toast-container" id="toastBox"></div>
 
 <div class="container py-3" style="max-width: 800px;">
+  <!-- LOGIN PAGE -->
   <div id="loginPage" class="mx-auto" style="width: 100%; max-width: 360px; margin-top: 50px;">
     <div class="card p-4">
-      <h3 class="text-center fw-bold text-primary mb-4">BD-SYSTEM</h3>
+      <h3 class="text-center fw-bold text-primary mb-4">SKU GEN</h3>
       <div class="mb-3"><input type="text" id="user" class="form-control form-control-lg" placeholder="Username"></div>
       <div class="mb-3"><input type="password" id="pass" class="form-control form-control-lg" placeholder="Password"></div>
       <button onclick="handleLogin()" class="btn btn-primary btn-lg w-100 fw-bold">LOGIN</button>
     </div>
   </div>
 
+  <!-- DASHBOARD PAGE -->
   <div id="dashboardPage" class="hidden">
     <div class="d-flex justify-content-between align-items-center mb-3">
       <h5 class="fw-bold m-0 text-secondary">PRO SKU & QR GENERATOR</h5>
@@ -73,6 +75,7 @@
       <li class="nav-item flex-fill text-center" id="menu-master"><button class="nav-link w-100 text-success" onclick="showTab('master-tab')">Master Data</button></li>
     </ul>
 
+    <!-- FORM INPUT SKU -->
     <div id="sku-tab" class="tab-content">
       <div class="card p-3 mb-3">
         <h6 id="form-title" class="fw-bold text-primary mb-3">Input Data Produk Baru / Bahan Baku</h6>
@@ -95,12 +98,14 @@
         <button id="btn-cancel-edit" onclick="cancelEdit()" class="btn btn-secondary mt-2 w-100 hidden">Batal Edit</button>
       </div>
 
+      <!-- PENCARIAN KODE SKU & QR SCANNER -->
       <div class="card p-3">
         <div class="input-group mb-2">
           <input type="text" id="q" class="form-control" placeholder="Cari Kode SKU saja..." onkeyup="renderSKU()">
-          <button class="btn btn-outline-primary" type="button" id="btn-toggle-scan" onclick="triggerScanner()" title="Scan QR / Barcode" style="width:auto !important;"><i class="fas fa-camera"></i> Scan</button>
+          <button class="btn btn-outline-primary" type="button" id="btn-toggle-scan" onclick="triggerScanner()" title="Scan QR Code" style="width:auto !important;"><i class="fas fa-camera"></i> Scan</button>
         </div>
         
+        <!-- Wadah Kamera Video Scanner -->
         <div id="reader" class="hidden"></div>
         
         <div id="skuList"></div>
@@ -108,6 +113,7 @@
       </div>
     </div>
 
+    <!-- TAB MASTER DATA -->
     <div id="master-tab" class="tab-content hidden">
       <div class="card p-3">
         <h6 id="master-form-title" class="fw-bold text-success mb-2">Kelola Data Master (Admin)</h6>
@@ -146,6 +152,7 @@
   </div>
 </div>
 
+<!-- MODAL POPUP DETAIL DATA PRODUK & QR CODE -->
 <div class="modal fade" id="detailModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
@@ -173,8 +180,9 @@
 </div>
 
 <script>
-  // v12 dengan qrcode scanner
+  // v13 dengan qrcode scanner
   const API_URL = "https://script.google.com/macros/s/AKfycbwNA_mT0or0ON1wcitKt4x1cmELZbW2lAYvLupJaMJ6TFbJEzMUpYwtuozX2tPHf8NR/exec"; 
+  
   
   let allSKU = [];
   let currentPage = 1;
@@ -184,7 +192,6 @@
   let isEditMode = false;
   let myModal;
   
-  // Objek global QR Code dan Scanner
   let qrCodeGenerator = null;
   let html5QrCodeScanner = null;
   let isScanning = false;
@@ -318,14 +325,15 @@
 
   function loadSKU() { callAPI({ action: "getSKU" }, data => { allSKU = data; renderSKU(); }); }
 
+  // FIX: Hanya menyaring dan memfilter HANYA berdasarkan KODE SKU murni
   function renderSKU() {
     const q = document.getElementById('q').value.toLowerCase();
     const filtered = allSKU.filter(x => x.sku.toLowerCase().includes(q));
     const start = (currentPage - 1) * 10;
     const paginated = filtered.slice(start, start + 10);
 
-    let html = paginated.map((item, index) => {
-      return `<div class="sku-list-item"><div class="sku-code-text">${item.sku}</div><button onclick="openDetailModal(${start + index})" class="btn btn-sm btn-primary px-3 py-1" style="width:auto !important;">Detail</button></div>`;
+    let html = paginated.map((item) => {
+      return `<div class="sku-list-item"><div class="sku-code-text">${item.sku}</div><button onclick="openDetailModal('${item.sku}')" class="btn btn-sm btn-primary px-3 py-1" style="width:auto !important;">Detail</button></div>`;
     }).join('');
     
     document.getElementById('skuList').innerHTML = html || '<div class="text-center text-muted py-3">Kode SKU tidak ditemukan</div>';
@@ -340,17 +348,17 @@
 
   function setPage(p) { currentPage = p; renderSKU(); }
 
-  // FIX: Mengubah Pembuatan Kode Menjadi QR Code
-  function openDetailModal(globalIndex) {
-    const item = allSKU[globalIndex];
+  // FIX: Menggunakan find() untuk mencari berdasarkan Teks SKU agar tidak bentrok saat data disaring/discanned
+  function openDetailModal(skuCode) {
+    const item = allSKU.find(x => x.sku === skuCode);
+    if (!item) return showNotification("Data produk tidak ditemukan!", "danger");
+    
     document.getElementById('md_nama').innerText = item.nama;
     document.getElementById('md_sku').innerText = item.sku;
     document.getElementById('md_harga').innerText = "Rp " + parseInt(item.harga).toLocaleString('id-ID');
     
-    // Clear area wadah QR Code terdahulu
     document.getElementById("modalQrCode").innerHTML = "";
     
-    // Render QR Code baru secara real-time
     qrCodeGenerator = new QRCode(document.getElementById("modalQrCode"), {
       text: item.sku,
       width: 150,
@@ -365,13 +373,13 @@
     const editBtn = document.getElementById('md_btn_edit');
     if (userRole === "Administrator") {
       editBtn.classList.remove('hidden');
-      editBtn.onclick = () => { myModal.hide(); setupEditForm(globalIndex); };
+      editBtn.onclick = () => { myModal.hide(); setupEditFormBySku(item.sku); };
     } else editBtn.classList.add('hidden');
     
     myModal.show();
   }
 
-  // ENGINE LIVE CAMERA SCANNER (Mendukung QR Code dan Barcode sekaligus)
+  // LIVE CAMERA SCANNER ENGINE (Membaca QR / Barcode)
   function triggerScanner() {
     const readerDiv = document.getElementById('reader');
     const btnScan = document.getElementById('btn-toggle-scan');
@@ -385,7 +393,7 @@
       isScanning = true;
 
       html5QrCodeScanner = new Html5Qrcode("reader");
-      const config = { fps: 15, qrbox: { width: 200, height: 200 } }; // Kotak simetris seimbang untuk QR code
+      const config = { fps: 15, qrbox: { width: 200, height: 200 } };
 
       html5QrCodeScanner.start(
         { facingMode: "environment" }, 
@@ -397,7 +405,7 @@
           stopScanner(); 
         },
         (errorMessage) => {
-          // Live tracking scanning bypass
+          // Live scan tracking bypass
         }
       ).catch(err => {
         showNotification("Gagal mengakses kamera: " + err, "danger");
@@ -423,9 +431,11 @@
     isScanning = false;
   }
 
-  function setupEditForm(globalIndex) {
+  function setupEditFormBySku(skuCode) {
     isEditMode = true;
-    const item = allSKU[globalIndex];
+    const item = allSKU.find(x => x.sku === skuCode);
+    if (!item) return showNotification("Gagal memuat data edit", "danger");
+    
     document.getElementById('form-title').innerText = "Edit Data Produk & SKU";
     document.getElementById('nama_produk').value = item.nama;
     document.getElementById('harga').value = item.harga;
@@ -468,16 +478,13 @@
 
   function getTxt(id) { const e = document.getElementById(id); return e ? e.options[e.selectedIndex].text : ''; }
 
-  // Fungsi Unduh Gambar QR Code (.png) yang Diperbaiki
+  // FIX DOWNLOAD: Mengambil paksa objek grafik murni dari elemen canvas untuk memaksa format unduhan PNG gambar asli
   function downloadQR(sku) {
-    // Mencari elemen canvas yang dibuat oleh qrcode.js
     const canvasEl = document.querySelector("#modalQrCode canvas");
     
     if (!canvasEl) {
-      // Fallback jika canvas tidak ditemukan, coba ambil dari img
       const imgEl = document.querySelector("#modalQrCode img");
       if (!imgEl) return showNotification("Gagal mengunduh gambar QR", "danger");
-      
       const a = document.createElement("a");
       a.href = imgEl.src;
       a.download = `QR_${sku}.png`;
@@ -485,15 +492,14 @@
       return;
     }
     
-    // Mengonversi canvas langsung menjadi URL Data PNG yang valid
     try {
       const dataUrl = canvasEl.toDataURL("image/png");
       const a = document.createElement("a");
       a.href = dataUrl;
-      a.download = `QR_${sku}.png`; // Memaksa ekstensi .png
+      a.download = `QR_${sku}.png`; 
       document.body.appendChild(a);
       a.click();
-      document.body.removeChild(a); // Bersihkan elemen setelah diklik
+      document.body.removeChild(a);
       showNotification("QR Code berhasil diunduh sebagai PNG");
     } catch (err) {
       console.error(err);
