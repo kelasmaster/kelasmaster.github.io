@@ -4,210 +4,219 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Al-Qur'an MP3 & Terjemahan</title>
-    <!-- Tailwind CSS untuk Desain Modern -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts untuk Font Arab -->
-    <link href="https://fonts.googleapis.com/css2?family=Amiri&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Poppins', sans-serif; }
-        .font-arabic { font-family: 'Amiri', serif; }
+        /* Gaya Dasar & Layout */
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #f4f6f9; color: #333; display: flex; flex-direction: column; height: 100vh; }
+        
+        /* Header */
+        header { background-color: #0f766e; color: white; padding: 15px 20px; font-size: 1.2rem; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        
+        /* Kontainer Utama */
+        .main-container { display: flex; flex: 1; overflow: hidden; padding: 15px; gap: 15px; }
+        
+        /* Sidebar Daftar Surah */
+        .sidebar { width: 30%; background: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); padding: 15px; overflow-y: auto; }
+        .sidebar h2 { color: #0f766e; font-size: 1.1rem; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #f0f0f0; }
+        .surah-btn { width: 100%; text-align: left; background: none; border: 1px solid #e2e8f0; padding: 12px; margin-bottom: 8px; border-radius: 6px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: all 0.2s; }
+        .surah-btn:hover { background-color: #f0fdfa; border-color: #0f766e; }
+        .surah-name-id { font-weight: 600; color: #475569; font-size: 0.95rem; }
+        .surah-sub { font-size: 0.75rem; color: #94a3b8; margin-top: 2px; }
+        .surah-name-ar { font-size: 1.2rem; color: #0f766e; font-weight: bold; }
+
+        /* Area Konten Utama (Ayat) */
+        .content-area { width: 70%; background: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); padding: 20px; display: flex; flex-direction: column; overflow: hidden; }
+        .surah-header { border-bottom: 2px solid #f0f0f0; padding-bottom: 15px; margin-bottom: 15px; }
+        .surah-title { font-size: 1.4rem; color: #1e293b; }
+        .audio-player-wrapper { margin-top: 10px; background: #f0fdfa; padding: 10px; border-radius: 6px; display: flex; align-items: center; gap: 10px; }
+        .audio-player-wrapper span { font-size: 0.8rem; font-weight: bold; color: #0f766e; }
+        audio { flex: 1; height: 32px; }
+
+        /* Opsi Tampilan Checkbox */
+        .options-bar { display: flex; gap: 15px; background: #f8fafc; padding: 10px; border-radius: 6px; margin-bottom: 15px; font-size: 0.9rem; }
+        .options-bar label { display: flex; align-items: center; gap: 6px; cursor: pointer; font-weight: 500; }
+
+        /* Daftar Ayat */
+        .ayat-list { flex: 1; overflow-y: auto; padding-right: 5px; }
+        .ayat-item { padding: 15px; border-bottom: 1px solid #f1f5f9; background: #fafafa; border-radius: 6px; margin-bottom: 10px; }
+        .ayat-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 15px; margin-bottom: 12px; }
+        .ayat-num { background: #0f766e; color: white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: bold; flex-shrink: 0; }
+        .ayat-arabic { font-size: 1.8rem; text-align: right; line-height: 2.5rem; color: #1e293b; width: 100%; word-break: break-word; }
+        .ayat-translation { font-size: 0.9rem; color: #475569; padding-left: 40px; line-height: 1.4rem; }
+        .ayat-translation em { font-size: 0.75rem; color: #94a3b8; display: block; margin-bottom: 3px; }
+        
+        /* Tombol Per Ayat */
+        .play-ayat-btn { margin-left: 40px; margin-top: 8px; background: white; border: 1px solid #cbd5e1; padding: 5px 10px; border-radius: 4px; font-size: 0.75rem; cursor: pointer; font-weight: 600; color: #0f766e; transition: background 0.2s; }
+        .play-ayat-btn:hover { background: #f0fdfa; border-color: #0f766e; }
+
+        /* Placeholder awal */
+        .placeholder { text-align: center; color: #94a3b8; margin-top: 100px; font-size: 1rem; }
+        .placeholder span { font-size: 3rem; display: block; margin-bottom: 10px; }
+
+        /* Footer */
+        footer { background: #1e293b; color: #94a3b8; text-align: center; padding: 10px; font-size: 0.75rem; }
+
+        /* Responsif Mobile */
+        @media (max-width: 768px) {
+            .main-container { flex-direction: column; overflow: visible; height: auto; }
+            .sidebar { width: 100%; height: 300px; }
+            .content-area { width: 100%; height: 500px; }
+        }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+<body>
 
-    <!-- Header -->
-    <header class="bg-teal-600 text-white shadow-md p-4 sticky top-0 z-50">
-        <div class="container mx-auto flex justify-between items-center">
-            <h1 class="text-xl font-bold flex items-center gap-2">
-                <span>📖</span> Al-Qur'an MP3 & Terjemahan
-            </h1>
-            <!-- Tombol Spotify Podcast -->
-            <a href="https://open.spotify.com/show/29yO24EDPeRMA3eMlRPz0Y?si=B-fPnoUlR4C4WgXDQXTtvg" 
-               target="_blank" 
-               class="bg-green-500 hover:bg-green-600 text-white text-xs md:text-sm font-semibold px-3 py-2 rounded-full flex items-center gap-2 transition shadow">
-                <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm4.586 14.424c-.18.295-.565.387-.86.207-2.377-1.454-5.37-1.783-8.893-.982-.336.075-.668-.135-.744-.47-.075-.336.135-.668.47-.743 3.856-.88 7.15-.51 9.822 1.13.296.178.387.563.206.858zm1.225-2.72c-.227.367-.707.487-1.074.26-2.72-1.672-6.87-2.157-10.08-1.182-.413.125-.847-.107-.972-.52-.125-.413.107-.847.52-.972 3.676-1.114 8.248-.574 11.348 1.33.367.226.487.706.258 1.074zm.104-2.822C14.39 8.52 8.438 8.322 4.994 9.37c-.526.16-1.077-.143-1.237-.67-.16-.526.143-1.077.67-1.237 3.96-1.202 10.536-.98 14.5 1.373.474.28.63.893.35 1.366-.28.474-.893.63-1.366.35z"/></svg>
-                Open Spotify Podcast
-            </h1>
+    <header>📖 Al-Qur'an MP3 & Terjemahan Indonesia</header>
+
+    <div class="main-container">
+        <div class="sidebar">
+            <h2>Daftar Surah</h2>
+            <div id="surah-list">Mencari data surah...</div>
         </div>
-    </header>
 
-    <!-- Main Content -->
-    <main class="container mx-auto p-4 flex-1 grid grid-cols-1 md:grid-cols-3 gap-6">
-        
-        <!-- Sidebar: Daftar Surah -->
-        <section class="bg-white rounded-xl shadow p-4 h-[calc(100vh-140px)] overflow-y-auto">
-            <h2 class="font-semibold text-lg border-b pb-2 mb-4 text-teal-700">Daftar Surah</h2>
-            <div id="surah-list" class="space-y-2">
-                <!-- Data Surah dimuat via JS -->
-                <p class="text-gray-500 text-sm animate-pulse">Memuat daftar surah...</p>
-            </div>
-        </section>
-
-        <!-- Konten Utama: Detail Surah & Audio -->
-        <section class="md:col-span-2 bg-white rounded-xl shadow p-6 flex flex-col h-[calc(100vh-140px)]">
-            <!-- Info Surah Aktif -->
-            <div id="surah-header" class="border-b pb-4 mb-4 hidden">
-                <h2 id="surah-title" class="text-2xl font-bold text-slate-800">Nama Surah</h2>
-                <p id="surah-desc" class="text-sm text-gray-500">Arti • Total Ayat</p>
-                <!-- Audio Player Utama (Per Surah) -->
-                <div class="mt-4 bg-teal-50 p-3 rounded-lg flex items-center gap-4">
-                    <span class="text-xs font-semibold text-teal-800">Putar Penuh:</span>
-                    <audio id="main-audio" controls class="w-full h-8"></audio>
+        <div class="content-area">
+            <div id="surah-header" style="display: none;">
+                <h3 id="surah-title" class="surah-title">Nama Surah</h3>
+                <div class="audio-player-wrapper">
+                    <span>Putar Surah:</span>
+                    <audio id="main-audio" controls></audio>
                 </div>
             </div>
 
-            <!-- Opsi Tampilan -->
-            <div class="flex gap-4 mb-4 text-sm bg-slate-100 p-2 rounded-lg">
-                <label class="flex items-center gap-2 cursor-pointer">
-                    <input type="checkbox" id="toggle-arabic" checked class="accent-teal-600"> Teks Arab
-                </label>
-                <label class="flex items-center gap-2 cursor-pointer">
-                    <input type="checkbox" id="toggle-translation" checked class="accent-teal-600"> Terjemahan
-                </label>
+            <div class="options-bar">
+                <label><input type="checkbox" id="chk-arabic" checked> Teks Arab</label>
+                <label><input type="checkbox" id="chk-translation" checked> Terjemahan</label>
             </div>
 
-            <!-- Area Ayat-Ayat -->
-            <div id="ayat-container" class="flex-1 overflow-y-auto space-y-6 pr-2">
-                <div class="text-center text-gray-400 mt-20">
-                    <span class="text-4xl block mb-2">📖</span>
-                    Silakan pilih surah di sebelah kiri untuk memulai membaca dan mendengarkan.
+            <div id="ayat-list" class="ayat-list">
+                <div class="placeholder">
+                    <span>📖</span> Silakan pilih surah di sebelah kiri untuk menampilkan teks dan memutar audio.
                 </div>
             </div>
-        </section>
-    </main>
+        </div>
+    </div>
 
-    <!-- Footer -->
-    <footer class="bg-slate-800 text-slate-400 text-center py-3 text-xs">
-        &copy; 2026 Aplikasi Al-Qur'an MP3. Audio terintegrasi & Referensi Podcast Murottal Spotify.
+    <footer>
+        Aplikasi Al-Qur'an Mandiri. Sumber Data: equran.id | Referensi Katalog Mandiri: googleusercontent.com/spotify.com/0
     </footer>
 
-    <!-- Logika Aplikasi (JavaScript) -->
     <script>
-        const apiBase = "https://equran.id/api/v2";
-        const surahListEl = document.getElementById('surah-list');
-        const surahHeaderEl = document.getElementById('surah-header');
-        const surahTitleEl = document.getElementById('surah-title');
-        const surahDescEl = document.getElementById('surah-desc');
-        const mainAudioEl = document.getElementById('main-audio');
-        const ayatContainerEl = document.getElementById('ayat-container');
+        const API_URL = "https://equran.id/api/v2";
+        const surahListContainer = document.getElementById('surah-list');
+        const surahHeader = document.getElementById('surah-header');
+        const surahTitle = document.getElementById('surah-title');
+        const mainAudio = document.getElementById('main-audio');
+        const ayatListContainer = document.getElementById('ayat-list');
+        
+        const chkArabic = document.getElementById('chk-arabic');
+        const chkTranslation = document.getElementById('chk-translation');
 
-        // Kontrol Visibilitas Teks
-        const toggleArabic = document.getElementById('toggle-arabic');
-        const toggleTranslation = document.getElementById('toggle-translation');
-
-        toggleArabic.addEventListener('change', () => {
-            document.querySelectorAll('.txt-arabic').forEach(el => el.style.display = toggleArabic.checked ? 'block' : 'none');
+        // Event listener untuk menyembunyikan/menampilkan teks secara instan
+        chkArabic.addEventListener('change', () => {
+            document.querySelectorAll('.ayat-arabic').forEach(el => el.style.display = chkArabic.checked ? 'block' : 'none');
         });
-        toggleTranslation.addEventListener('change', () => {
-            document.querySelectorAll('.txt-translation').forEach(el => el.style.display = toggleTranslation.checked ? 'block' : 'none');
+        chkTranslation.addEventListener('change', () => {
+            document.querySelectorAll('.ayat-translation').forEach(el => el.style.display = chkTranslation.checked ? 'block' : 'none');
         });
 
-        // 1. Ambil Daftar Surah
-        async function loadSurahList() {
+        // 1. Ambil Data Semua Surah
+        async function fetchSurah() {
             try {
-                const response = await fetch(`${apiBase}/surat`);
-                const result = await response.json();
-                const data = result.data;
+                const res = await fetch(`${API_URL}/surat`);
+                const json = await res.json();
+                const listSurah = json.data;
 
-                surahListEl.innerHTML = '';
-                data.forEach(surah => {
+                surahListContainer.innerHTML = '';
+                listSurah.forEach(s => {
                     const btn = document.createElement('button');
-                    btn.className = "w-full text-left p-3 rounded-lg hover:bg-teal-50 transition border border-transparent hover:border-teal-200 flex justify-between items-center group";
-                    btn.onclick = () => loadSurahDetail(surah.nomor);
+                    btn.className = 'surah-btn';
+                    btn.onclick = () => fetchDetailSurah(s.nomor);
                     btn.innerHTML = `
                         <div>
-                            <span class="font-semibold text-sm text-slate-700 group-hover:text-teal-700">${surah.nomor}. ${surah.namaLatin}</span>
-                            <p class="text-xs text-gray-400">${surah.arti} • ${surah.jumlahAyat} Ayat</p>
+                            <div class="surah-name-id">${s.nomor}. ${s.namaLatin}</div>
+                            <div class="surah-sub">${s.arti} • ${s.jumlahAyat} Ayat</div>
                         </div>
-                        <span class="font-arabic text-teal-600 text-lg">${surah.nama}</span>
+                        <div class="surah-name-ar">${s.nama}</div>
                     `;
-                    surahListEl.appendChild(btn);
+                    surahListContainer.appendChild(btn);
                 });
-            } catch (error) {
-                surahListEl.innerHTML = `<p class="text-red-500 text-xs">Gagal memuat data. Periksa koneksi internet Anda.</p>`;
+            } catch (err) {
+                surahListContainer.innerHTML = '<p style="color:red; font-size:0.8rem;">Gagal memuat data surah. Cek koneksi Anda.</p>';
             }
         }
 
-        // 2. Ambil Detail Surah & Ayat
-        async function loadSurahDetail(nomor) {
-            ayatContainerEl.innerHTML = `<div class="text-center mt-20 text-gray-500 animate-pulse">Memuat ayat...</div>`;
-            
+        // 2. Ambil Detail Ayat & File Audio MP3
+        async function fetchDetailSurah(nomor) {
+            ayatListContainer.innerHTML = '<div class="placeholder">Memuat ayat dan audio...</div>';
             try {
-                const response = await fetch(`${apiBase}/surat/${nomor}`);
-                const result = await response.json();
-                const surah = result.data;
+                const res = await fetch(`${API_URL}/surat/${nomor}`);
+                const json = await res.json();
+                const detail = json.data;
 
-                // Tampilkan Header & Set Audio Full Surah (Misyari Rasyid Al-Afasy)
-                surahHeaderEl.classList.remove('hidden');
-                surahTitleEl.innerText = `${surah.nomor}. ${surah.namaLatin} (${surah.nama})`;
-                surahDescEl.innerText = `${surah.arti} • ${surah.jumlahAyat} Ayat`;
-                
-                // Menggunakan audio full surah opsi 01
-                mainAudioEl.src = surah.audioFull["01"];
-                mainAudioEl.load();
+                // Tampilkan & set audio full satu surah
+                surahHeader.style.display = 'block';
+                surahTitle.innerText = `${detail.nomor}. Surah ${detail.namaLatin} (${detail.nama})`;
+                mainAudio.src = detail.audioFull["01"];
+                mainAudio.load();
 
-                // Render Ayat
-                ayatContainerEl.innerHTML = '';
-                
-                // Tambahkan Bismillah kecuali surah At-Taubah & Al-Fatihah (jika data tidak inklusif)
-                if(nomor !== 1 && nomor !== 9) {
+                // Bersihkan wadah ayat
+                ayatListContainer.innerHTML = '';
+
+                // Sisipkan Bismillah di awal (kecuali At-Taubah & Al-Fatihah)
+                if (nomor !== 1 && nomor !== 9) {
                     const bismillah = document.createElement('div');
-                    bismillah.className = "text-center font-arabic text-2xl py-4 text-slate-700 border-b border-dashed";
-                    bismillah.innerText = "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ";
-                    ayatContainerEl.appendChild(bismillah);
+                    bismillah.style.cssText = "text-align:center; font-size: 1.6rem; padding: 15px 0; color: #475569; border-bottom: 1px dashed #cbd5e1; margin-bottom: 15px;";
+                    bismillah.innerText = "بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيْمِ";
+                    ayatListContainer.appendChild(bismillah);
                 }
 
-                surah.ayat.forEach(ayat => {
-                    const ayatEl = document.createElement('div');
-                    ayatEl.className = "p-4 rounded-xl bg-slate-50/50 hover:bg-slate-100/70 transition space-y-3 border border-slate-100";
+                // Tampilkan daftar ayat
+                detail.ayat.forEach(a => {
+                    const div = document.createElement('div');
+                    div.className = 'ayat-item';
                     
-                    // Cek visibilitas awal checkbox
-                    const displayArabic = toggleArabic.checked ? 'block' : 'none';
-                    const displayTranslation = toggleTranslation.checked ? 'block' : 'none';
+                    const showAr = chkArabic.checked ? 'block' : 'none';
+                    const showTr = chkTranslation.checked ? 'block' : 'none';
 
-                    ayatEl.innerHTML = `
-                        <div class="flex justify-between items-start gap-4">
-                            <span class="bg-teal-600 text-white text-xs font-bold w-6 h-6 flex items-center justify-center rounded-full shrink-0 mt-1">${ayat.nomorAyat}</span>
-                            <p class="txt-arabic font-arabic text-3xl text-right leading-loose text-slate-800 w-full" style="display: ${displayArabic}">${ayat.teksArab}</p>
+                    div.innerHTML = `
+                        <div class="ayat-top">
+                            <div class="ayat-num">${a.nomorAyat}</div>
+                            <div class="ayat-arabic" style="display: ${showAr}">${a.teksArab}</div>
                         </div>
-                        <div class="txt-translation text-sm text-slate-600 pl-10" style="display: ${displayTranslation}">
-                            <p class="italic text-gray-400 text-xs mb-1">Terjemahan:</p>
-                            <p>${ayat.teksIndonesia}</p>
+                        <div class="ayat-translation" style="display: ${showTr}">
+                            <em>Terjemahan:</em>
+                            ${a.teksIndonesia}
                         </div>
-                        <!-- Mini Audio per Ayat -->
-                        <div class="pl-10 flex items-center gap-2">
-                            <button onclick="playAyatAudio('${ayat.audio["01"]}', this)" class="text-xs text-teal-600 hover:text-teal-800 font-semibold flex items-center gap-1 bg-white px-2 py-1 rounded border shadow-sm">
-                                🔊 Putar Ayat
-                            </button>
-                        </div>
+                        <button class="play-ayat-btn" onclick="playSingleAyat('${a.audio["01"]}', this)">▶ Putar Ayat</button>
                     `;
-                    ayatContainerEl.appendChild(ayatEl);
+                    ayatListContainer.appendChild(div);
                 });
 
-            } catch (error) {
-                ayatContainerEl.innerHTML = `<div class="text-red-500 text-center mt-20">Gagal memuat ayat. Silakan coba lagi.</div>`;
+            } catch (err) {
+                ayatListContainer.innerHTML = '<div class="placeholder" style="color:red;">Gagal memuat detail ayat.</div>';
             }
         }
 
-        // 3. Fungsi Putar Audio per Ayat
-        let currentAyatAudio = null;
-        function playAyatAudio(url, btn) {
-            if(currentAyatAudio) {
-                currentAyatAudio.pause();
+        // 3. Fungsi kontrol audio per ayat tunggal
+        let audioAyat Aktif = null;
+        function playSingleAyat(url, btn) {
+            if (audioAyatAktif) {
+                audioAyatAktif.pause();
+                document.querySelectorAll('.play-ayat-btn').forEach(b => b.innerText = '▶ Putar Ayat');
             }
-            mainAudioEl.pause(); // Hentikan audio full surah jika sedang menyala
+            mainAudio.pause(); // matikan audio surah penuh agar tidak tabrakan
             
-            currentAyatAudio = new Audio(url);
+            audioAyatAktif = new Audio(url);
             btn.innerText = "⏳ Memutar...";
-            currentAyatAudio.play();
+            audioAyatAktif.play();
             
-            currentAyatAudio.onended = () => {
-                btn.innerText = "🔊 Putar Ayat";
+            audioAyatAktif.onended = () => {
+                btn.innerText = '▶ Putar Ayat';
             };
         }
 
-        // Inisialisasi Aplikasi saat halaman dimuat
-        window.onload = loadSurahList;
+        // Jalankan saat aplikasi dibuka
+        window.onload = fetchSurah;
     </script>
 </body>
 </html>
