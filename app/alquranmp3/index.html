@@ -5,17 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Al-Qur'an MP3 & Terjemahan</title>
     <style>
-        /* Gaya Dasar & Layout */
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body { background-color: #f4f6f9; color: #333; display: flex; flex-direction: column; height: 100vh; }
         
-        /* Header */
         header { background-color: #0f766e; color: white; padding: 15px 20px; font-size: 1.2rem; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         
-        /* Kontainer Utama */
         .main-container { display: flex; flex: 1; overflow: hidden; padding: 15px; gap: 15px; }
         
-        /* Sidebar Daftar Surah */
         .sidebar { width: 30%; background: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); padding: 15px; overflow-y: auto; }
         .sidebar h2 { color: #0f766e; font-size: 1.1rem; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #f0f0f0; }
         .surah-btn { width: 100%; text-align: left; background: none; border: 1px solid #e2e8f0; padding: 12px; margin-bottom: 8px; border-radius: 6px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: all 0.2s; }
@@ -24,7 +20,6 @@
         .surah-sub { font-size: 0.75rem; color: #94a3b8; margin-top: 2px; }
         .surah-name-ar { font-size: 1.2rem; color: #0f766e; font-weight: bold; }
 
-        /* Area Konten Utama (Ayat) */
         .content-area { width: 70%; background: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); padding: 20px; display: flex; flex-direction: column; overflow: hidden; }
         .surah-header { border-bottom: 2px solid #f0f0f0; padding-bottom: 15px; margin-bottom: 15px; }
         .surah-title { font-size: 1.4rem; color: #1e293b; }
@@ -32,11 +27,9 @@
         .audio-player-wrapper span { font-size: 0.8rem; font-weight: bold; color: #0f766e; }
         audio { flex: 1; height: 32px; }
 
-        /* Opsi Tampilan Checkbox */
         .options-bar { display: flex; gap: 15px; background: #f8fafc; padding: 10px; border-radius: 6px; margin-bottom: 15px; font-size: 0.9rem; }
         .options-bar label { display: flex; align-items: center; gap: 6px; cursor: pointer; font-weight: 500; }
 
-        /* Daftar Ayat */
         .ayat-list { flex: 1; overflow-y: auto; padding-right: 5px; }
         .ayat-item { padding: 15px; border-bottom: 1px solid #f1f5f9; background: #fafafa; border-radius: 6px; margin-bottom: 10px; }
         .ayat-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 15px; margin-bottom: 12px; }
@@ -45,18 +38,14 @@
         .ayat-translation { font-size: 0.9rem; color: #475569; padding-left: 40px; line-height: 1.4rem; }
         .ayat-translation em { font-size: 0.75rem; color: #94a3b8; display: block; margin-bottom: 3px; }
         
-        /* Tombol Per Ayat */
         .play-ayat-btn { margin-left: 40px; margin-top: 8px; background: white; border: 1px solid #cbd5e1; padding: 5px 10px; border-radius: 4px; font-size: 0.75rem; cursor: pointer; font-weight: 600; color: #0f766e; transition: background 0.2s; }
         .play-ayat-btn:hover { background: #f0fdfa; border-color: #0f766e; }
 
-        /* Placeholder awal */
         .placeholder { text-align: center; color: #94a3b8; margin-top: 100px; font-size: 1rem; }
         .placeholder span { font-size: 3rem; display: block; margin-bottom: 10px; }
 
-        /* Footer */
         footer { background: #1e293b; color: #94a3b8; text-align: center; padding: 10px; font-size: 0.75rem; }
 
-        /* Responsif Mobile */
         @media (max-width: 768px) {
             .main-container { flex-direction: column; overflow: visible; height: auto; }
             .sidebar { width: 100%; height: 300px; }
@@ -69,11 +58,13 @@
     <header>📖 Al-Qur'an MP3 & Terjemahan Indonesia</header>
 
     <div class="main-container">
+        <!-- Kolom Kiri: Daftar Surah -->
         <div class="sidebar">
             <h2>Daftar Surah</h2>
-            <div id="surah-list">Mencari data surah...</div>
+            <div id="surah-list">Menghubungkan ke server Al-Qur'an...</div>
         </div>
 
+        <!-- Kolom Kanan: Teks & Audio Player -->
         <div class="content-area">
             <div id="surah-header" style="display: none;">
                 <h3 id="surah-title" class="surah-title">Nama Surah</h3>
@@ -97,10 +88,11 @@
     </div>
 
     <footer>
-        Aplikasi Al-Qur'an Mandiri. Sumber Data: equran.id | Referensi Katalog Mandiri: googleusercontent.com/spotify.com/0
+        Aplikasi Al-Qur'an Mandiri. Data source: Kemenag RI / Open API API v2.
     </footer>
 
     <script>
+        // Menggunakan URL API yang stabil
         const API_URL = "https://equran.id/api/v2";
         const surahListContainer = document.getElementById('surah-list');
         const surahHeader = document.getElementById('surah-header');
@@ -111,7 +103,6 @@
         const chkArabic = document.getElementById('chk-arabic');
         const chkTranslation = document.getElementById('chk-translation');
 
-        // Event listener untuk menyembunyikan/menampilkan teks secara instan
         chkArabic.addEventListener('change', () => {
             document.querySelectorAll('.ayat-arabic').forEach(el => el.style.display = chkArabic.checked ? 'block' : 'none');
         });
@@ -123,6 +114,7 @@
         async function fetchSurah() {
             try {
                 const res = await fetch(`${API_URL}/surat`);
+                if (!res.ok) throw new Error("Server bermasalah");
                 const json = await res.json();
                 const listSurah = json.data;
 
@@ -141,28 +133,27 @@
                     surahListContainer.appendChild(btn);
                 });
             } catch (err) {
-                surahListContainer.innerHTML = '<p style="color:red; font-size:0.8rem;">Gagal memuat data surah. Cek koneksi Anda.</p>';
+                console.error(err);
+                surahListContainer.innerHTML = '<p style="color:red; font-size:0.85rem; padding:10px; text-align:center;">Gagal memuat data surah.<br>Pastikan internet Anda aktif dan segarkan halaman.</p>';
             }
         }
 
         // 2. Ambil Detail Ayat & File Audio MP3
         async function fetchDetailSurah(nomor) {
-            ayatListContainer.innerHTML = '<div class="placeholder">Memuat ayat dan audio...</div>';
+            ayatListContainer.innerHTML = '<div class="placeholder">Memuat teks ayat dan audio...</div>';
             try {
                 const res = await fetch(`${API_URL}/surat/${nomor}`);
+                if (!res.ok) throw new Error("Gagal mengambil detail surah");
                 const json = await res.json();
                 const detail = json.data;
 
-                // Tampilkan & set audio full satu surah
                 surahHeader.style.display = 'block';
                 surahTitle.innerText = `${detail.nomor}. Surah ${detail.namaLatin} (${detail.nama})`;
                 mainAudio.src = detail.audioFull["01"];
                 mainAudio.load();
 
-                // Bersihkan wadah ayat
                 ayatListContainer.innerHTML = '';
 
-                // Sisipkan Bismillah di awal (kecuali At-Taubah & Al-Fatihah)
                 if (nomor !== 1 && nomor !== 9) {
                     const bismillah = document.createElement('div');
                     bismillah.style.cssText = "text-align:center; font-size: 1.6rem; padding: 15px 0; color: #475569; border-bottom: 1px dashed #cbd5e1; margin-bottom: 15px;";
@@ -170,7 +161,6 @@
                     ayatListContainer.appendChild(bismillah);
                 }
 
-                // Tampilkan daftar ayat
                 detail.ayat.forEach(a => {
                     const div = document.createElement('div');
                     div.className = 'ayat-item';
@@ -193,29 +183,33 @@
                 });
 
             } catch (err) {
-                ayatListContainer.innerHTML = '<div class="placeholder" style="color:red;">Gagal memuat detail ayat.</div>';
+                console.error(err);
+                ayatListContainer.innerHTML = '<div class="placeholder" style="color:red;">Gagal memuat detail ayat. Silakan coba lagi.</div>';
             }
         }
 
-        // 3. Fungsi kontrol audio per ayat tunggal
-        let audioAyat Aktif = null;
+        // 3. Fungsi kontrol audio per ayat tunggal (Sudah diperbaiki dari typo spasi)
+        let audioAyatAktif = null;
         function playSingleAyat(url, btn) {
             if (audioAyatAktif) {
                 audioAyatAktif.pause();
                 document.querySelectorAll('.play-ayat-btn').forEach(b => b.innerText = '▶ Putar Ayat');
             }
-            mainAudio.pause(); // matikan audio surah penuh agar tidak tabrakan
+            mainAudio.pause(); 
             
             audioAyatAktif = new Audio(url);
             btn.innerText = "⏳ Memutar...";
-            audioAyatAktif.play();
+            
+            audioAyatAktif.play().catch(e => {
+                btn.innerText = '⚠️ Gagal Putar';
+                console.log("Audio play blocked or failed: ", e);
+            });
             
             audioAyatAktif.onended = () => {
                 btn.innerText = '▶ Putar Ayat';
             };
         }
 
-        // Jalankan saat aplikasi dibuka
         window.onload = fetchSurah;
     </script>
 </body>
