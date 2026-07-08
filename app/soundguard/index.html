@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>SoundGuard — Pendeteksi Berisik | Noise Level Meter</title>
+<title>SoundGuard — Noise Level Meter</title>
 <style>
   :root{
     --bg: #17140f;
@@ -32,7 +32,7 @@
   .mono{ font-family: ui-monospace, "SF Mono", "Roboto Mono", "JetBrains Mono", Menlo, Consolas, monospace; }
 
   .app{
-    max-width: 600px; margin: 0 auto; padding: 18px 16px 40px;
+    max-width: 480px; margin: 0 auto; padding: 18px 16px 40px;
     min-height: 100vh;
   }
 
@@ -60,7 +60,7 @@
   }
 
   .gauge-wrap{ position: relative; width: 100%; max-width: 340px; margin: 0 auto; }
-  .gauge-wrap svg{ display:block; width:100%; height:auto; }
+  .gauge-wrap svg{ display:block; width:100%; height:auto; aspect-ratio: 340 / 200; }
   .needle{ transform-origin: 170px 168px; transition: transform 0.09s cubic-bezier(.4,0,.2,1); }
   .peak-tick{ transition: transform 0.15s linear; transform-origin: 170px 168px; }
 
@@ -166,7 +166,7 @@
 
   <div class="meter-card" id="meterCard">
     <div class="gauge-wrap">
-      <svg viewBox="0 0 340 200">
+      <svg viewBox="0 0 340 200" width="340" height="200" preserveAspectRatio="xMidYMid meet">
         <!-- zone arcs: scale 30(left, -90deg) to 120(right, +90deg) mapped over 180deg semicircle -->
         <path d="M 20 168 A 150 150 0 0 1 121 44" fill="none" stroke="var(--safe)" stroke-width="14" stroke-linecap="round" opacity="0.85"/>
         <path d="M 121 44 A 150 150 0 0 1 219 44" fill="none" stroke="var(--warn)" stroke-width="14" opacity="0.85"/>
