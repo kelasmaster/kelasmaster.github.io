@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BDStock - Multi-Warehouse Inventory</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; }
+        .gradient-bg { background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); }
+    </style>
+</head>
+<body class="text-slate-700 overflow-x-hidden">
+
+    <div id="app"></div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, doc, setDoc, getDocs, collection } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // ================= FIREBASE CONFIGURATION =================
+        const firebaseConfig = {
+            apiKey: "AIzaSyCo3v3ezHrUQbkaGnPwTFHdfoU1XiD-JQM",
+            authDomain: "bdstock-bd69e.firebaseapp.com",
+            projectId: "bdstock-bd69e",
+            storageBucket: "bdstock-bd69e.firebasestorage.app",
+            messagingSenderId: "554513937921",
+            appId: "1:554513937921:web:a730333be0d58db718b200"
+        };
+
+        // Inisialisasi Firebase & Firestore (Siap digunakan untuk sinkronisasi cloud nanti)
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // ================= SEED DATA & INITIALIZATION =================
+        const defaultUsers = [
+            { email: "bandardeterjen@gmail.com", password: "admin123", role: "admin", name: "Utama Admin" },
+            { email: "staff@gmail.com", password: "user123", role: "user", name: "Staff Gudang" }
+        ];
+
+        const defaultWarehouses = [
+            { id: "W1", name: "Gudang Pusat Cileungsi", location: "Bogor, Jawa Barat" },
+            { id: "W2", name: "Gudang Cabang Purwokerto", location: "Banyumas, Jawa Tengah" }
+        ];
+
+        const defaultCategories = [
+            { id: "C1", name: "Deterjen", minStock: 50 },
+            { id: "C2", name: "Pelicin", minStock: 20 }
+        ];
+
+        const defaultProducts = [
+            { sku: "BD001", name: "Deterjen Bubuk Premium", categoryId: "C1", stocks: { "W1": 25, "W2": 25 } },
+            { sku: "BD002", name: "Pelicin Mawar Wangi", categoryId: "C2", stocks: { "W1": 15, "W2": 0 } }
+        ];
+
+        if (!localStorage.getItem("bd_users")) localStorage.setItem("bd_users", JSON.stringify(defaultUsers));
+        if (!localStorage.getItem("bd_warehouses")) localStorage.setItem("bd_warehouses", JSON.stringify(defaultWarehouses));
+        if (!localStorage.getItem("bd_categories")) localStorage.setItem("bd_categories", JSON.stringify(defaultCategories));
+        if (!localStorage.getItem("bd_products")) localStorage.setItem("bd_products", JSON.stringify(defaultProducts));
+
+        let state = {
+            currentUser: JSON.parse(sessionStorage.getItem("current_user")) || null,
+            currentView: JSON.parse(sessionStorage.getItem("current_user")) ? "dashboard" : "login",
+            users: JSON.parse(localStorage.getItem("bd_users")),
+            warehouses: JSON.parse(localStorage.getItem("bd_warehouses")),
+            categories: JSON.parse(localStorage.getItem("bd_categories")),
+            products: JSON.parse(localStorage.getItem("bd_products")),
+            mobileMenuOpen: false,
+            editingProductId: null,
+            editingCategoryId: null,
+            editingWarehouseId: null
+        };
+
+        function updateStorage(key, data) {
+            localStorage.setItem(key, JSON.stringify(data));
+            state[key.replace("bd_", "")] = data;
+        }
+
+        function getProductTotalStock(product) {
+            return Object.values(product.stocks || {}).reduce((a, b) => a + (parseInt(b) || 0), 0);
+        }
+
+        // Ekspos fungsi navigasi ke window agar bisa dipanggil dari atribut onclick HTML
+        window.navigate = function(view) {
+            state.currentView = view;
+            state.mobileMenuOpen = false;
+            renderApp();
+            if (view === 'dashboard') initChart();
+        }
+
+        window.handleLogout = function() {
+            sessionStorage.removeItem("current_user");
+            state.currentUser = null;
+            window.navigate("login");
+        }
+
+        window.toggleMobileMenu = function() {
+            state.mobileMenuOpen = !state.mobileMenuOpen;
+            renderApp();
+        }
+
+        // ================= CORE APPS ROUTER =================
+        function renderApp() {
+            const appEl = document.getElementById("app");
+            if (state.currentView === "login") {
+                appEl.innerHTML = renderLogin();
+            } else {
+                appEl.innerHTML = `
+                    <div class="min-h-screen md:flex">
+                        <div class="hidden md:block">
+                            ${renderSidebar()}
+                        </div>
+                        
+                        <div class="fixed inset-0 z-40 md:hidden ${state.mobileMenuOpen ? 'block' : 'hidden'}">
+                            <div class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm" onclick="window.toggleMobileMenu()"></div>
+                            <div class="fixed inset-y-0 left-0 w-72 bg-white p-6 shadow-xl flex flex-col justify-between">
+                                ${renderSidebar()}
+                            </div>
+                        </div>
+
+                        <main class="flex-1 p-4 md:p-8 overflow-y-auto max-h-screen w-full">
+                            ${renderTopbar()}
+                            ${renderContent()}
+                        </main>
+                    </div>
+                `;
+            }
+        }
+
+        // ================= UI COMPONENTS =================
+        function renderLogin() {
+            return `
+                <div class="min-h-screen flex items-center justify-center bg-slate-50 p-4">
+                    <div class="bg-white p-6 md:p-8 rounded-3xl shadow-xl w-full max-w-md border border-slate-100">
+                        <div class="text-center mb-6">
+                            <div class="w-14 h-14 gradient-bg rounded-2xl flex items-center justify-center mx-auto mb-3 text-white text-xl font-bold shadow-lg">BD</div>
+                            <h2 class="text-2xl font-bold text-slate-800">BDStock v2</h2>
+                            <p class="text-slate-400 text-xs mt-1">Gudang Cileungsi & Purwokerto</p>
+                        </div>
+                        <form id="loginForm" class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-500 mb-1">Email</label>
+                                <input type="email" id="loginEmail" required class="w-full px-4 py-2.5 text-sm rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none" placeholder="bandardeterjen@gmail.com">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-500 mb-1">Password</label>
+                                <input type="password" id="loginPassword" required class="w-full px-4 py-2.5 text-sm rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none" placeholder="admin123">
+                            </div>
+                            <button type="submit" class="w-full gradient-bg text-white py-3 rounded-xl font-medium shadow-md shadow-indigo-500/20 text-sm hover:opacity-90">Masuk</button>
+                        </form>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderSidebar() {
+            const isAdmin = state.currentUser?.role === 'admin';
+            const links = [
+                { view: 'dashboard', label: 'Dashboard', icon: 'fa-chart-pie' },
+                { view: 'produk', label: 'Stok Produk (CRUD)', icon: 'fa-boxes-stacked' },
+                { view: 'kategori', label: 'Manajemen Kategori', icon: 'fa-tags', adminOnly: true },
+                { view: 'gudang', label: 'Manajemen Gudang', icon: 'fa-warehouse' },
+                { view: 'user', label: 'Kelola User', icon: 'fa-users', adminOnly: true }
+            ];
+
+            return `
+                <div class="h-full flex flex-col justify-between bg-white md:bg-transparent">
+                    <div>
+                        <div class="flex items-center justify-between mb-6 px-2">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 gradient-bg rounded-xl flex items-center justify-center text-white font-bold text-lg">BD</div>
+                                <div>
+                                    <h1 class="font-bold text-slate-800 tracking-tight text-base">BDStock</h1>
+                                    <p class="text-[10px] text-indigo-500 font-bold uppercase">Multi-Warehouse</p>
+                                </div>
+                            </div>
+                            <button class="md:hidden text-slate-400" onclick="window.toggleMobileMenu()"><i class="fa-solid fa-xmark text-lg"></i></button>
+                        </div>
+                        <nav class="space-y-1 w-64">
+                            ${links.map(link => {
+                                if (link.adminOnly && !isAdmin) return '';
+                                const isActive = state.currentView === link.view;
+                                return `
+                                    <button onclick="window.navigate('${link.view}')" class="w-full flex items-center gap-3.5 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all ${isActive ? 'gradient-bg text-white shadow-md' : 'text-slate-500 hover:bg-slate-100 hover:text-slate-800'}">
+                                        <i class="fa-solid ${link.icon} text-sm w-5"></i>
+                                        ${link.label}
+                                    </button>
+                                `;
+                            }).join('')}
+                        </nav>
+                    </div>
+                    <div class="bg-slate-100 p-3 rounded-2xl flex items-center justify-between mt-auto border border-slate-200/60">
+                        <div class="overflow-hidden pr-1">
+                            <p class="text-xs font-bold text-slate-700 truncate">${state.currentUser?.name || ''}</p>
+                            <span class="text-[9px] bg-indigo-100 text-indigo-700 px-1.5 py-0.5 rounded-md font-bold uppercase tracking-wider">${state.currentUser?.role || ''}</span>
+                        </div>
+                        <button onclick="window.handleLogout()" class="p-2 bg-white text-red-500 rounded-lg shadow-sm hover:bg-red-50"><i class="fa-solid fa-power-off text-xs"></i></button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderTopbar() {
+            return `
+                <header class="flex justify-between items-center mb-6 bg-white p-4 rounded-2xl border border-slate-100 shadow-sm md:shadow-none md:bg-transparent md:p-0">
+                    <div class="flex items-center gap-3">
+                        <button onclick="window.toggleMobileMenu()" class="md:hidden text-slate-600 p-2 bg-slate-50 rounded-lg"><i class="fa-solid fa-bars"></i></button>
+                        <div>
+                            <h2 class="text-xl font-bold text-slate-800 capitalize">${state.currentView === 'produk' ? 'Stok Produk (CRUD)' : 'Menu ' + state.currentView}</h2>
+                        </div>
+                    </div>
+                    <div class="hidden sm:block bg-white px-3 py-1.5 rounded-xl border border-slate-100 text-xs font-medium text-slate-500">
+                        <i class="fa-regular fa-calendar text-indigo-500 mr-1"></i> ${new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
+                    </div>
+                </header>
+            `;
+        }
+
+        function renderContent() {
+            switch(state.currentView) {
+                case 'dashboard': return renderDashboardView();
+                case 'produk': return renderProdukView();
+                case 'kategori': return renderKategoriView();
+                case 'gudang': return renderGudangView();
+                case 'user': return renderUserView();
+                default: return '<h1>Not Found</h1>';
+            }
+        }
+
+        // ================= VIEWS MARKUP GENERATOR =================
+        function renderDashboardView() {
+            const totalSKUs = state.products.length;
+            let lowStockAlerts = 0;
+            const reorderItems = [];
+
+            state.products.forEach(p => {
+                const cat = state.categories.find(c => c.id === p.categoryId);
+                const totalStock = getProductTotalStock(p);
+                const minLimit = cat ? cat.minStock : 0;
+                if (totalStock <= minLimit) {
+                    lowStockAlerts++;
+                    reorderItems.push({ name: p.name, sku: p.sku, total: totalStock, min: minLimit });
+                }
+            });
+
+            return `
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+                    <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between">
+                        <div><p class="text-[11px] font-bold text-slate-400 uppercase">Total SKU Terdaftar</p><h3 class="text-2xl font-bold text-slate-800 mt-1">${totalSKUs} Item</h3></div>
+                        <div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center"><i class="fa-solid fa-box"></i></div>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between">
+                        <div><p class="text-[11px] font-bold text-slate-400 uppercase">Alert Limit Kategori</p><h3 class="text-2xl font-bold text-amber-500 mt-1">${lowStockAlerts} SKU</h3></div>
+                        <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-500 flex items-center justify-center"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between sm:col-span-2 lg:col-span-1">
+                        <div><p class="text-[11px] font-bold text-slate-400 uppercase">Gudang Utama</p><h3 class="text-2xl font-bold text-slate-800 mt-1">${state.warehouses.length} Lokasi</h3></div>
+                        <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center"><i class="fa-solid fa-warehouse"></i></div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+                    <div class="lg:col-span-2 bg-white p-4 rounded-2xl border border-slate-100 shadow-sm">
+                        <p class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Grafik Total Volume per Kategori</p>
+                        <div class="h-60 relative"><canvas id="categoryChart"></canvas></div>
+                    </div>
+                    <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex flex-col">
+                        <p class="text-xs font-bold uppercase tracking-wider text-amber-600 mb-3"><i class="fa-solid fa-bell mr-1"></i> Perlu Reorder Segera</p>
+                        <div class="space-y-2 overflow-y-auto max-h-60 flex-1 pr-1">
+                            ${reorderItems.length === 0 ? '<p class="text-slate-400 text-xs text-center py-6">Stok aman sesuai batas kategori.</p>' : reorderItems.map(item => `
+                                <div class="p-2.5 bg-amber-50/60 rounded-xl border border-amber-100 flex justify-between items-center text-xs">
+                                    <div><p class="font-bold text-slate-700">${item.name} (${item.sku})</p><p class="text-[11px] text-slate-400">Total Stok: <b class="text-amber-600">${item.total}</b> / Batas Min Kategori: ${item.min}</p></div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm">
+                    <p class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Visualisasi Distribusi Gudang & Wilayah</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        ${state.warehouses.map(w => {
+                            let totalItemDiGudang = 0;
+                            state.products.forEach(p => { totalItemDiGudang += parseInt(p.stocks[w.id] || 0); });
+                            return `
+                                <div class="p-4 bg-slate-50 rounded-xl border border-slate-100 flex items-start gap-3">
+                                    <div class="p-2.5 bg-indigo-600 text-white rounded-lg text-sm"><i class="fa-solid fa-location-dot"></i></div>
+                                    <div>
+                                        <h5 class="font-bold text-slate-800 text-sm">${w.name}</h5>
+                                        <p class="text-[11px] text-slate-400"><i class="fa-solid fa-map-pin mr-1"></i>${w.location}</p>
+                                        <p class="text-xs font-semibold text-slate-600 mt-2 bg-white px-2 py-0.5 rounded border inline-block">Total Vol: ${totalItemDiGudang} Unit</p>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderProdukView() {
+            const isAdmin = state.currentUser?.role === 'admin';
+            const editProd = state.editingProductId ? state.products.find(p => p.sku === state.editingProductId) : null;
+
+            return `
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm self-start">
+                        <p class="text-xs font-bold text-slate-400 uppercase mb-4">${editProd ? '✏️ Edit Kuantitas/Data Produk' : '➕ Entri SKU Produk Baru'}</p>
+                        <form id="productForm" class="space-y-3.5">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-500 mb-1">Kode SKU</label>
+                                <input type="text" id="prodSku" required ${editProd ? 'readonly bg-slate-100 text-slate-400' : ''} value="${editProd ? editProd.sku : ''}" class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 outline-none focus:border-indigo-500" placeholder="Contoh: BD001">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-500 mb-1">Nama Produk</label>
+                                <input type="text" id="prodName" required value="${editProd ? editProd.name : ''}" class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 outline-none focus:border-indigo-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-500 mb-1">Kategori (Batas Min Otomatis)</label>
+                                <select id="prodCategory" required class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 bg-white outline-none">
+                                    ${state.categories.map(c => `<option value="${c.id}" ${editProd && editProd.categoryId === c.id ? 'selected' : ''}>${c.name} (Min: ${c.minStock})</option>`).join('')}
+                                </select>
+                            </div>
+
+                            <div class="p-3 bg-slate-50 rounded-xl border border-slate-100 space-y-2">
+                                <p class="text-[10px] font-bold text-indigo-600 uppercase tracking-wider"><i class="fa-solid fa-share-nodes"></i> Distribusi Stok per Gudang</p>
+                                ${state.warehouses.map(w => {
+                                    const val = editProd && editProd.stocks ? (editProd.stocks[w.id] || 0) : 0;
+                                    return `
+                                        <div class="flex items-center justify-between gap-2 bg-white p-2 rounded-lg border border-slate-200">
+                                            <span class="text-xs font-medium text-slate-600 truncate">${w.name}</span>
+                                            <input type="number" data-whid="${w.id}" required min="0" value="${val}" class="wh-stock-input w-20 px-2 py-1 text-xs font-bold text-right border border-slate-200 rounded-md outline-none">
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
+
+                            <div class="flex gap-2 pt-2">
+                                <button type="submit" class="flex-1 bg-slate-800 text-white text-xs py-2.5 rounded-xl font-bold hover:bg-slate-700">Simpan Produk</button>
+                                ${editProd ? `<button type="button" id="btnCancelProductEdit" class="px-3 bg-slate-100 text-slate-500 text-xs rounded-xl">Batal</button>` : ''}
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="lg:col-span-2 space-y-3">
+                        <p class="text-xs font-bold text-slate-400 uppercase">Katalog Manajemen Ketersediaan SKU</p>
+                        <div class="grid grid-cols-1 gap-3">
+                            ${state.products.map(p => {
+                                const cat = state.categories.find(c => c.id === p.categoryId);
+                                const totalStock = getProductTotalStock(p);
+                                const isLow = totalStock <= (cat ? cat.minStock : 0);
+
+                                return `
+                                    <div class="bg-white p-4 rounded-xl border ${isLow ? 'border-amber-200 bg-amber-50/10' : 'border-slate-100'} shadow-sm">
+                                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3 mb-3">
+                                            <div>
+                                                <div class="flex items-center gap-2 flex-wrap">
+                                                    <span class="px-1.5 py-0.5 bg-slate-800 text-white font-mono text-[10px] font-bold rounded">${p.sku}</span>
+                                                    <h4 class="font-bold text-slate-800 text-sm">${p.name}</h4>
+                                                    <span class="px-2 py-0.5 bg-indigo-50 text-indigo-600 text-[10px] font-bold rounded-full">${cat ? cat.name : 'Tanpa Kategori'}</span>
+                                                </div>
+                                                <p class="text-[11px] text-slate-400 mt-0.5">Batas Minimum Reorder Kategori: <span class="font-semibold text-indigo-600">${cat ? cat.minStock : 0}</span></p>
+                                            </div>
+                                            <div class="flex gap-2 self-end sm:self-center">
+                                                <button data-sku="${p.sku}" class="btn-edit-product px-2.5 py-1 text-[11px] border border-indigo-100 text-indigo-600 rounded-lg bg-indigo-50/40 hover:bg-indigo-50 font-semibold"><i class="fa-solid fa-pen"></i> Edit</button>
+                                                ${isAdmin ? `<button data-sku="${p.sku}" class="btn-delete-product px-2.5 py-1 text-[11px] border border-red-100 text-red-600 rounded-lg bg-red-50/40 hover:bg-red-50 font-semibold"><i class="fa-solid fa-trash"></i> Hapus</button>` : ''}
+                                            </div>
+                                        </div>
+                                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
+                                            <div class="bg-slate-50 p-2 rounded-lg">
+                                                <p class="text-[10px] text-slate-400 uppercase font-semibold">Total Global</p>
+                                                <p class="text-sm font-extrabold ${isLow ? 'text-amber-600' : 'text-slate-700'}">${totalStock} Unit</p>
+                                            </div>
+                                            ${state.warehouses.map(w => `
+                                                <div class="bg-slate-50 p-2 rounded-lg border border-dashed border-slate-200">
+                                                    <p class="text-[10px] text-slate-400 truncate">${w.name}</p>
+                                                    <p class="text-sm font-bold text-slate-700">${p.stocks[w.id] || 0} <span class="text-[10px] text-slate-400 font-normal">unit</span></p>
+                                                </div>
+                                            `).join('')}
+                                        </div>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderKategoriView() {
+            const editCat = state.editingCategoryId ? state.categories.find(c => c.id === state.editingCategoryId) : null;
+            return `
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm self-start">
+                        <p class="text-xs font-bold text-slate-400 uppercase mb-4">Form Pengelolaan Kategori</p>
+                        <form id="categoryForm" class="space-y-3">
+                            <input type="hidden" id="catId" value="${editCat ? editCat.id : ''}">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-500 mb-1">Nama Kategori</label>
+                                <input type="text" id="catName" required value="${editCat ? editCat.name : ''}" class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-500 mb-1">Limit Stok Minimum Global</label>
+                                <input type="number" id="catMinStock" required min="0" value="${editCat ? editCat.minStock : ''}" class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 outline-none">
+                            </div>
+                            <div class="flex gap-2 pt-2">
+                                <button type="submit" class="flex-1 bg-slate-800 text-white text-xs py-2.5 rounded-xl font-bold">Simpan Kategori</button>
+                                ${editCat ? `<button type="button" id="btnCancelCategoryEdit" class="px-3 bg-slate-100 text-slate-500 text-xs rounded-xl">Batal</button>` : ''}
+                            </div>
+                        </form>
+                    </div>
+                    <div class="lg:col-span-2 space-y-3">
+                        <p class="text-xs font-bold text-slate-400 uppercase">Daftar Kategori & Aturan Limit</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            ${state.categories.map(c => `
+                                <div class="bg-white p-4 rounded-xl border border-slate-100 shadow-sm flex justify-between items-center">
+                                    <div>
+                                        <h5 class="font-bold text-slate-800 text-sm">${c.name}</h5>
+                                        <p class="text-[11px] text-slate-400 mt-1">Rule Min Reorder: <b class="text-indigo-600">${c.minStock} Unit</b></p>
+                                    </div>
+                                    <div class="flex gap-1">
+                                        <button data-id="${c.id}" class="btn-edit-category p-1.5 text-xs text-indigo-600 hover:bg-indigo-50 rounded"><i class="fa-solid fa-pen"></i></button>
+                                        <button data-id="${c.id}" class="btn-delete-category p-1.5 text-xs text-red-500 hover:bg-red-50 rounded"><i class="fa-solid fa-trash"></i></button>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderGudangView() {
+            const isAdmin = state.currentUser?.role === 'admin';
+            const editWh = state.editingWarehouseId ? state.warehouses.find(w => w.id === state.editingWarehouseId) : null;
+            return `
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm self-start">
+                        <p class="text-xs font-bold text-slate-400 uppercase mb-4">Operasional Lokasi Gudang</p>
+                        ${isAdmin ? `
+                            <form id="warehouseForm" class="space-y-3">
+                                <input type="hidden" id="whId" value="${editWh ? editWh.id : ''}">
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-500 mb-1">Nama Cabang Gudang</label>
+                                    <input type="text" id="whName" required value="${editWh ? editWh.name : ''}" class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-500 mb-1">Lokasi Wilayah/Kota</label>
+                                    <input type="text" id="whLocation" required value="${editWh ? editWh.location : ''}" class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 outline-none">
+                                </div>
+                                <div class="flex gap-2">
+                                    <button type="submit" class="flex-1 bg-slate-800 text-white text-xs py-2.5 rounded-xl font-bold">Simpan Gudang</button>
+                                    ${editWh ? `<button type="button" id="btnCancelWarehouseEdit" class="px-3 bg-slate-100 text-slate-500 text-xs rounded-xl">Batal</button>` : ''}
+                                </div>
+                            </form>
+                        ` : `<p class="text-xs text-slate-400 bg-slate-50 p-4 rounded-xl border border-dashed">Form khusus Admin.</p>`}
+                    </div>
+                    <div class="lg:col-span-2 space-y-3">
+                        <p class="text-xs font-bold text-slate-400 uppercase">Master Data Lokasi</p>
+                        <div class="grid grid-cols-1 gap-2">
+                            ${state.warehouses.map(w => `
+                                <div class="bg-white p-4 rounded-xl border border-slate-100 shadow-sm flex justify-between items-center">
+                                    <div><h5 class="font-bold text-slate-800 text-xs">${w.name}</h5><p class="text-[11px] text-slate-400 mt-0.5">${w.location}</p></div>
+                                    ${isAdmin ? `
+                                        <div class="flex gap-1">
+                                            <button data-id="${w.id}" class="btn-edit-warehouse p-1.5 text-xs text-indigo-600 hover:bg-indigo-50 rounded"><i class="fa-solid fa-pen"></i></button>
+                                            <button data-id="${w.id}" class="btn-delete-warehouse p-1.5 text-xs text-red-500 hover:bg-red-50 rounded"><i class="fa-solid fa-trash"></i></button>
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderUserView() {
+            return `
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm self-start">
+                        <p class="text-xs font-bold text-slate-400 uppercase mb-4">Registrasi Akun Anggota</p>
+                        <form id="userForm" class="space-y-3">
+                            <div><label class="block text-xs font-semibold text-slate-500 mb-1">Nama Anggota</label><input type="text" id="usrName" required class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 outline-none"></div>
+                            <div><label class="block text-xs font-semibold text-slate-500 mb-1">Email</label><input type="email" id="usrEmail" required class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 outline-none"></div>
+                            <div><label class="block text-xs font-semibold text-slate-500 mb-1">Password</label><input type="password" id="usrPassword" required class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 outline-none"></div>
+                            <div><label class="block text-xs font-semibold text-slate-500 mb-1">Akses Sistem</label><select id="usrRole" required class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 bg-white outline-none"><option value="user">User (Hanya Tambah/Edit Produk)</option><option value="admin">Admin</option></select></div>
+                            <button type="submit" class="w-full bg-slate-800 text-white text-xs py-2.5 rounded-xl font-bold">Daftarkan User</button>
+                        </form>
+                    </div>
+                    <div class="lg:col-span-2 space-y-2">
+                        <p class="text-xs font-bold text-slate-400 uppercase">Daftar Akun Otoritas</p>
+                        ${state.users.map(u => `
+                            <div class="bg-white p-3.5 rounded-xl border border-slate-100 shadow-sm flex justify-between items-center text-xs">
+                                <div><h5 class="font-bold text-slate-800">${u.name}</h5><p class="text-slate-400 text-[11px]">${u.email}</p></div>
+                                <span class="px-2 py-0.5 ${u.email === 'bandardeterjen@gmail.com' ? 'bg-indigo-600 text-white font-bold' : 'bg-slate-100 text-slate-600'} rounded text-[10px] font-semibold uppercase">${u.email === 'bandardeterjen@gmail.com' ? 'Master Admin' : u.role}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        // ================= INTERACTION EVENT BINDING =================
+        function setupEventListeners() {
+            // 1. Form Login
+            const loginForm = document.getElementById("loginForm");
+            if (loginForm) {
+                loginForm.addEventListener("submit", function(e) {
+                    e.preventDefault();
+                    const email = document.getElementById("loginEmail").value;
+                    const pass = document.getElementById("loginPassword").value;
+                    const user = state.users.find(u => u.email === email && u.password === pass);
+                    if (user) {
+                        sessionStorage.setItem("current_user", JSON.stringify(user));
+                        state.currentUser = user;
+                        window.navigate("dashboard");
+                    } else { alert("Email atau Password salah!"); }
+                });
+            }
+
+            // 2. Form Produk (Submit & Batal)
+            const productForm = document.getElementById("productForm");
+            if (productForm) {
+                productForm.addEventListener("submit", function(e) {
+                    e.preventDefault();
+                    const sku = document.getElementById("prodSku").value;
+                    const name = document.getElementById("prodName").value;
+                    const categoryId = document.getElementById("prodCategory").value;
+
+                    const stocks = {};
+                    document.querySelectorAll(".wh-stock-input").forEach(input => {
+                        const whId = input.getAttribute("data-whid");
+                        stocks[whId] = parseInt(input.value) || 0;
+                    });
+
+                    let updatedProducts = [...state.products];
+                    if (state.editingProductId) {
+                        updatedProducts = updatedProducts.map(p => p.sku === sku ? { sku, name, categoryId, stocks } : p);
+                        state.editingProductId = null;
+                    } else {
+                        if (state.products.some(p => p.sku === sku)) { alert("Kode SKU ini sudah ada!"); return; }
+                        updatedProducts.push({ sku, name, categoryId, stocks });
+                    }
+                    updateStorage("bd_products", updatedProducts);
+                    window.navigate("produk");
+                });
+            }
+            const btnCancelProductEdit = document.getElementById("btnCancelProductEdit");
+            if (btnCancelProductEdit) {
+                btnCancelProductEdit.addEventListener("click", () => { state.editingProductId = null; renderApp(); });
+            }
+
+            // 3. Form Kategori (Submit & Batal)
+            const categoryForm = document.getElementById("categoryForm");
+            if (categoryForm) {
+                categoryForm.addEventListener("submit", function(e) {
+                    e.preventDefault();
+                    const id = document.getElementById("catId").value;
+                    const name = document.getElementById("catName").value;
+                    const minStock = parseInt(document.getElementById("catMinStock").value);
+
+                    let updatedCats = [...state.categories];
+                    if (id) {
+                        updatedCats = updatedCats.map(c => c.id === id ? { id, name, minStock } : c);
+                        state.editingCategoryId = null;
+                    } else {
+                        updatedCats.push({ id: "C" + Date.now().toString().slice(-3), name, minStock });
+                    }
+                    updateStorage("bd_categories", updatedCats);
+                    window.navigate("kategori");
+                });
+            }
+            const btnCancelCategoryEdit = document.getElementById("btnCancelCategoryEdit");
+            if (btnCancelCategoryEdit) {
+                btnCancelCategoryEdit.addEventListener("click", () => { state.editingCategoryId = null; renderApp(); });
+            }
+
+            // 4. Form Gudang (Submit & Batal)
+            const warehouseForm = document.getElementById("warehouseForm");
+            if (warehouseForm) {
+                warehouseForm.addEventListener("submit", function(e) {
+                    e.preventDefault();
+                    const id = document.getElementById("whId").value;
+                    const name = document.getElementById("whName").value;
+                    const location = document.getElementById("whLocation").value;
+
+                    let updatedWhs = [...state.warehouses];
+                    if (id) {
+                        updatedWhs = updatedWhs.map(w => w.id === id ? { id, name, location } : w);
+                        state.editingWarehouseId = null;
+                    } else {
+                        updatedWhs.push({ id: "W" + Date.now().toString().slice(-2), name, location });
+                    }
+                    updateStorage("bd_warehouses", updatedWhs);
+                    window.navigate("gudang");
+                });
+            }
+            const btnCancelWarehouseEdit = document.getElementById("btnCancelWarehouseEdit");
+            if (btnCancelWarehouseEdit) {
+                btnCancelWarehouseEdit.addEventListener("click", () => { state.editingWarehouseId = null; renderApp(); });
+            }
+
+            // 5. Form User Registrasi
+            const userForm = document.getElementById("userForm");
+            if (userForm) {
+                userForm.addEventListener("submit", function(e) {
+                    e.preventDefault();
+                    const email = document.getElementById("usrEmail").value;
+                    if (state.users.some(u => u.email === email)) { alert("Email sudah terdaftar!"); return; }
+
+                    const newUser = {
+                        name: document.getElementById("usrName").value,
+                        email: email,
+                        password: document.getElementById("usrPassword").value,
+                        role: document.getElementById("usrRole").value
+                    };
+                    updateStorage("bd_users", [...state.users, newUser]);
+                    window.navigate("user");
+                });
+            }
+
+            // 6. Action Buttons Click (Edit/Hapus via Delegation)
+            document.querySelectorAll(".btn-edit-product").forEach(btn => {
+                btn.addEventListener("click", (e) => { state.editingProductId = e.currentTarget.getAttribute("data-sku"); renderApp(); });
+            });
+            document.querySelectorAll(".btn-delete-product").forEach(btn => {
+                btn.addEventListener("click", (e) => {
+                    const sku = e.currentTarget.getAttribute("data-sku");
+                    if (confirm(`Hapus produk dengan SKU ${sku}?`)) {
+                        updateStorage("bd_products", state.products.filter(p => p.sku !== sku));
+                        window.navigate("produk");
+                    }
+                });
+            });
+            document.querySelectorAll(".btn-edit-category").forEach(btn => {
+                btn.addEventListener("click", (e) => { state.editingCategoryId = e.currentTarget.getAttribute("data-id"); renderApp(); });
+            });
+            document.querySelectorAll(".btn-delete-category").forEach(btn => {
+                btn.addEventListener("click", (e) => {
+                    const id = e.currentTarget.getAttribute("data-id");
+                    if (confirm("Hapus kategori ini? Aturan reorder produk terkait akan hilang.")) {
+                        updateStorage("bd_categories", state.categories.filter(c => c.id !== id));
+                        window.navigate("kategori");
+                    }
+                });
+            });
+            document.querySelectorAll(".btn-edit-warehouse").forEach(btn => {
+                btn.addEventListener("click", (e) => { state.editingWarehouseId = e.currentTarget.getAttribute("data-id"); renderApp(); });
+            });
+            document.querySelectorAll(".btn-delete-warehouse").forEach(btn => {
+                btn.addEventListener("click", (e) => {
+                    const id = e.currentTarget.getAttribute("data-id");
+                    if (confirm("Hapus entitas gudang ini?")) {
+                        updateStorage("bd_warehouses", state.warehouses.filter(w => w.id !== id));
+                        window.navigate("gudang");
+                    }
+                });
+            });
+        }
+
+        // Override render wrapper untuk selalu memasang event listener tepat setelah DOM disuntikkan
+        const originalRender = renderApp;
+        renderApp = function() {
+            originalRender();
+            setupEventListeners();
+        };
+
+        // ================= GRAPH SYSTEM (CHART.JS) =================
+        let myChart = null;
+        function initChart() {
+            const ctx = document.getElementById('categoryChart');
+            if (!ctx) return;
+
+            const labels = [];
+            const dataValues = [];
+
+            state.categories.forEach(c => {
+                labels.push(c.name);
+                let count = 0;
+                state.products.filter(p => p.categoryId === c.id).forEach(p => {
+                    count += getProductTotalStock(p);
+                });
+                dataValues.push(count);
+            });
+
+            if (myChart) myChart.destroy();
+            myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Kuantitas Global',
+                        data: dataValues,
+                        backgroundColor: '#6366f1',
+                        borderRadius: 6,
+                        barThickness: 24
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true }, x: { grid: { display: false } } }
+                }
+            });
+        }
+
+        // Jalankan aplikasi pertama kali
+        renderApp();
+        if (state.currentView === 'dashboard') initChart();
+    </script>
+</body>
+</html>
