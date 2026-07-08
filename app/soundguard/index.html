@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>SoundGuard — Noise Level Meter</title>
+<style>
+  :root{
+    --bg: #17140f;
+    --panel: #211c15;
+    --bezel: #2c261c;
+    --face: #f0e6d2;
+    --face-dim: #d8caa8;
+    --brass: #c08a3e;
+    --brass-bright: #e0ab5c;
+    --ink: #2a2016;
+    --safe: #5c8a63;
+    --warn: #c9a13a;
+    --danger: #c1432e;
+    --danger-bright: #ff5c3f;
+    --line: rgba(240,230,210,0.12);
+    font-size: 16px;
+  }
+  *{ box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html,body{
+    margin:0; padding:0; background: var(--bg); color: var(--face);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+    width: 100%;
+  }
+  .mono{ font-family: ui-monospace, "SF Mono", "Roboto Mono", "JetBrains Mono", Menlo, Consolas, monospace; }
+
+  .app{
+    max-width: 480px; margin: 0 auto; padding: 18px 16px 40px;
+    min-height: 100vh;
+  }
+
+  header{ display:flex; align-items:center; justify-content:space-between; margin-bottom: 14px; }
+  .brand{ display:flex; align-items:center; gap:10px; }
+  .brand-mark{ width: 30px; height:30px; }
+  .brand h1{ font-size: 1.05rem; letter-spacing: 0.04em; margin:0; font-weight: 700; }
+  .brand small{ display:block; font-size: 0.68rem; color: var(--face-dim); letter-spacing: 0.03em; }
+  .status-dot{ width:8px; height:8px; border-radius:50%; background: #6b6154; transition: background .2s; }
+  .status-dot.live{ background: var(--safe); box-shadow: 0 0 8px var(--safe); }
+  .status-dot.alert{ background: var(--danger-bright); box-shadow: 0 0 8px var(--danger-bright); }
+
+  .meter-card{
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 20px 18px 14px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.03);
+    position: relative;
+    overflow: hidden;
+    transition: box-shadow .25s;
+  }
+  .meter-card.flash{
+    box-shadow: 0 0 0 2px var(--danger-bright), 0 10px 30px rgba(193,67,46,0.45);
+  }
+
+  .gauge-wrap{ position: relative; width: 100%; max-width: 340px; margin: 0 auto; }
+  .gauge-wrap svg{ display:block; width:100%; height:auto; }
+  .needle{ transform-origin: 170px 168px; transition: transform 0.09s cubic-bezier(.4,0,.2,1); }
+  .peak-tick{ transition: transform 0.15s linear; transform-origin: 170px 168px; }
+
+  .readout{ text-align:center; margin-top: -8px; }
+  .readout .value{ font-size: 3.2rem; font-weight: 700; line-height:1; letter-spacing: -0.02em; }
+  .readout .unit{ font-size: 1rem; color: var(--face-dim); margin-left: 4px; font-weight: 500; }
+  .readout .label{ margin-top: 4px; font-size: 0.85rem; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600; }
+
+  .zone-legend{ display:flex; justify-content:center; gap: 14px; margin-top: 10px; font-size: 0.7rem; color: var(--face-dim); }
+  .zone-legend span{ display:flex; align-items:center; gap:5px; }
+  .zone-legend i{ width:8px; height:8px; border-radius:2px; display:inline-block; }
+
+  .primary-btn{
+    width:100%; margin-top: 16px; padding: 14px; border-radius: 12px; border: none;
+    font-size: 1rem; font-weight: 700; letter-spacing: 0.02em; cursor:pointer;
+    background: var(--brass); color: #201603; transition: transform .08s, background .2s;
+  }
+  .primary-btn:active{ transform: scale(0.98); }
+  .primary-btn.stop{ background: var(--danger); color: #fff; }
+  .primary-btn:disabled{ opacity: 0.5; cursor: default; }
+
+  .hint{ text-align:center; font-size: 0.72rem; color: var(--face-dim); margin-top: 8px; min-height: 1em; }
+
+  section.block{
+    background: var(--panel); border: 1px solid var(--line); border-radius: 16px;
+    padding: 14px 16px; margin-top: 14px;
+  }
+  .block h2{ font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--face-dim); margin: 0 0 10px; font-weight: 700; }
+
+  .history-canvas-wrap{ position:relative; }
+  canvas#history{ width:100%; height: 90px; display:block; }
+
+  .row{ display:flex; align-items:center; justify-content:space-between; gap: 12px; margin-top: 6px; }
+  .row label{ font-size: 0.85rem; color: var(--face); flex-shrink:0; }
+  .row .val{ font-size: 0.85rem; color: var(--brass-bright); font-weight:700; min-width: 46px; text-align:right; }
+  input[type=range]{
+    -webkit-appearance: none; appearance:none; width: 100%; height: 4px; border-radius: 2px;
+    background: var(--bezel); outline:none;
+  }
+  input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none; appearance:none; width: 18px; height:18px; border-radius:50%;
+    background: var(--brass); border: 2px solid var(--face); cursor:pointer;
+  }
+  input[type=range]::-moz-range-thumb{
+    width: 18px; height:18px; border-radius:50%; background: var(--brass); border: 2px solid var(--face); cursor:pointer;
+  }
+
+  .presets{ display:grid; grid-template-columns: repeat(4, 1fr); gap:8px; margin-top: 10px; }
+  .preset-btn{
+    padding: 9px 4px; border-radius: 10px; border: 1px solid var(--line);
+    background: var(--bezel); color: var(--face); font-size: 0.65rem; font-weight:600; cursor:pointer; text-align:center;
+    line-height:1.3; min-width: 0;
+  }
+  .preset-btn.active{ background: var(--brass); color:#201603; border-color: var(--brass); }
+  @media (max-width: 380px){
+    .presets{ grid-template-columns: repeat(2, 1fr); }
+  }
+
+  .toggle-row{ display:flex; align-items:center; justify-content:space-between; padding: 8px 0; border-top: 1px solid var(--line); }
+  .toggle-row:first-child{ border-top:none; }
+  .toggle-row span.t-label{ font-size: 0.85rem; }
+  .switch{ position:relative; width:42px; height:24px; }
+  .switch input{ opacity:0; width:0; height:0; }
+  .slider-switch{
+    position:absolute; cursor:pointer; inset:0; background: var(--bezel); border-radius: 24px; transition:.2s;
+    border: 1px solid var(--line);
+  }
+  .slider-switch:before{
+    position:absolute; content:""; height:18px; width:18px; left:2px; top:2px; background: var(--face-dim);
+    border-radius:50%; transition:.2s;
+  }
+  .switch input:checked + .slider-switch{ background: var(--brass); }
+  .switch input:checked + .slider-switch:before{ transform: translateX(18px); background:#201603; }
+
+  .log-list{ list-style:none; margin:0; padding:0; max-height: 220px; overflow-y:auto; }
+  .log-list li{
+    display:flex; justify-content:space-between; align-items:center; padding: 9px 0;
+    border-top: 1px solid var(--line); font-size: 0.82rem;
+  }
+  .log-list li:first-child{ border-top:none; }
+  .log-list .lvl{ font-weight:700; color: var(--danger-bright); }
+  .log-empty{ text-align:center; color: var(--face-dim); font-size: 0.8rem; padding: 14px 0; }
+
+  .footnote{ text-align:center; font-size: 0.68rem; color: #6b6154; margin-top: 18px; line-height:1.5; }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <header>
+    <div class="brand">
+      <svg class="brand-mark" viewBox="0 0 32 32" fill="none">
+        <circle cx="16" cy="16" r="15" stroke="#c08a3e" stroke-width="2"/>
+        <path d="M9 19V13M13 21V11M17 23V9M21 19V13M25 17V15" stroke="#e0ab5c" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <div>
+        <h1>SoundGuard</h1>
+        <small>Noise level meter &amp; alerts</small>
+      </div>
+    </div>
+    <div class="status-dot" id="statusDot"></div>
+  </header>
+
+  <div class="meter-card" id="meterCard">
+    <div class="gauge-wrap">
+      <svg viewBox="0 0 340 200">
+        <!-- zone arcs: scale 30(left, -90deg) to 120(right, +90deg) mapped over 180deg semicircle -->
+        <path d="M 20 168 A 150 150 0 0 1 121 44" fill="none" stroke="var(--safe)" stroke-width="14" stroke-linecap="round" opacity="0.85"/>
+        <path d="M 121 44 A 150 150 0 0 1 219 44" fill="none" stroke="var(--warn)" stroke-width="14" opacity="0.85"/>
+        <path d="M 219 44 A 150 150 0 0 1 320 168" fill="none" stroke="var(--danger)" stroke-width="14" stroke-linecap="round" opacity="0.85"/>
+        <!-- tick labels -->
+        <g class="mono" fill="var(--face-dim)" font-size="11" text-anchor="middle">
+          <text x="20" y="188">30</text>
+          <text x="72" y="80">60</text>
+          <text x="170" y="30">85</text>
+          <text x="268" y="80">100</text>
+          <text x="320" y="188">120</text>
+        </g>
+        <!-- peak hold tick -->
+        <line id="peakTick" class="peak-tick" x1="170" y1="168" x2="170" y2="48" stroke="var(--brass-bright)" stroke-width="3" opacity="0.7"/>
+        <!-- needle -->
+        <g id="needle" class="needle">
+          <line x1="170" y1="168" x2="170" y2="55" stroke="var(--face)" stroke-width="3"/>
+          <circle cx="170" cy="168" r="8" fill="var(--brass)" stroke="var(--face)" stroke-width="2"/>
+        </g>
+      </svg>
+    </div>
+
+    <div class="readout">
+      <span class="value mono" id="dbValue">--</span><span class="unit">dB</span>
+      <div class="label" id="dbLabel" style="color:var(--face-dim)">Not listening</div>
+    </div>
+
+    <div class="zone-legend">
+      <span><i style="background:var(--safe)"></i>Safe</span>
+      <span><i style="background:var(--warn)"></i>Loud</span>
+      <span><i style="background:var(--danger)"></i>Harmful</span>
+    </div>
+
+    <button class="primary-btn" id="toggleBtn">Start listening</button>
+    <div class="hint" id="hint">Tap start and allow microphone access</div>
+  </div>
+
+  <section class="block">
+    <h2>Last 60 seconds</h2>
+    <div class="history-canvas-wrap">
+      <canvas id="history"></canvas>
+    </div>
+  </section>
+
+  <section class="block">
+    <h2>Alert threshold</h2>
+    <div class="row">
+      <label for="thresholdSlider">Trigger above</label>
+      <span class="val mono" id="thresholdVal">85 dB</span>
+    </div>
+    <input type="range" id="thresholdSlider" min="40" max="120" value="85" step="1">
+    <div class="presets">
+      <button class="preset-btn" data-v="45">Library<br>45 dB</button>
+      <button class="preset-btn" data-v="65">Conversation<br>65 dB</button>
+      <button class="preset-btn active" data-v="85">Heavy traffic<br>85 dB</button>
+      <button class="preset-btn" data-v="100">Concert<br>100 dB</button>
+    </div>
+  </section>
+
+  <section class="block">
+    <h2>Alert options</h2>
+    <div class="toggle-row">
+      <span class="t-label">Sound alert</span>
+      <label class="switch"><input type="checkbox" id="soundToggle" checked><span class="slider-switch"></span></label>
+    </div>
+    <div class="toggle-row">
+      <span class="t-label">Push notification</span>
+      <label class="switch"><input type="checkbox" id="notifToggle" checked><span class="slider-switch"></span></label>
+    </div>
+    <div class="toggle-row">
+      <span class="t-label">Screen flash</span>
+      <label class="switch"><input type="checkbox" id="flashToggle" checked><span class="slider-switch"></span></label>
+    </div>
+  </section>
+
+  <section class="block">
+    <h2>Microphone calibration</h2>
+    <div class="row">
+      <label for="calSlider">Offset</label>
+      <span class="val mono" id="calVal">+100</span>
+    </div>
+    <input type="range" id="calSlider" min="70" max="130" value="100" step="1">
+    <div class="hint" style="margin-top:8px">Phone mics aren't calibrated instruments — adjust this against a reference meter if you have one, or leave at default for a close estimate.</div>
+  </section>
+
+  <section class="block">
+    <h2>Alert log</h2>
+    <ul class="log-list" id="logList">
+      <li class="log-empty">No alerts yet</li>
+    </ul>
+  </section>
+
+  <div class="footnote">Readings are an estimate based on your device microphone, not a certified sound level meter. For occupational or legal compliance measurements, use a calibrated instrument.</div>
+</div>
+
+<script>
+(function(){
+  const toggleBtn = document.getElementById('toggleBtn');
+  const hint = document.getElementById('hint');
+  const dbValue = document.getElementById('dbValue');
+  const dbLabel = document.getElementById('dbLabel');
+  const statusDot = document.getElementById('statusDot');
+  const meterCard = document.getElementById('meterCard');
+  const needle = document.getElementById('needle');
+  const peakTick = document.getElementById('peakTick');
+  const thresholdSlider = document.getElementById('thresholdSlider');
+  const thresholdVal = document.getElementById('thresholdVal');
+  const calSlider = document.getElementById('calSlider');
+  const calVal = document.getElementById('calVal');
+  const soundToggle = document.getElementById('soundToggle');
+  const notifToggle = document.getElementById('notifToggle');
+  const flashToggle = document.getElementById('flashToggle');
+  const logList = document.getElementById('logList');
+  const historyCanvas = document.getElementById('history');
+  const ctx = historyCanvas.getContext('2d');
+  const presetBtns = document.querySelectorAll('.preset-btn');
+
+  let audioCtx, analyser, source, dataArray, rafId, intervalId;
+  let listening = false;
+  let calOffset = 100;
+  let threshold = 85;
+  let history = []; // {t, v}
+  const HISTORY_SECONDS = 60;
+  let peakValue = 30;
+  let peakDecayTimer = null;
+  let lastAlertTime = 0;
+  const ALERT_COOLDOWN_MS = 5000;
+  let alertLogs = [];
+
+  function dbToAngleDeg(db){
+    // map 30..120 -> -90..90 degrees
+    const clamped = Math.max(30, Math.min(120, db));
+    const frac = (clamped - 30) / (120 - 30);
+    return -90 + frac * 180;
+  }
+
+  function setNeedle(db){
+    const angle = dbToAngleDeg(db);
+    needle.style.transform = `rotate(${angle}deg)`;
+  }
+
+  function setPeak(db){
+    if(db > peakValue){
+      peakValue = db;
+      const angle = dbToAngleDeg(peakValue);
+      peakTick.style.transform = `rotate(${angle}deg)`;
+      clearTimeout(peakDecayTimer);
+      peakDecayTimer = setTimeout(decayPeak, 1500);
+    }
+  }
+  function decayPeak(){
+    peakValue = Math.max(30, peakValue - 3);
+    const angle = dbToAngleDeg(peakValue);
+    peakTick.style.transform = `rotate(${angle}deg)`;
+    if(peakValue > 30) peakDecayTimer = setTimeout(decayPeak, 200);
+  }
+
+  function labelFor(db){
+    if(db < 60) return {text:'Quiet', color:'var(--safe)'};
+    if(db < 85) return {text:'Moderate', color:'var(--warn)'};
+    if(db < 100) return {text:'Loud', color:'var(--danger)'};
+    return {text:'Dangerous', color:'var(--danger-bright)'};
+  }
+
+  function resizeCanvas(){
+    const dpr = window.devicePixelRatio || 1;
+    const rect = historyCanvas.getBoundingClientRect();
+    historyCanvas.width = rect.width * dpr;
+    historyCanvas.height = rect.height * dpr;
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+  }
+  window.addEventListener('resize', resizeCanvas);
+
+  function drawHistory(){
+    const rect = historyCanvas.getBoundingClientRect();
+    const w = rect.width, h = rect.height;
+    ctx.clearRect(0,0,w,h);
+
+    // grid lines
+    ctx.strokeStyle = 'rgba(240,230,210,0.08)';
+    ctx.lineWidth = 1;
+    for(let i=1;i<4;i++){
+      const y = h*i/4;
+      ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(w,y); ctx.stroke();
+    }
+
+    const now = Date.now();
+    const minT = now - HISTORY_SECONDS*1000;
+    const visible = history.filter(p => p.t >= minT);
+    if(visible.length < 2) return;
+
+    const minDb = 30, maxDb = 120;
+    function x(t){ return ((t - minT) / (HISTORY_SECONDS*1000)) * w; }
+    function y(v){ return h - ((Math.max(minDb,Math.min(maxDb,v)) - minDb)/(maxDb-minDb)) * h; }
+
+    // threshold line
+    ctx.strokeStyle = 'rgba(193,67,46,0.6)';
+    ctx.setLineDash([4,4]);
+    ctx.beginPath();
+    ctx.moveTo(0, y(threshold));
+    ctx.lineTo(w, y(threshold));
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // history line
+    ctx.strokeStyle = '#e0ab5c';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    visible.forEach((p,i)=>{
+      const px = x(p.t), py = y(p.v);
+      if(i===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+    });
+    ctx.stroke();
+
+    // fill under
+    ctx.lineTo(x(visible[visible.length-1].t), h);
+    ctx.lineTo(x(visible[0].t), h);
+    ctx.closePath();
+    ctx.fillStyle = 'rgba(224,171,92,0.12)';
+    ctx.fill();
+  }
+
+  function addLog(db){
+    const time = new Date();
+    const timeStr = time.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit', second:'2-digit'});
+    alertLogs.unshift({time: timeStr, db: Math.round(db)});
+    alertLogs = alertLogs.slice(0, 25);
+    renderLog();
+  }
+  function renderLog(){
+    if(alertLogs.length === 0){
+      logList.innerHTML = '<li class="log-empty">No alerts yet</li>';
+      return;
+    }
+    logList.innerHTML = alertLogs.map(l =>
+      `<li><span>${l.time}</span><span class="lvl mono">${l.db} dB</span></li>`
+    ).join('');
+  }
+
+  function beep(){
+    try{
+      const bctx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = bctx.createOscillator();
+      const gain = bctx.createGain();
+      osc.type = 'square';
+      osc.frequency.value = 880;
+      gain.gain.setValueAtTime(0.15, bctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, bctx.currentTime + 0.35);
+      osc.connect(gain).connect(bctx.destination);
+      osc.start();
+      osc.stop(bctx.currentTime + 0.35);
+      osc.onended = () => bctx.close();
+    }catch(e){}
+  }
+
+  function flashScreen(){
+    meterCard.classList.add('flash');
+    statusDot.classList.add('alert');
+    setTimeout(()=>{
+      meterCard.classList.remove('flash');
+      statusDot.classList.remove('alert');
+    }, 700);
+  }
+
+  function notify(db){
+    if(!('Notification' in window)) return;
+    if(Notification.permission === 'granted'){
+      try{
+        new Notification('SoundGuard alert', {
+          body: `Noise level hit ${Math.round(db)} dB — above your ${threshold} dB threshold.`,
+          tag: 'soundguard-alert'
+        });
+      }catch(e){}
+    }
+  }
+
+  function maybeAlert(db){
+    if(db < threshold) return;
+    const now = Date.now();
+    if(now - lastAlertTime < ALERT_COOLDOWN_MS) return;
+    lastAlertTime = now;
+    addLog(db);
+    if(flashToggle.checked) flashScreen();
+    if(soundToggle.checked) beep();
+    if(notifToggle.checked) notify(db);
+  }
+
+  function processAudio(){
+    analyser.getFloatTimeDomainData(dataArray);
+    let sumSq = 0;
+    for(let i=0;i<dataArray.length;i++){
+      sumSq += dataArray[i]*dataArray[i];
+    }
+    const rms = Math.sqrt(sumSq / dataArray.length);
+    const dBFS = 20 * Math.log10(rms || 0.00001);
+    const dbSPL = Math.max(0, dBFS + calOffset);
+
+    dbValue.textContent = dbSPL < 1 ? '--' : Math.round(dbSPL);
+    const lab = labelFor(dbSPL);
+    dbLabel.textContent = lab.text;
+    dbLabel.style.color = lab.color;
+
+    setNeedle(dbSPL);
+    setPeak(dbSPL);
+
+    history.push({t: Date.now(), v: dbSPL});
+    const cutoff = Date.now() - (HISTORY_SECONDS+2)*1000;
+    while(history.length && history[0].t < cutoff) history.shift();
+
+    maybeAlert(dbSPL);
+  }
+
+  async function startListening(){
+    try{
+      const stream = await navigator.mediaDevices.getUserMedia({audio: {echoCancellation:false, noiseSuppression:false, autoGainControl:false}});
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      source = audioCtx.createMediaStreamSource(stream);
+      analyser = audioCtx.createAnalyser();
+      analyser.fftSize = 2048;
+      dataArray = new Float32Array(analyser.fftSize);
+      source.connect(analyser);
+
+      listening = true;
+      toggleBtn.textContent = 'Stop listening';
+      toggleBtn.classList.add('stop');
+      statusDot.classList.add('live');
+      hint.textContent = 'Listening — keep this tab open in the background to keep getting alerts';
+      peakValue = 30;
+
+      if('Notification' in window && Notification.permission === 'default' && notifToggle.checked){
+        Notification.requestPermission();
+      }
+
+      intervalId = setInterval(processAudio, 120);
+      const loop = () => { drawHistory(); rafId = requestAnimationFrame(loop); };
+      loop();
+
+      window._sgStream = stream;
+    }catch(err){
+      hint.textContent = 'Microphone access was denied or unavailable. Check your browser/site permissions and try again.';
+    }
+  }
+
+  function stopListening(){
+    listening = false;
+    clearInterval(intervalId);
+    cancelAnimationFrame(rafId);
+    if(window._sgStream){
+      window._sgStream.getTracks().forEach(t => t.stop());
+    }
+    if(audioCtx) audioCtx.close();
+    toggleBtn.textContent = 'Start listening';
+    toggleBtn.classList.remove('stop');
+    statusDot.classList.remove('live');
+    dbValue.textContent = '--';
+    dbLabel.textContent = 'Not listening';
+    dbLabel.style.color = 'var(--face-dim)';
+    hint.textContent = 'Tap start and allow microphone access';
+  }
+
+  toggleBtn.addEventListener('click', () => {
+    if(listening) stopListening(); else startListening();
+  });
+
+  thresholdSlider.addEventListener('input', (e) => {
+    threshold = parseInt(e.target.value, 10);
+    thresholdVal.textContent = threshold + ' dB';
+    presetBtns.forEach(b => b.classList.toggle('active', parseInt(b.dataset.v,10) === threshold));
+  });
+
+  calSlider.addEventListener('input', (e) => {
+    calOffset = parseInt(e.target.value, 10);
+    calVal.textContent = (calOffset>=0?'+':'') + calOffset;
+  });
+
+  presetBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const v = parseInt(btn.dataset.v, 10);
+      threshold = v;
+      thresholdSlider.value = v;
+      thresholdVal.textContent = v + ' dB';
+      presetBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  });
+
+  notifToggle.addEventListener('change', () => {
+    if(notifToggle.checked && 'Notification' in window && Notification.permission === 'default'){
+      Notification.requestPermission();
+    }
+  });
+
+  resizeCanvas();
+  drawHistory();
+})();
+</script>
+</body>
+</html>
