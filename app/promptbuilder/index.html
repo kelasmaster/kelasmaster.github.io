@@ -1,11 +1,12 @@
 <!DOCTYPE html>
-<html lang="id" x-data="promptApp()" :class="{ 'dark': darkMode === 'dark' || (darkMode === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches) }" class="scroll-smooth">
+<html lang="id" x-data="promptApp()" :class="{ 'dark': darkMode }" class="scroll-smooth">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>App Prompt Builder - Pembuat Prompt Aplikasi Profesional</title>
+  <title>App Prompt Builder - Generator Prompt Aplikasi Profesional</title>
+  <meta name="description" content="Generator prompt aplikasi terlengkap untuk ChatGPT, Gemini, Claude, DeepSeek, dan AI lainnya.">
   
-  <!-- Tailwind CSS CDN -->
+  <!-- Tailwind CSS & Google Fonts -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -14,268 +15,225 @@
         extend: {
           colors: {
             brand: {
-              50: '#f5f3ff',
-              100: '#ede9fe',
-              200: '#ddd6fe',
-              500: '#8b5cf6',
-              600: '#7c3aed',
-              700: '#6d28d9',
-              800: '#5b21b6',
-              900: '#4c1d95',
+              50: '#eef2ff',
+              100: '#e0e7ff',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca',
+              900: '#312e81',
             }
-          },
-          fontFamily: {
-            sans: ['Inter', 'Plus Jakarta Sans', 'sans-serif'],
           }
         }
       }
     }
   </script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   
-  <!-- Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <!-- Alpine.js (Lightweight Interactivity) -->
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
   
-  <!-- Alpine.js & Lucide Icons -->
-  <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
-
+  
   <style>
     body {
       font-family: 'Plus Jakarta Sans', sans-serif;
     }
-    .custom-scrollbar::-webkit-scrollbar {
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
       width: 6px;
       height: 6px;
     }
-    .custom-scrollbar::-webkit-scrollbar-track {
+    ::-webkit-scrollbar-track {
       background: transparent;
     }
-    .custom-scrollbar::-webkit-scrollbar-thumb {
-      background: rgba(156, 163, 175, 0.3);
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
       border-radius: 4px;
     }
-    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-      background: rgba(156, 163, 175, 0.5);
+    .dark ::-webkit-scrollbar-thumb {
+      background: #475569;
     }
   </style>
 </head>
-<body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 min-h-screen transition-colors duration-300">
+<body class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-300">
 
-  <!-- TOAST NOTIFICATIONS -->
-  <div class="fixed top-5 right-5 z-50 flex flex-col gap-3 pointer-events-none">
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div class="fixed top-5 right-5 z-50 flex flex-col gap-2 pointer-events-none">
     <template x-for="toast in toasts" :key="toast.id">
-      <div x-transition:enter="transition ease-out duration-300 transform"
-           x-transition:enter-start="opacity-0 translate-y-2 md:translate-y-0 md:translate-x-4"
-           x-transition:enter-end="opacity-100 translate-y-0 md:translate-x-0"
+      <div x-transition:enter="transition ease-out duration-300"
+           x-transition:enter-start="opacity-0 transform translate-y-2 md:translate-y-0 md:translate-x-2"
+           x-transition:enter-end="opacity-100 transform translate-y-0 md:translate-x-0"
            x-transition:leave="transition ease-in duration-200"
            x-transition:leave-start="opacity-100"
            x-transition:leave-end="opacity-0"
-           class="pointer-events-auto flex items-center gap-3 bg-white dark:bg-slate-900 shadow-xl border border-slate-100 dark:border-slate-800 px-4 py-3.5 rounded-2xl max-w-sm">
-        <div class="p-1.5 rounded-xl text-white" :class="toast.type === 'success' ? 'bg-emerald-500' : toast.type === 'info' ? 'bg-indigo-500' : 'bg-rose-500'">
-          <i :data-lucide="toast.type === 'success' ? 'check-circle' : toast.type === 'info' ? 'info' : 'alert-circle'" class="w-4 h-4"></i>
+           class="pointer-events-auto flex items-center gap-3 bg-white dark:bg-slate-900 shadow-xl border border-slate-100 dark:border-slate-800 px-4 py-3 rounded-xl max-w-sm">
+        <div class="p-1 rounded-full text-white" :class="toast.type === 'success' ? 'bg-emerald-500' : 'bg-red-500'">
+          <i :data-lucide="toast.type === 'success' ? 'check' : 'alert-circle'" class="w-4 h-4"></i>
         </div>
-        <p class="text-xs font-semibold" x-text="toast.message"></p>
+        <p class="text-sm font-medium" x-text="toast.message"></p>
       </div>
     </template>
   </div>
 
-  <!-- MAIN APP CONTAINER -->
-  <div class="flex min-h-screen h-screen overflow-hidden">
+  <!-- MAIN WRAPPER -->
+  <div class="flex flex-1 overflow-hidden h-screen">
     
     <!-- DESKTOP SIDEBAR -->
-    <aside class="hidden lg:flex flex-col w-72 bg-white dark:bg-slate-900 border-r border-slate-100 dark:border-slate-800 shrink-0">
+    <aside class="hidden md:flex flex-col w-64 bg-white dark:bg-slate-900 border-r border-slate-100 dark:border-slate-800 shrink-0">
       <div class="p-6 flex items-center gap-3 border-b border-slate-100 dark:border-slate-800">
-        <div class="p-2.5 bg-brand-600 text-white rounded-2xl shadow-lg shadow-brand-500/20">
-          <i data-lucide="cpu" class="w-6 h-6 animate-pulse"></i>
+        <div class="p-2 bg-brand-500 text-white rounded-xl">
+          <i data-lucide="sparkles" class="w-6 h-6 animate-pulse"></i>
         </div>
         <div>
-          <h1 class="font-extrabold text-md bg-gradient-to-r from-brand-600 to-indigo-500 bg-clip-text text-transparent">App Prompt Builder</h1>
-          <span class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">SaaS Professional</span>
+          <h1 class="font-extrabold text-md bg-gradient-to-r from-brand-500 to-indigo-400 bg-clip-text text-transparent">PromptBuilder</h1>
+          <span class="text-xs text-slate-400 font-semibold">v1.1 (2026)</span>
         </div>
       </div>
       
-      <!-- NAVIGATION LINKS -->
-      <nav class="flex-1 p-4 space-y-2 overflow-y-auto custom-scrollbar">
-        <button @click="activeTab = 'dashboard'" :class="activeTab === 'dashboard' ? 'bg-brand-50 text-brand-700 dark:bg-brand-950/40 dark:text-brand-300' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50'" class="w-full flex items-center gap-3.5 px-4 py-3 rounded-2xl text-sm font-bold transition">
-          <i data-lucide="layout-grid" class="w-5 h-5"></i> Dashboard
+      <!-- Sidebar Navigation -->
+      <nav class="flex-1 p-4 space-y-1.5 overflow-y-auto">
+        <button @click="activeTab = 'dashboard'" :class="activeTab === 'dashboard' ? 'bg-brand-50 text-brand-600 dark:bg-brand-950/50 dark:text-brand-400' : 'hover:bg-slate-50 dark:hover:bg-slate-800/50'" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition">
+          <i data-lucide="layout-dashboard" class="w-5 h-5"></i> Dashboard
         </button>
-        <button @click="activeTab = 'builder'" :class="activeTab === 'builder' ? 'bg-brand-50 text-brand-700 dark:bg-brand-950/40 dark:text-brand-300' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50'" class="w-full flex items-center gap-3.5 px-4 py-3 rounded-2xl text-sm font-bold transition">
-          <i data-lucide="sliders" class="w-5 h-5"></i> Prompt Wizard
+        <button @click="startNewPrompt()" :class="activeTab === 'builder' ? 'bg-brand-50 text-brand-600 dark:bg-brand-950/50 dark:text-brand-400' : 'hover:bg-slate-50 dark:hover:bg-slate-800/50'" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition">
+          <i data-lucide="sliders" class="w-5 h-5"></i> Prompt Builder
         </button>
-        <button @click="activeTab = 'templates'" :class="activeTab === 'templates' ? 'bg-brand-50 text-brand-700 dark:bg-brand-950/40 dark:text-brand-300' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50'" class="w-full flex items-center gap-3.5 px-4 py-3 rounded-2xl text-sm font-bold transition">
-          <i data-lucide="book-open" class="w-5 h-5"></i> Template Bawaan
+        <button @click="activeTab = 'templates'" :class="activeTab === 'templates' ? 'bg-brand-50 text-brand-600 dark:bg-brand-950/50 dark:text-brand-400' : 'hover:bg-slate-50 dark:hover:bg-slate-800/50'" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition">
+          <i data-lucide="layers" class="w-5 h-5"></i> Template Bawaan
         </button>
-        <button @click="activeTab = 'settings'" :class="activeTab === 'settings' ? 'bg-brand-50 text-brand-700 dark:bg-brand-950/40 dark:text-brand-300' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50'" class="w-full flex items-center gap-3.5 px-4 py-3 rounded-2xl text-sm font-bold transition">
+        <button @click="activeTab = 'settings'" :class="activeTab === 'settings' ? 'bg-brand-50 text-brand-600 dark:bg-brand-950/50 dark:text-brand-400' : 'hover:bg-slate-50 dark:hover:bg-slate-800/50'" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition">
           <i data-lucide="settings" class="w-5 h-5"></i> Pengaturan
         </button>
       </nav>
 
-      <!-- SIDEBAR FOOTER & SYSTEM THEME -->
-      <div class="p-4 border-t border-slate-100 dark:border-slate-800 space-y-2">
-        <div class="flex items-center justify-between p-2.5 bg-slate-50 dark:bg-slate-800/50 rounded-2xl">
-          <span class="text-xs font-bold text-slate-400">Mode Tampilan</span>
-          <div class="flex gap-1 bg-white dark:bg-slate-900 p-1 rounded-xl shadow-inner">
-            <button @click="setTheme('light')" :class="darkMode === 'light' ? 'bg-brand-500 text-white' : 'text-slate-400'" class="p-1.5 rounded-lg transition" title="Light Mode">
-              <i data-lucide="sun" class="w-3.5 h-3.5"></i>
-            </button>
-            <button @click="setTheme('dark')" :class="darkMode === 'dark' ? 'bg-brand-500 text-white' : 'text-slate-400'" class="p-1.5 rounded-lg transition" title="Dark Mode">
-              <i data-lucide="moon" class="w-3.5 h-3.5"></i>
-            </button>
-            <button @click="setTheme('auto')" :class="darkMode === 'auto' ? 'bg-brand-500 text-white' : 'text-slate-400'" class="p-1.5 rounded-lg transition" title="Auto (System)">
-              <i data-lucide="laptop" class="w-3.5 h-3.5"></i>
-            </button>
-          </div>
-        </div>
+      <!-- Sidebar Footer / Darkmode Toggle -->
+      <div class="p-4 border-t border-slate-100 dark:border-slate-800">
+        <button @click="toggleDarkMode()" class="w-full flex items-center justify-between px-4 py-2.5 bg-slate-50 dark:bg-slate-800 rounded-xl text-sm font-medium hover:opacity-90 transition">
+          <span class="flex items-center gap-2">
+            <i :data-lucide="darkMode ? 'sun' : 'moon'" class="w-4 h-4 text-amber-500"></i>
+            <span x-text="darkMode ? 'Light Mode' : 'Dark Mode'"></span>
+          </span>
+          <span class="w-2 h-2 rounded-full bg-brand-500"></span>
+        </button>
       </div>
     </aside>
 
-    <!-- CONTENT BODY CONTAINER -->
-    <main class="flex-1 flex flex-col min-w-0 h-screen overflow-hidden relative">
+    <!-- CONTENT CONTAINER -->
+    <main class="flex-1 flex flex-col overflow-hidden relative">
       
-      <!-- DESKTOP & MOBILE HEADER -->
-      <header class="flex items-center justify-between px-6 py-4 bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800 shrink-0 z-10 shadow-sm">
-        <div class="flex items-center gap-3">
-          <div class="lg:hidden p-2 bg-brand-600 text-white rounded-xl shadow-md">
-            <i data-lucide="cpu" class="w-5 h-5"></i>
-          </div>
-          <div>
-            <h2 class="text-base font-extrabold text-slate-800 dark:text-white uppercase tracking-wider" x-text="activeTab === 'builder' ? 'Langkah ' + currentStep + ' / 20' : activeTab"></h2>
-            <p class="text-[10px] text-slate-400 font-bold" x-text="activeTab === 'builder' ? stepTitles[currentStep - 1] : 'SaaS Prompt Management'"></p>
-          </div>
+      <!-- DESKTOP NAVBAR -->
+      <header class="flex items-center justify-between px-6 py-4 bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800 shrink-0">
+        <div class="flex items-center gap-4">
+          <!-- Mobile Menu Trigger -->
+          <span class="md:hidden p-2 bg-brand-500 text-white rounded-lg">
+            <i data-lucide="sparkles" class="w-5 h-5"></i>
+          </span>
+          <h2 class="text-lg font-bold text-slate-800 dark:text-white capitalize" x-text="activeTab === 'builder' ? 'Prompt Wizard (Langkah ' + currentStep + '/20)' : activeTab"></h2>
         </div>
         <div class="flex items-center gap-3">
-          <div class="hidden md:flex flex-col items-end">
-            <span class="text-xs font-black text-slate-800 dark:text-slate-200">Arsitek AI</span>
-            <span class="text-[10px] text-emerald-500 font-bold flex items-center gap-1">
-              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Mode Aktif
-            </span>
+          <div class="text-right hidden sm:block">
+            <p class="text-xs text-slate-400 font-semibold">User Akun</p>
+            <p class="text-sm font-bold text-slate-700 dark:text-slate-300">Wahyudi</p>
           </div>
-          <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-brand-600 to-indigo-600 flex items-center justify-center text-white font-black text-sm shadow-md">
-            AI
-          </div>
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-500 to-indigo-500 flex items-center justify-center text-white font-black text-sm">W</div>
         </div>
       </header>
 
-      <!-- MAIN SCROLLABLE WRAPPER -->
-      <div class="flex-1 overflow-y-auto p-4 md:p-8 pb-28 md:pb-8 custom-scrollbar">
+      <!-- MAIN SCROLLABLE BODY -->
+      <div class="flex-1 overflow-y-auto p-4 md:p-8 pb-24 md:pb-8">
         
-        <!-- SKELETON LOADER -->
+        <!-- SKELETON LOADING VIEW (Simulasi loading cepat saat ganti tab) -->
         <div x-show="loading" class="space-y-6">
-          <div class="h-6 bg-slate-200 dark:bg-slate-800 rounded-lg w-1/4 animate-pulse"></div>
+          <div class="h-8 bg-slate-200 dark:bg-slate-800 rounded-lg w-1/4 animate-pulse"></div>
           <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="h-32 bg-slate-200 dark:bg-slate-800 rounded-3xl animate-pulse"></div>
-            <div class="h-32 bg-slate-200 dark:bg-slate-800 rounded-3xl animate-pulse"></div>
-            <div class="h-32 bg-slate-200 dark:bg-slate-800 rounded-3xl animate-pulse"></div>
+            <div class="h-32 bg-slate-200 dark:bg-slate-800 rounded-2xl animate-pulse"></div>
+            <div class="h-32 bg-slate-200 dark:bg-slate-800 rounded-2xl animate-pulse"></div>
+            <div class="h-32 bg-slate-200 dark:bg-slate-800 rounded-2xl animate-pulse"></div>
           </div>
-          <div class="h-80 bg-slate-200 dark:bg-slate-800 rounded-3xl animate-pulse"></div>
+          <div class="h-64 bg-slate-200 dark:bg-slate-800 rounded-2xl animate-pulse"></div>
         </div>
 
-        <div x-show="!loading" x-transition class="space-y-6">
+        <div x-show="!loading" class="transition-opacity duration-200">
           
           <!-- ==================== DASHBOARD TAB ==================== -->
           <template x-if="activeTab === 'dashboard'">
             <div class="space-y-6">
-              
-              <!-- TOP BANNER -->
-              <div class="bg-gradient-to-r from-brand-800 to-indigo-900 rounded-3xl p-6 md:p-8 text-white shadow-xl relative overflow-hidden">
-                <div class="absolute right-0 bottom-0 opacity-10 transform translate-x-12 translate-y-12">
-                  <i data-lucide="cpu" class="w-72 h-72"></i>
+              <!-- Stat Cards -->
+              <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm flex items-center gap-4">
+                  <div class="p-3 bg-indigo-50 dark:bg-indigo-950/50 text-indigo-500 rounded-xl">
+                    <i data-lucide="file-text" class="w-6 h-6"></i>
+                  </div>
+                  <div>
+                    <p class="text-xs font-semibold text-slate-400">Total Prompt</p>
+                    <p class="text-2xl font-black text-slate-800 dark:text-white" x-text="savedPrompts.length"></p>
+                  </div>
                 </div>
-                <div class="max-w-2xl relative z-10 space-y-4">
-                  <span class="bg-brand-500 text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider shadow-sm">AI Engine Powered</span>
-                  <h3 class="text-xl md:text-3xl font-extrabold leading-tight">Buat Prompt Pengembangan Aplikasi Tanpa Cacat</h3>
-                  <p class="text-xs md:text-sm text-slate-200 leading-relaxed">
-                    Pandu AI kesayangan Anda (ChatGPT, Gemini, Claude, Grok, DeepSeek) dengan instruksi arsitektur sistem modular terlengkap. Bebas bug dan halusinasi.
-                  </p>
-                  <button @click="startNewPrompt()" class="bg-white text-brand-800 font-extrabold px-5 py-3 rounded-2xl hover:bg-slate-100 transition shadow-lg text-xs md:text-sm flex items-center gap-2">
-                    <i data-lucide="plus" class="w-4 h-4"></i> Buat Prompt Baru
+
+                <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm flex items-center gap-4">
+                  <div class="p-3 bg-pink-50 dark:bg-pink-950/50 text-pink-500 rounded-xl">
+                    <i data-lucide="heart" class="w-6 h-6"></i>
+                  </div>
+                  <div>
+                    <p class="text-xs font-semibold text-slate-400">Favorit</p>
+                    <p class="text-2xl font-black text-slate-800 dark:text-white" x-text="savedPrompts.filter(p => p.fav).length"></p>
+                  </div>
+                </div>
+
+                <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm flex items-center gap-4 col-span-2 sm:col-span-1">
+                  <div class="p-3 bg-amber-50 dark:bg-amber-950/50 text-amber-500 rounded-xl">
+                    <i data-lucide="history" class="w-6 h-6"></i>
+                  </div>
+                  <div>
+                    <p class="text-xs font-semibold text-slate-400">Terakhir Dibuat</p>
+                    <p class="text-sm font-bold text-slate-700 dark:text-slate-300 truncate max-w-[120px]" x-text="savedPrompts.length > 0 ? savedPrompts[0].appName : '-'"></p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Main Hero Call-to-action -->
+              <div class="bg-gradient-to-r from-brand-600 to-indigo-600 rounded-3xl p-6 md:p-10 text-white shadow-xl relative overflow-hidden">
+                <div class="absolute right-0 bottom-0 opacity-10 transform translate-x-12 translate-y-12">
+                  <i data-lucide="sparkles" class="w-80 h-80"></i>
+                </div>
+                <div class="max-w-xl relative z-10 space-y-4">
+                  <h3 class="text-2xl md:text-3xl font-extrabold tracking-tight">Butuh Prompt Pembuatan Aplikasi Tanpa Cela?</h3>
+                  <p class="text-indigo-100 text-sm md:text-base leading-relaxed">Hindari jawaban AI yang terpotong, berputar-putar, atau salah menentukan modul. Gunakan sistem wizard multi-langkah kami untuk merangkai standar profesional dalam sekejap.</p>
+                  <button @click="startNewPrompt()" class="bg-white text-brand-700 font-bold px-6 py-3 rounded-xl hover:bg-slate-50 transition shadow-md flex items-center gap-2">
+                    <i data-lucide="plus-circle" class="w-5 h-5"></i> Buat Prompt Baru
                   </button>
                 </div>
               </div>
 
-              <!-- METRICS CARDS -->
-              <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                <div class="bg-white dark:bg-slate-900 p-5 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm flex items-center gap-4">
-                  <div class="p-3 bg-brand-50 dark:bg-brand-950 text-brand-600 dark:text-brand-400 rounded-2xl">
-                    <i data-lucide="file-text" class="w-6 h-6"></i>
-                  </div>
-                  <div>
-                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Total Prompt</span>
-                    <p class="text-xl font-extrabold" x-text="savedPrompts.length"></p>
-                  </div>
-                </div>
-
-                <div class="bg-white dark:bg-slate-900 p-5 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm flex items-center gap-4">
-                  <div class="p-3 bg-rose-50 dark:bg-rose-950 text-rose-500 rounded-2xl">
-                    <i data-lucide="heart" class="w-6 h-6"></i>
-                  </div>
-                  <div>
-                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Favorit</span>
-                    <p class="text-xl font-extrabold" x-text="getFavCount()"></p>
-                  </div>
-                </div>
-
-                <div class="bg-white dark:bg-slate-900 p-5 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm flex items-center gap-4 col-span-2 sm:col-span-1">
-                  <div class="p-3 bg-amber-50 dark:bg-amber-950 text-amber-500 rounded-2xl">
-                    <i data-lucide="clock" class="w-6 h-6"></i>
-                  </div>
-                  <div class="min-w-0">
-                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Prompt Terakhir</span>
-                    <p class="text-xs font-bold truncate text-slate-700 dark:text-slate-300" x-text="savedPrompts.length > 0 ? savedPrompts[0].appName : '-'"></p>
-                  </div>
-                </div>
-
-                <div class="bg-white dark:bg-slate-900 p-5 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm flex items-center gap-4 col-span-2 sm:col-span-1">
-                  <div class="p-3 bg-indigo-50 dark:bg-indigo-950 text-indigo-500 rounded-2xl">
-                    <i data-lucide="package" class="w-6 h-6"></i>
-                  </div>
-                  <div class="min-w-0">
-                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Template Terakhir</span>
-                    <p class="text-xs font-bold truncate text-slate-700 dark:text-slate-300" x-text="lastTemplateUsed || '-'"></p>
-                  </div>
-                </div>
-              </div>
-
-              <!-- RECENT HISTORY & TEMPLATES LIST -->
+              <!-- Last Created & History -->
               <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                
-                <!-- PROMPT HISTORY -->
-                <div class="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 space-y-4">
-                  <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
-                    <h4 class="font-bold text-sm flex items-center gap-2">
-                      <i data-lucide="history" class="w-4 h-4 text-brand-600"></i> Prompt Tersimpan Anda
-                    </h4>
-                    <span class="text-[10px] font-black text-slate-400" x-text="savedPrompts.length + ' Item'"></span>
-                  </div>
-
-                  <div class="space-y-3 max-h-80 overflow-y-auto pr-2 custom-scrollbar">
+                <!-- Saved History -->
+                <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 p-6 space-y-4">
+                  <h4 class="text-md font-bold flex items-center gap-2">
+                    <i data-lucide="archive" class="w-5 h-5 text-indigo-500"></i> Prompt Tersimpan Anda
+                  </h4>
+                  <div class="space-y-3 max-h-80 overflow-y-auto pr-2">
                     <template x-if="savedPrompts.length === 0">
-                      <div class="text-center py-12 text-slate-400 space-y-3">
-                        <i data-lucide="folder-archive" class="w-12 h-12 mx-auto stroke-1"></i>
-                        <p class="text-xs font-bold">Belum ada prompt tersimpan. Mulai membuat prompt pertamamu!</p>
+                      <div class="text-center py-8 text-slate-400 space-y-2">
+                        <i data-lucide="folder-open" class="w-10 h-10 mx-auto opacity-40"></i>
+                        <p class="text-sm">Belum ada prompt yang disimpan.</p>
                       </div>
                     </template>
-                    
-                    <template x-for="item in savedPrompts" :key="item.id">
-                      <div class="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800/40 rounded-2xl border border-slate-100 dark:border-slate-800 hover:shadow-sm transition">
-                        <div class="min-w-0 flex-1">
-                          <div class="flex items-center gap-2">
-                            <span class="text-[10px] font-black uppercase text-brand-600 dark:text-brand-400" x-text="item.platform"></span>
-                            <span class="w-1.5 h-1.5 rounded-full bg-slate-300"></span>
-                            <span class="text-[9px] font-bold text-slate-400" x-text="item.date"></span>
-                          </div>
-                          <h5 class="text-xs font-bold text-slate-800 dark:text-slate-200 mt-1 truncate" x-text="item.appName"></h5>
+                    <template x-for="(p, index) in savedPrompts" :key="p.id">
+                      <div class="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-800 hover:border-slate-200 transition">
+                        <div>
+                          <span class="px-2 py-0.5 text-[10px] font-bold bg-indigo-100 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-300 rounded-md" x-text="p.platform"></span>
+                          <h5 class="font-bold text-sm text-slate-800 dark:text-white mt-1" x-text="p.appName"></h5>
                         </div>
-                        <div class="flex items-center gap-1.5 shrink-0 ml-3">
-                          <button @click="toggleFavorite(item.id)" class="p-2 rounded-xl text-slate-400 hover:text-rose-500 transition">
-                            <i data-lucide="heart" class="w-4 h-4" :class="item.fav ? 'fill-rose-500 text-rose-500' : ''"></i>
+                        <div class="flex items-center gap-1">
+                          <button @click="toggleFav(p.id)" class="p-2 rounded-lg text-slate-400 hover:text-pink-500 transition">
+                            <i data-lucide="heart" class="w-4 h-4" :class="p.fav ? 'fill-pink-500 text-pink-500' : ''"></i>
                           </button>
-                          <button @click="loadPrompt(item)" class="p-2 bg-brand-50 hover:bg-brand-100 text-brand-700 dark:bg-brand-950 dark:text-brand-300 rounded-xl transition text-[10px] font-extrabold flex items-center gap-1">
-                            <i data-lucide="external-link" class="w-3 h-3"></i> Buka
+                          <button @click="loadSavedPrompt(p)" class="p-2 bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 text-brand-600 dark:text-brand-400 rounded-xl hover:bg-brand-50 transition text-xs font-bold">
+                            Buka
                           </button>
-                          <button @click="deletePrompt(item.id)" class="p-2 text-slate-400 hover:text-rose-500 transition">
+                          <button @click="deletePrompt(p.id)" class="p-2 text-slate-400 hover:text-red-500 transition">
                             <i data-lucide="trash-2" class="w-4 h-4"></i>
                           </button>
                         </div>
@@ -284,89 +242,54 @@
                   </div>
                 </div>
 
-                <!-- ACCORDION / AI EDUCATION SECTION -->
-                <div class="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 space-y-4">
-                  <div class="border-b border-slate-100 dark:border-slate-800 pb-3">
-                    <h4 class="font-bold text-sm flex items-center gap-2">
-                      <i data-lucide="lightbulb" class="w-4 h-4 text-amber-500 animate-bounce"></i> Mengapa Gunakan Prompt Ber-Struktur?
-                    </h4>
-                  </div>
-                  
+                <!-- Tips / FAQ Accordion -->
+                <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 p-6 space-y-4">
+                  <h4 class="text-md font-bold flex items-center gap-2">
+                    <i data-lucide="help-circle" class="w-5 h-5 text-emerald-500"></i> Mengapa Prompt Builder?
+                  </h4>
                   <div class="space-y-3">
-                    <!-- ACCORDION ITEM 1 -->
-                    <div class="border border-slate-100 dark:border-slate-800 rounded-2xl overflow-hidden">
-                      <button @click="accordionOpen = accordionOpen === 1 ? 0 : 1" class="w-full flex items-center justify-between p-4 bg-slate-50/50 dark:bg-slate-800/20 text-left">
-                        <span class="text-xs font-extrabold">1. Menghindari Token Terpotong</span>
-                        <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 transition" :class="accordionOpen === 1 ? 'transform rotate-180' : ''"></i>
-                      </button>
-                      <div x-show="accordionOpen === 1" class="p-4 bg-white dark:bg-slate-900 text-xs text-slate-400 leading-relaxed border-t border-slate-100 dark:border-slate-800">
-                        Sering kali AI memotong jawaban karena konteks awal aplikasi tidak jelas. Dengan menyusun arsitektur sistem secara detail terlebih dahulu di form wizard, AI dapat langsung menentukan file-file boilerplate dengan tepat dan ringkas.
-                      </div>
+                    <div class="border border-slate-100 dark:border-slate-800 rounded-2xl p-4">
+                      <p class="font-bold text-sm mb-1">1. Menghindari "Halusinasi" AI</p>
+                      <p class="text-xs text-slate-400 leading-relaxed">Formulir 20 langkah dirancang untuk menetapkan batas-batas yang sangat tegas mengenai teknologi, batasan keamanan, integrasi, dan pola arsitektur kode.</p>
                     </div>
-
-                    <!-- ACCORDION ITEM 2 -->
-                    <div class="border border-slate-100 dark:border-slate-800 rounded-2xl overflow-hidden">
-                      <button @click="accordionOpen = accordionOpen === 2 ? 0 : 2" class="w-full flex items-center justify-between p-4 bg-slate-50/50 dark:bg-slate-800/20 text-left">
-                        <span class="text-xs font-extrabold">2. Keamanan & Performa Terjamin</span>
-                        <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 transition" :class="accordionOpen === 2 ? 'transform rotate-180' : ''"></i>
-                      </button>
-                      <div x-show="accordionOpen === 2" class="p-4 bg-white dark:bg-slate-900 text-xs text-slate-400 leading-relaxed border-t border-slate-100 dark:border-slate-800">
-                        AI dilatih untuk memprioritaskan keamanan jika diminta. Langkah Keamanan &amp; Performa memastikan AI menambahkan filter Anti-SQL Injection, CSRF, validasi, dan caching sejak baris kode pertama.
-                      </div>
-                    </div>
-
-                    <!-- ACCORDION ITEM 3 -->
-                    <div class="border border-slate-100 dark:border-slate-800 rounded-2xl overflow-hidden">
-                      <button @click="accordionOpen = accordionOpen === 3 ? 0 : 3" class="w-full flex items-center justify-between p-4 bg-slate-50/50 dark:bg-slate-800/20 text-left">
-                        <span class="text-xs font-extrabold">3. Spesialist Google Apps Script</span>
-                        <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 transition" :class="accordionOpen === 3 ? 'transform rotate-180' : ''"></i>
-                      </button>
-                      <div x-show="accordionOpen === 3" class="p-4 bg-white dark:bg-slate-900 text-xs text-slate-400 leading-relaxed border-t border-slate-100 dark:border-slate-800">
-                        Google Apps Script memiliki batasan file (.html dan .gs). Template prompt khusus GAS memfokuskan model AI untuk menulis implementasi server-side dan client-side tanpa dependensi library eksternal yang melanggar batasan eksekusi cloud.
-                      </div>
+                    <div class="border border-slate-100 dark:border-slate-800 rounded-2xl p-4">
+                      <p class="font-bold text-sm mb-1">2. Dukungan Google Apps Script Maksimal</p>
+                      <p class="text-xs text-slate-400 leading-relaxed">Mendukung setup multi-file, integrasi otomatis Google Sheets API, pembuatan mockup spreadsheet cepat, dan petunjuk deployment tanpa hambatan.</p>
                     </div>
                   </div>
                 </div>
-
               </div>
             </div>
           </template>
 
-          <!-- ==================== PROMPT BUILDER (WIZARD) TAB ==================== -->
+          <!-- ==================== PROMPT BUILDER TAB ==================== -->
           <template x-if="activeTab === 'builder'">
-            <div class="max-w-4xl mx-auto space-y-6">
+            <div class="max-w-4xl mx-auto space-y-8">
               
-              <!-- PROGRESS TRACKER -->
-              <div class="bg-white dark:bg-slate-900 p-4 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-3">
-                <div class="flex items-center gap-2">
-                  <span class="text-xs font-black bg-brand-500 text-white w-6 h-6 rounded-lg flex items-center justify-center" x-text="currentStep"></span>
-                  <div>
-                    <h5 class="text-xs font-extrabold text-slate-800 dark:text-slate-100" x-text="stepTitles[currentStep-1]"></h5>
-                    <p class="text-[9px] text-slate-400 font-bold uppercase tracking-wider">Langkah Bertahap Aplikasi</p>
-                  </div>
+              <!-- Progress Indicator -->
+              <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm space-y-2">
+                <div class="flex justify-between items-center text-xs font-bold text-slate-400">
+                  <span x-text="'Langkah ' + currentStep + ' dari 20'"></span>
+                  <span class="text-brand-500" x-text="Math.round((currentStep/20)*100) + '% Selesai'"></span>
                 </div>
-                <div class="flex-1 max-w-md hidden md:block">
-                  <div class="w-full bg-slate-100 dark:bg-slate-800 h-2.5 rounded-full overflow-hidden">
-                    <div class="bg-gradient-to-r from-brand-500 to-indigo-500 h-full transition-all duration-300" :style="'width: ' + ((currentStep / 20) * 100) + '%'"></div>
-                  </div>
+                <div class="w-full bg-slate-100 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
+                  <div class="bg-gradient-to-r from-brand-500 to-indigo-500 h-full transition-all duration-300" :style="'width: ' + ((currentStep/20)*100) + '%'"></div>
                 </div>
-                <span class="text-xs font-extrabold text-brand-600 dark:text-brand-400 shrink-0 text-right" x-text="Math.round((currentStep / 20) * 100) + '% Selesai'"></span>
               </div>
 
-              <!-- STEP CARDS -->
-              <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm p-6 md:p-8 space-y-6">
+              <!-- STEP CONTAINER (Card) -->
+              <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 p-6 md:p-8 shadow-sm space-y-6">
                 
-                <!-- LANGKAH 1: PILIH PLATFORM -->
+                <!-- LANGKAH 1: Pilih Platform -->
                 <div x-show="currentStep === 1" class="space-y-4">
-                  <div class="space-y-1">
-                    <label class="text-xs font-black text-slate-400 uppercase tracking-widest block">Langkah 1: Landasan Utama (Platform / Framework)</label>
-                    <p class="text-[11px] text-slate-400 leading-relaxed">Tentukan teknologi utama di mana aplikasi ini akan di-compile atau dijalankan.</p>
+                  <div class="flex items-center gap-3">
+                    <div class="p-2 bg-indigo-50 text-indigo-500 dark:bg-indigo-950 rounded-xl"><i data-lucide="layers" class="w-5 h-5"></i></div>
+                    <h3 class="text-lg font-bold">Langkah 1: Pilih Platform / Framework Utama</h3>
                   </div>
+                  <p class="text-xs text-slate-400">Pilih fondasi dasar tumpukan teknologi (tech-stack) aplikasi Anda.</p>
                   <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
                     <template x-for="plat in techPlatforms" :key="plat">
-                      <button @click="form.platform = plat; if(plat === 'Google App Script') { form.database = 'Spreadsheet' }" 
-                              :class="form.platform === plat ? 'border-brand-500 bg-brand-50/50 dark:bg-brand-950/20 text-brand-700 dark:text-brand-300' : 'border-slate-100 dark:border-slate-800 hover:border-slate-200'" 
-                              class="p-4 border rounded-2xl text-left font-bold text-xs transition flex justify-between items-center">
+                      <button @click="form.platform = plat" :class="form.platform === plat ? 'border-brand-500 bg-brand-50/50 dark:bg-brand-950/20 text-brand-600 dark:text-brand-400' : 'border-slate-100 dark:border-slate-800 hover:border-slate-200'" class="p-4 border rounded-2xl text-left font-bold text-sm transition flex items-center justify-between">
                         <span x-text="plat"></span>
                         <span x-show="form.platform === plat" class="w-2.5 h-2.5 rounded-full bg-brand-500"></span>
                       </button>
@@ -374,404 +297,415 @@
                   </div>
                 </div>
 
-                <!-- LANGKAH 2: JENIS APLIKASI -->
+                <!-- LANGKAH 2: Jenis Aplikasi -->
                 <div x-show="currentStep === 2" class="space-y-4">
-                  <div class="space-y-1">
-                    <label class="text-xs font-black text-slate-400 uppercase tracking-widest block">Langkah 2: Model &amp; Jenis Aplikasi</label>
-                    <p class="text-[11px] text-slate-400 leading-relaxed">Pilih salah satu model/konsep sistem yang ingin dikembangkan atau buat sendiri.</p>
+                  <div class="flex items-center gap-3">
+                    <div class="p-2 bg-indigo-50 text-indigo-500 dark:bg-indigo-950 rounded-xl"><i data-lucide="code" class="w-5 h-5"></i></div>
+                    <h3 class="text-lg font-bold">Langkah 2: Jenis / Model Aplikasi</h3>
                   </div>
-                  <div class="grid grid-cols-3 md:grid-cols-4 gap-2">
-                    <template x-for="type in appTypes" :key="type">
-                      <button @click="form.appType = type" :class="form.appType === type ? 'bg-brand-600 text-white' : 'bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700'" class="p-3 rounded-xl text-[10px] font-extrabold text-center transition" x-text="type"></button>
-                    </template>
-                  </div>
-                  <div class="pt-2">
-                    <label class="block text-xs font-black text-slate-400 uppercase mb-2">Nama Proyek / Aplikasi Khusus</label>
-                    <input type="text" x-model="form.appName" class="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 rounded-2xl p-4 text-xs font-semibold focus:ring-2 focus:ring-brand-500" placeholder="Contoh: Aplikasi POS Restoran Lezat Mandiri">
+                  <p class="text-xs text-slate-400">Masukkan nama dan jenis aplikasi yang ingin dikembangkan.</p>
+                  <div class="space-y-4">
+                    <div>
+                      <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Nama Aplikasi</label>
+                      <input type="text" x-model="form.appName" class="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-brand-500" placeholder="Contoh: Kasir Pintar Cileungsi">
+                    </div>
+                    <div>
+                      <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Pilih Jenis Aplikasi</label>
+                      <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
+                        <template x-for="type in appTypes" :key="type">
+                          <button @click="form.appType = type" :class="form.appType === type ? 'bg-brand-500 text-white' : 'bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700'" class="p-3 rounded-xl text-xs font-bold text-center transition" x-text="type"></button>
+                        </template>
+                      </div>
+                      <input type="text" x-model="form.appType" class="w-full mt-3 bg-slate-50 dark:bg-slate-800 border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-brand-500" placeholder="Ketik custom jika tidak ada di atas">
+                    </div>
                   </div>
                 </div>
 
-                <!-- LANGKAH 3: PENGATURAN KHUSUS GOOGLE APPS SCRIPT -->
+                <!-- LANGKAH 3: Khusus Google Apps Script -->
                 <div x-show="currentStep === 3" class="space-y-6">
-                  <div class="space-y-1">
-                    <label class="text-xs font-black text-slate-400 uppercase tracking-widest block">Langkah 3: Pengaturan Google Apps Script</label>
-                    <p class="text-[11px] text-slate-400 leading-relaxed">Hanya berlaku apabila Anda memilih platform **Google App Script**. Abaikan jika menggunakan teknologi lainnya.</p>
+                  <div class="flex items-center gap-3">
+                    <div class="p-2 bg-indigo-50 text-indigo-500 dark:bg-indigo-950 rounded-xl"><i data-lucide="file-spreadsheet" class="w-5 h-5"></i></div>
+                    <h3 class="text-lg font-bold">Langkah 3: Aturan Khusus Google Apps Script</h3>
+                  </div>
+                  <div class="bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-400 p-4 rounded-2xl text-xs flex gap-3 leading-relaxed">
+                    <i data-lucide="info" class="w-5 h-5 shrink-0"></i>
+                    <span>Bagian ini mendominasi output prompt jika Anda memilih <strong>Google Apps Script</strong> pada Langkah 1. Jika tidak, pengaturan ini akan diabaikan.</span>
                   </div>
 
-                  <template x-if="form.platform !== 'Google App Script'">
-                    <div class="bg-indigo-50 dark:bg-indigo-950/40 p-5 rounded-3xl border border-brand-100 dark:border-brand-900 flex flex-col items-center justify-center text-center gap-3">
-                      <i data-lucide="info" class="w-8 h-8 text-brand-600"></i>
-                      <p class="text-xs font-extrabold">Langkah ini Terlewat Otomatis</p>
-                      <p class="text-[10px] text-slate-400 max-w-sm">Anda memilih **<span x-text="form.platform"></span>** pada Langkah 1. Anda boleh langsung klik "Lanjutkan".</p>
+                  <!-- Struktur File -->
+                  <div class="space-y-3">
+                    <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Struktur File</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                      <label class="p-4 border border-slate-100 dark:border-slate-800 rounded-2xl cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center gap-3">
+                        <input type="radio" name="gas_structure" value="Banyak file" x-model="form.gas.structure" class="text-brand-500">
+                        <span class="text-sm font-semibold">Banyak File Terpisah</span>
+                      </label>
+                      <label class="p-4 border border-slate-100 dark:border-slate-800 rounded-2xl cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center gap-3">
+                        <input type="radio" name="gas_structure" value="Hanya Code.gs & Index.html" x-model="form.gas.structure" class="text-brand-500">
+                        <span class="text-sm font-semibold">Code.gs &amp; Index.html</span>
+                      </label>
+                      <label class="p-4 border border-slate-100 dark:border-slate-800 rounded-2xl cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center gap-3">
+                        <input type="radio" name="gas_structure" value="Bebas AI menentukan" x-model="form.gas.structure" class="text-brand-500">
+                        <span class="text-sm font-semibold">Bebas Ditentukan AI</span>
+                      </label>
                     </div>
-                  </template>
+                  </div>
 
-                  <template x-if="form.platform === 'Google App Script'">
-                    <div class="space-y-6">
-                      <!-- Struktur File -->
-                      <div class="space-y-2">
-                        <label class="text-xs font-bold text-slate-400 uppercase block">Struktur Penyusunan File</label>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                          <label class="p-4 border border-slate-100 dark:border-slate-800 rounded-2xl cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center gap-3">
-                            <input type="radio" name="gas_structure" value="Banyak file" x-model="form.gasStructure" class="text-brand-500">
-                            <span class="text-xs font-bold">Banyak File (Terpisah)</span>
-                          </label>
-                          <label class="p-4 border border-slate-100 dark:border-slate-800 rounded-2xl cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center gap-3">
-                            <input type="radio" name="gas_structure" value="Hanya Code.gs dan Index.html" x-model="form.gasStructure" class="text-brand-500">
-                            <span class="text-xs font-bold">Code.gs &amp; Index.html saja</span>
-                          </label>
-                          <label class="p-4 border border-slate-100 dark:border-slate-800 rounded-2xl cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center gap-3">
-                            <input type="radio" name="gas_structure" value="Bebas AI menentukan" x-model="form.gasStructure" class="text-brand-500">
-                            <span class="text-xs font-bold">Tergantung AI</span>
-                          </label>
-                        </div>
-                      </div>
-
-                      <!-- Spreadsheet Checklist -->
-                      <div class="space-y-2">
-                        <label class="text-xs font-bold text-slate-400 uppercase block">Fitur Otomatisasi Google Sheets</label>
-                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-                          <template x-for="opt in gasSpreadsheets" :key="opt">
-                            <label class="p-3 border border-slate-100 dark:border-slate-800 rounded-xl cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center gap-2">
-                              <input type="checkbox" :value="opt" x-model="form.gasSheets" class="rounded text-brand-500">
-                              <span class="text-[11px] font-bold" x-text="opt"></span>
-                            </label>
-                          </template>
-                        </div>
-                      </div>
-
-                      <!-- Hosting Frontend & Backend -->
-                      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                          <label class="text-xs font-bold text-slate-400 uppercase block mb-1">Frontend Hosting</label>
-                          <select x-model="form.gasHosting" class="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 rounded-2xl p-4 text-xs font-semibold">
-                            <option value="HTML Service">HTML Service (Bawaan GAS)</option>
-                            <option value="Github Pages">Github Pages</option>
-                            <option value="Cloudflare Pages">Cloudflare Pages</option>
-                          </select>
-                        </div>
-                        <div>
-                          <label class="text-xs font-bold text-slate-400 uppercase block mb-1">Backend Hosting</label>
-                          <input type="text" value="Google App Script" disabled class="w-full bg-slate-100 dark:bg-slate-800 border border-slate-100 dark:border-slate-800 rounded-2xl p-4 text-xs font-semibold text-slate-400 cursor-not-allowed">
-                        </div>
-                      </div>
-
-                      <!-- Deployment Checklist -->
-                      <div class="flex gap-4">
-                        <label class="flex items-center gap-2 cursor-pointer text-xs font-bold">
-                          <input type="checkbox" x-model="form.gasDeployGuide" class="rounded text-brand-500"> Sediakan panduan Deploy
+                  <!-- Spreadsheet Integrations -->
+                  <div class="space-y-3">
+                    <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Fitur Otomatis Spreadsheet</h4>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                      <template x-for="f in gasFeatures" :key="f">
+                        <label class="p-3 border border-slate-100 dark:border-slate-800 rounded-xl cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center gap-2">
+                          <input type="checkbox" :value="f" x-model="form.gas.sheetsOptions" class="rounded text-brand-500">
+                          <span class="text-xs font-semibold" x-text="f"></span>
                         </label>
-                        <label class="flex items-center gap-2 cursor-pointer text-xs font-bold">
-                          <input type="checkbox" x-model="form.gasPublishGuide" class="rounded text-brand-500"> Sediakan panduan Publish
-                        </label>
-                      </div>
+                      </template>
                     </div>
-                  </template>
+                  </div>
+
+                  <!-- Hosting Frontend & Backend -->
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Hosting Frontend</h4>
+                      <select x-model="form.gas.hostingFrontend" class="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-brand-500">
+                        <option value="HTML Service">HTML Service (Apps Script)</option>
+                        <option value="Github Pages">Github Pages</option>
+                        <option value="Cloudflare Pages">Cloudflare Pages</option>
+                      </select>
+                    </div>
+                    <div>
+                      <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Hosting Backend</h4>
+                      <input type="text" readonly value="Google App Script" class="w-full bg-slate-100 dark:bg-slate-800/50 border-none rounded-xl p-3 text-sm text-slate-400 cursor-not-allowed">
+                    </div>
+                  </div>
+
+                  <!-- Deployment Checklist -->
+                  <div class="flex gap-4">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                      <input type="checkbox" x-model="form.gas.deployGuide" class="rounded text-brand-500">
+                      <span class="text-xs font-semibold">Sertakan panduan Deploy</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                      <input type="checkbox" x-model="form.gas.publishGuide" class="rounded text-brand-500">
+                      <span class="text-xs font-semibold">Sertakan panduan Publish</span>
+                    </label>
+                  </div>
                 </div>
 
-                <!-- LANGKAH 4: DATABASE -->
+                <!-- LANGKAH 4: Database -->
                 <div x-show="currentStep === 4" class="space-y-4">
-                  <div class="space-y-1">
-                    <label class="text-xs font-black text-slate-400 uppercase tracking-widest block">Langkah 4: Database Pendukung</label>
-                    <p class="text-[11px] text-slate-400 leading-relaxed">Tentukan database yang akan digunakan untuk menyimpan data transaksi.</p>
+                  <div class="flex items-center gap-3">
+                    <div class="p-2 bg-indigo-50 text-indigo-500 dark:bg-indigo-950 rounded-xl"><i data-lucide="database" class="w-5 h-5"></i></div>
+                    <h3 class="text-lg font-bold">Langkah 4: Database Engine</h3>
                   </div>
+                  <p class="text-xs text-slate-400">Pilih media penyimpanan database utama yang ingin dikonfigurasi.</p>
                   <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
                     <template x-for="db in databases" :key="db">
-                      <button @click="form.database = db" :class="form.database === db ? 'bg-brand-600 text-white' : 'bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700'" class="p-4 rounded-2xl text-xs font-bold text-center transition" x-text="db"></button>
+                      <button @click="form.database = db" :class="form.database === db ? 'bg-brand-500 text-white' : 'bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700'" class="p-4 rounded-2xl text-xs font-bold text-center transition" x-text="db"></button>
                     </template>
                   </div>
+                  <input type="text" x-model="form.database" class="w-full mt-3 bg-slate-50 dark:bg-slate-800 border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-brand-500" placeholder="Nama Database kustom">
                 </div>
 
-                <!-- LANGKAH 5: LOGIN & ROLES -->
+                <!-- LANGKAH 5: Login & Otentikasi -->
                 <div x-show="currentStep === 5" class="space-y-6">
-                  <div class="space-y-1">
-                    <label class="text-xs font-black text-slate-400 uppercase tracking-widest block">Langkah 5: Mekanisme Login &amp; Role Akses</label>
-                    <p class="text-[11px] text-slate-400 leading-relaxed">Bagaimana cara pengguna masuk ke sistem dan tingkatan hak akses apa saja yang disediakan.</p>
+                  <div class="flex items-center gap-3">
+                    <div class="p-2 bg-indigo-50 text-indigo-500 dark:bg-indigo-950 rounded-xl"><i data-lucide="lock" class="w-5 h-5"></i></div>
+                    <h3 class="text-lg font-bold">Langkah 5: Metode Login & Pengaturan Akses (Role)</h3>
                   </div>
 
+                  <!-- Login Methods -->
                   <div class="space-y-3">
-                    <label class="text-xs font-bold text-slate-400 uppercase block">Metode Otentikasi</label>
+                    <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Otentikasi Utama</h4>
                     <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
-                      <template x-for="method in authMethods" :key="method">
-                        <button @click="form.authMethod = method" :class="form.authMethod === method ? 'border-brand-500 bg-brand-50/50 dark:bg-brand-950/20 text-brand-700 dark:text-brand-300' : 'border-slate-100 dark:border-slate-800 hover:border-slate-200'" class="p-4 border rounded-2xl text-left font-bold text-xs transition flex justify-between items-center">
-                          <span x-text="method"></span>
-                          <span x-show="form.authMethod === method" class="w-2 h-2 rounded-full bg-brand-500"></span>
-                        </button>
+                      <template x-for="auth in authMethods" :key="auth">
+                        <button @click="form.authMethod = auth" :class="form.authMethod === auth ? 'border-brand-500 bg-brand-50/50 dark:bg-brand-950/20 text-brand-600 dark:text-brand-400' : 'border-slate-100 dark:border-slate-800'" class="p-4 border rounded-2xl text-left font-bold text-xs transition" x-text="auth"></button>
                       </template>
                     </div>
                   </div>
 
+                  <!-- Roles Checklist -->
                   <div class="space-y-3">
-                    <label class="text-xs font-bold text-slate-400 uppercase block">Role Pengguna (Dapat Memilih Lebih Dari Satu)</label>
+                    <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Role Pengguna</h4>
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
                       <template x-for="role in rolesList" :key="role">
-                        <label class="p-3.5 border border-slate-100 dark:border-slate-800 rounded-2xl cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center gap-2">
+                        <label class="p-3 border border-slate-100 dark:border-slate-800 rounded-xl cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center gap-2">
                           <input type="checkbox" :value="role" x-model="form.roles" class="rounded text-brand-500">
-                          <span class="text-xs font-bold" x-text="role"></span>
+                          <span class="text-xs font-semibold" x-text="role"></span>
                         </label>
                       </template>
                     </div>
                   </div>
                 </div>
 
-                <!-- LANGKAH 6: COMPONENT DASHBOARD -->
+                <!-- LANGKAH 6: Widget & Dashboard UI -->
                 <div x-show="currentStep === 6" class="space-y-4">
-                  <div class="space-y-1">
-                    <label class="text-xs font-black text-slate-400 uppercase tracking-widest block">Langkah 6: Komponen Dashboard Utama</label>
-                    <p class="text-[11px] text-slate-400 leading-relaxed">Pilih elemen data visual yang ingin disediakan saat admin masuk beranda.</p>
+                  <div class="flex items-center gap-3">
+                    <div class="p-2 bg-indigo-50 text-indigo-500 dark:bg-indigo-950 rounded-xl"><i data-lucide="palette" class="w-5 h-5"></i></div>
+                    <h3 class="text-lg font-bold">Langkah 6: Komponen Dashboard Utama</h3>
                   </div>
-                  <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
-                    <template x-for="item in dashboardWidgets" :key="item">
-                      <label class="p-4 border border-slate-100 dark:border-slate-800 rounded-2xl cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center gap-3">
-                        <input type="checkbox" :value="item" x-model="form.dashboard" class="rounded text-brand-500">
-                        <span class="text-xs font-bold" x-text="item"></span>
-                      </label>
-                    </template>
-                  </div>
-                </div>
-
-                <!-- LANGKAH 7: OPERASI CRUD -->
-                <div x-show="currentStep === 7" class="space-y-4">
-                  <div class="space-y-1">
-                    <label class="text-xs font-black text-slate-400 uppercase tracking-widest block">Langkah 7: Operasi CRUD &amp; Ekspor Data</label>
-                    <p class="text-[11px] text-slate-400 leading-relaxed">Fitur tindakan manipulasi data tabel yang wajib disisipkan AI.</p>
-                  </div>
+                  <p class="text-xs text-slate-400">Pilih widget-widget yang akan ditampilkan pada halaman beranda internal.</p>
                   <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-                    <template x-for="item in crudActions" :key="item">
-                      <label class="p-3.5 border border-slate-100 dark:border-slate-800 rounded-2xl cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center gap-3">
-                        <input type="checkbox" :value="item" x-model="form.crud" class="rounded text-brand-500">
-                        <span class="text-xs font-bold" x-text="item"></span>
+                    <template x-for="widget in dashboardWidgets" :key="widget">
+                      <label class="p-4 border border-slate-100 dark:border-slate-800 rounded-2xl cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center gap-2">
+                        <input type="checkbox" :value="widget" x-model="form.dashboardItems" class="rounded text-brand-500">
+                        <span class="text-xs font-semibold" x-text="widget"></span>
                       </label>
                     </template>
                   </div>
                 </div>
 
-                <!-- LANGKAH 8: PENCARIAN -->
+                <!-- LANGKAH 7: Operasi CRUD -->
+                <div x-show="currentStep === 7" class="space-y-4">
+                  <div class="flex items-center gap-3">
+                    <div class="p-2 bg-indigo-50 text-indigo-500 dark:bg-indigo-950 rounded-xl"><i data-lucide="edit-3" class="w-5 h-5"></i></div>
+                    <h3 class="text-lg font-bold">Langkah 7: Manajemen Data (CRUD &amp; Ekspor)</h3>
+                  </div>
+                  <p class="text-xs text-slate-400">Tentukan cakupan integrasi pengelolaan data dan unduhan laporan.</p>
+                  <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    <template x-for="op in crudOptions" :key="op">
+                      <label class="p-4 border border-slate-100 dark:border-slate-800 rounded-2xl cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center gap-2">
+                        <input type="checkbox" :value="op" x-model="form.crud" class="rounded text-brand-500">
+                        <span class="text-xs font-semibold" x-text="op"></span>
+                      </label>
+                    </template>
+                  </div>
+                </div>
+
+                <!-- LANGKAH 8: Fitur Pencarian -->
                 <div x-show="currentStep === 8" class="space-y-4">
-                  <div class="space-y-1">
-                    <label class="text-xs font-black text-slate-400 uppercase tracking-widest block">Langkah 8: Pencarian &amp; Filter Sistem</label>
-                    <p class="text-[11px] text-slate-400 leading-relaxed">Kemampuan mencari dan menyaring data agar tidak membebani memori browser.</p>
+                  <div class="flex items-center gap-3">
+                    <div class="p-2 bg-indigo-50 text-indigo-500 dark:bg-indigo-950 rounded-xl"><i data-lucide="search" class="w-5 h-5"></i></div>
+                    <h3 class="text-lg font-bold">Langkah 8: Sistem Pencarian &amp; Filter</h3>
                   </div>
                   <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
-                    <template x-for="item in searchFeatures" :key="item">
-                      <label class="p-4 border border-slate-100 dark:border-slate-800 rounded-2xl cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center gap-3">
-                        <input type="checkbox" :value="item" x-model="form.search" class="rounded text-brand-500">
-                        <span class="text-xs font-bold" x-text="item"></span>
+                    <template x-for="feat in searchFeatures" :key="feat">
+                      <label class="p-4 border border-slate-100 dark:border-slate-800 rounded-2xl cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center gap-2">
+                        <input type="checkbox" :value="feat" x-model="form.search" class="rounded text-brand-500">
+                        <span class="text-xs font-semibold" x-text="feat"></span>
                       </label>
                     </template>
                   </div>
                 </div>
 
-                <!-- LANGKAH 9: UI FRAMEWORK & THEME -->
+                <!-- LANGKAH 9: Desain UI / CSS Framework -->
                 <div x-show="currentStep === 9" class="space-y-6">
-                  <div class="space-y-1">
-                    <label class="text-xs font-black text-slate-400 uppercase tracking-widest block">Langkah 9: Kerangka Tampilan &amp; Desain CSS</label>
-                    <p class="text-[11px] text-slate-400 leading-relaxed">Tentukan kerangka UI agar desain visual konsisten dan rapi.</p>
+                  <div class="flex items-center gap-3">
+                    <div class="p-2 bg-indigo-50 text-indigo-500 dark:bg-indigo-950 rounded-xl"><i data-lucide="layout" class="w-5 h-5"></i></div>
+                    <h3 class="text-lg font-bold">Langkah 9: Kerangka Desain &amp; Tema</h3>
                   </div>
 
-                  <div class="space-y-3">
-                    <label class="text-xs font-bold text-slate-400 uppercase block">Framework Utama</label>
+                  <!-- Framework -->
+                  <div class="space-y-2">
+                    <h4 class="text-xs font-bold text-slate-400 uppercase">Framework UI CSS</h4>
                     <div class="grid grid-cols-3 gap-3">
                       <template x-for="fw in uiFrameworks" :key="fw">
-                        <button @click="form.uiFramework = fw" :class="form.uiFramework === fw ? 'bg-brand-600 text-white' : 'bg-slate-50 dark:bg-slate-800'" class="p-4 rounded-2xl text-xs font-bold transition" x-text="fw"></button>
+                        <button @click="form.uiFramework = fw" :class="form.uiFramework === fw ? 'bg-brand-500 text-white' : 'bg-slate-50 dark:bg-slate-800'" class="p-4 rounded-xl text-xs font-bold transition" x-text="fw"></button>
                       </template>
                     </div>
                   </div>
 
-                  <div class="space-y-3">
-                    <label class="text-xs font-bold text-slate-400 uppercase block">Mode Tema Didukung</label>
-                    <div class="flex flex-wrap gap-4">
-                      <label class="flex items-center gap-2 cursor-pointer text-xs font-bold">
-                        <input type="checkbox" value="Dark" x-model="form.uiModes" class="rounded text-brand-500"> Dark Mode
+                  <!-- Modes -->
+                  <div class="space-y-2">
+                    <h4 class="text-xs font-bold text-slate-400 uppercase">Tema Warna</h4>
+                    <div class="flex gap-4">
+                      <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" value="Light" x-model="form.uiThemes" class="rounded text-brand-500">
+                        <span class="text-xs font-semibold">Light Mode</span>
                       </label>
-                      <label class="flex items-center gap-2 cursor-pointer text-xs font-bold">
-                        <input type="checkbox" value="Light" x-model="form.uiModes" class="rounded text-brand-500"> Light Mode
+                      <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" value="Dark" x-model="form.uiThemes" class="rounded text-brand-500">
+                        <span class="text-xs font-semibold">Dark Mode</span>
                       </label>
-                      <label class="flex items-center gap-2 cursor-pointer text-xs font-bold">
-                        <input type="checkbox" value="Auto" x-model="form.uiModes" class="rounded text-brand-500"> Auto Mode
+                      <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" value="Auto" x-model="form.uiThemes" class="rounded text-brand-500">
+                        <span class="text-xs font-semibold">Auto Sync (System)</span>
                       </label>
                     </div>
                   </div>
                 </div>
 
-                <!-- LANGKAH 10: MOBILE OPTIMIZATION -->
+                <!-- LANGKAH 10: Dukungan Mobile -->
                 <div x-show="currentStep === 10" class="space-y-4">
-                  <div class="space-y-1">
-                    <label class="text-xs font-black text-slate-400 uppercase tracking-widest block">Langkah 10: Optimalisasi Mobile</label>
-                    <p class="text-[11px] text-slate-400 leading-relaxed">Centang kapabilitas responsif pada layar ponsel pintar/tablet.</p>
+                  <div class="flex items-center gap-3">
+                    <div class="p-2 bg-indigo-50 text-indigo-500 dark:bg-indigo-950 rounded-xl"><i data-lucide="smartphone" class="w-5 h-5"></i></div>
+                    <h3 class="text-lg font-bold">Langkah 10: Responsivitas Mobile &amp; Offline</h3>
                   </div>
                   <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
-                    <template x-for="opt in mobileOptions" :key="opt">
-                      <label class="p-4 border border-slate-100 dark:border-slate-800 rounded-2xl cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center gap-3">
-                        <input type="checkbox" :value="opt" x-model="form.mobile" class="rounded text-brand-500">
-                        <span class="text-xs font-bold" x-text="opt"></span>
+                    <template x-for="m in mobileOptions" :key="m">
+                      <label class="p-4 border border-slate-100 dark:border-slate-800 rounded-2xl cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center gap-2">
+                        <input type="checkbox" :value="m" x-model="form.mobile" class="rounded text-brand-500">
+                        <span class="text-xs font-semibold" x-text="m"></span>
                       </label>
                     </template>
                   </div>
                 </div>
 
-                <!-- LANGKAH 11: SEO -->
+                <!-- LANGKAH 11: Optimasi SEO -->
                 <div x-show="currentStep === 11" class="space-y-4">
-                  <div class="space-y-1">
-                    <label class="text-xs font-black text-slate-400 uppercase tracking-widest block">Langkah 11: SEO &amp; Ramah Pencarian AI</label>
-                    <p class="text-[11px] text-slate-400 leading-relaxed">Agar aplikasi Anda tidak hanya ramah Google Search, tapi juga ramah mesin penjawab AI seperti ChatGPT dan Perplexity.</p>
+                  <div class="flex items-center gap-3">
+                    <div class="p-2 bg-indigo-50 text-indigo-500 dark:bg-indigo-950 rounded-xl"><i data-lucide="search-code" class="w-5 h-5"></i></div>
+                    <h3 class="text-lg font-bold">Langkah 11: Optimasi SEO &amp; Ramah AI Bot</h3>
                   </div>
                   <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-                    <template x-for="item in seoOptions" :key="item">
+                    <template x-for="s in seoList" :key="s">
                       <label class="p-3 border border-slate-100 dark:border-slate-800 rounded-xl cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center gap-2">
-                        <input type="checkbox" :value="item" x-model="form.seo" class="rounded text-brand-500">
-                        <span class="text-[10px] font-bold" x-text="item"></span>
+                        <input type="checkbox" :value="s" x-model="form.seo" class="rounded text-brand-500">
+                        <span class="text-xs font-semibold" x-text="s"></span>
                       </label>
                     </template>
                   </div>
                 </div>
 
-                <!-- LANGKAH 12: KEAMANAN -->
+                <!-- LANGKAH 12: Keamanan -->
                 <div x-show="currentStep === 12" class="space-y-4">
-                  <div class="space-y-1">
-                    <label class="text-xs font-black text-slate-400 uppercase tracking-widest block">Langkah 12: Pertahanan &amp; Keamanan Sistem</label>
-                    <p class="text-[11px] text-slate-400 leading-relaxed">Wajibkan AI memasang baris kode pertahanan untuk memitigasi celah eksploitasi data.</p>
+                  <div class="flex items-center gap-3">
+                    <div class="p-2 bg-indigo-50 text-indigo-500 dark:bg-indigo-950 rounded-xl"><i data-lucide="shield-check" class="w-5 h-5"></i></div>
+                    <h3 class="text-lg font-bold">Langkah 12: Standar Keamanan &amp; Sanitasi</h3>
                   </div>
                   <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-                    <template x-for="item in securityOptions" :key="item">
+                    <template x-for="sec in securityOptions" :key="sec">
                       <label class="p-3 border border-slate-100 dark:border-slate-800 rounded-xl cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center gap-2">
-                        <input type="checkbox" :value="item" x-model="form.security" class="rounded text-brand-500">
-                        <span class="text-[10px] font-bold" x-text="item"></span>
+                        <input type="checkbox" :value="sec" x-model="form.security" class="rounded text-brand-500">
+                        <span class="text-xs font-semibold" x-text="sec"></span>
                       </label>
                     </template>
                   </div>
                 </div>
 
-                <!-- LANGKAH 13: PERFORMA -->
+                <!-- LANGKAH 13: Optimasi Performa -->
                 <div x-show="currentStep === 13" class="space-y-4">
-                  <div class="space-y-1">
-                    <label class="text-xs font-black text-slate-400 uppercase tracking-widest block">Langkah 13: Akselerasi &amp; Kecepatan Sistem</label>
-                    <p class="text-[11px] text-slate-400 leading-relaxed">Pastikan aplikasi berjalan mulus tanpa lag di perangkat dengan spesifikasi rendah.</p>
+                  <div class="flex items-center gap-3">
+                    <div class="p-2 bg-indigo-50 text-indigo-500 dark:bg-indigo-950 rounded-xl"><i data-lucide="zap" class="w-5 h-5"></i></div>
+                    <h3 class="text-lg font-bold">Langkah 13: Performa &amp; Efisiensi Aset</h3>
                   </div>
                   <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-                    <template x-for="item in performanceOptions" :key="item">
+                    <template x-for="perf in perfList" :key="perf">
                       <label class="p-3 border border-slate-100 dark:border-slate-800 rounded-xl cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center gap-2">
-                        <input type="checkbox" :value="item" x-model="form.performance" class="rounded text-brand-500">
-                        <span class="text-[10px] font-bold" x-text="item"></span>
+                        <input type="checkbox" :value="perf" x-model="form.performance" class="rounded text-brand-500">
+                        <span class="text-xs font-semibold" x-text="perf"></span>
                       </label>
                     </template>
                   </div>
                 </div>
 
-                <!-- LANGKAH 14: KOMPONEN UI -->
+                <!-- LANGKAH 14: Komponen Antarmuka -->
                 <div x-show="currentStep === 14" class="space-y-4">
-                  <div class="space-y-1">
-                    <label class="text-xs font-black text-slate-400 uppercase tracking-widest block">Langkah 14: Elemen Komponen Antarmuka</label>
-                    <p class="text-[11px] text-slate-400 leading-relaxed">Kumpulan komponen UI esensial yang harus digambar AI dalam templating file.</p>
+                  <div class="flex items-center gap-3">
+                    <div class="p-2 bg-indigo-50 text-indigo-500 dark:bg-indigo-950 rounded-xl"><i data-lucide="box" class="w-5 h-5"></i></div>
+                    <h3 class="text-lg font-bold">Langkah 14: Komponen UI Esensial</h3>
                   </div>
                   <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-                    <template x-for="item in componentOptions" :key="item">
+                    <template x-for="c in componentsList" :key="c">
                       <label class="p-3 border border-slate-100 dark:border-slate-800 rounded-xl cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center gap-2">
-                        <input type="checkbox" :value="item" x-model="form.components" class="rounded text-brand-500">
-                        <span class="text-[10px] font-bold" x-text="item"></span>
+                        <input type="checkbox" :value="c" x-model="form.components" class="rounded text-brand-500">
+                        <span class="text-xs font-semibold" x-text="c"></span>
                       </label>
                     </template>
                   </div>
                 </div>
 
-                <!-- LANGKAH 15: UPLOAD BERKAS -->
+                <!-- LANGKAH 15: Dukungan Ekstensi File Upload -->
                 <div x-show="currentStep === 15" class="space-y-4">
-                  <div class="space-y-1">
-                    <label class="text-xs font-black text-slate-400 uppercase tracking-widest block">Langkah 15: Manajemen Berkas / Media</label>
-                    <p class="text-[11px] text-slate-400 leading-relaxed">Format ekstensi unggahan berkas yang harus diizinkan oleh validator internal sistem.</p>
+                  <div class="flex items-center gap-3">
+                    <div class="p-2 bg-indigo-50 text-indigo-500 dark:bg-indigo-950 rounded-xl"><i data-lucide="upload-cloud" class="w-5 h-5"></i></div>
+                    <h3 class="text-lg font-bold">Langkah 15: Batasan & Jenis Berkas Unggahan</h3>
                   </div>
                   <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
-                    <template x-for="item in fileUploadOptions" :key="item">
-                      <label class="p-4 border border-slate-100 dark:border-slate-800 rounded-2xl cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center gap-3">
-                        <input type="checkbox" :value="item" x-model="form.uploads" class="rounded text-brand-500">
-                        <span class="text-xs font-bold" x-text="item"></span>
+                    <template x-for="up in fileUploads" :key="up">
+                      <label class="p-4 border border-slate-100 dark:border-slate-800 rounded-2xl cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center gap-2">
+                        <input type="checkbox" :value="up" x-model="form.uploads" class="rounded text-brand-500">
+                        <span class="text-xs font-semibold" x-text="up"></span>
                       </label>
                     </template>
                   </div>
                 </div>
 
-                <!-- LANGKAH 16: INTEGRASI API -->
+                <!-- LANGKAH 16: Integrasi Pihak Ketiga -->
                 <div x-show="currentStep === 16" class="space-y-4">
-                  <div class="space-y-1">
-                    <label class="text-xs font-black text-slate-400 uppercase tracking-widest block">Langkah 16: Integrasi Gateway &amp; Pihak Ketiga</label>
-                    <p class="text-[11px] text-slate-400 leading-relaxed">Sambungkan aplikasi Anda ke aneka layanan populer global maupun regional (Indonesia).</p>
+                  <div class="flex items-center gap-3">
+                    <div class="p-2 bg-indigo-50 text-indigo-500 dark:bg-indigo-950 rounded-xl"><i data-lucide="link" class="w-5 h-5"></i></div>
+                    <h3 class="text-lg font-bold">Langkah 16: Layanan Pihak Ketiga &amp; API</h3>
                   </div>
                   <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-                    <template x-for="item in integrationOptions" :key="item">
+                    <template x-for="integ in integrationList" :key="integ">
                       <label class="p-3 border border-slate-100 dark:border-slate-800 rounded-xl cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center gap-2">
-                        <input type="checkbox" :value="item" x-model="form.integrations" class="rounded text-brand-500">
-                        <span class="text-[10px] font-bold" x-text="item"></span>
+                        <input type="checkbox" :value="integ" x-model="form.integrations" class="rounded text-brand-500">
+                        <span class="text-xs font-semibold" x-text="integ"></span>
                       </label>
                     </template>
                   </div>
                 </div>
 
-                <!-- LANGKAH 17: PERSYARATAN DOKUMENTASI -->
+                <!-- LANGKAH 17: Persyaratan Dokumentasi -->
                 <div x-show="currentStep === 17" class="space-y-4">
-                  <div class="space-y-1">
-                    <label class="text-xs font-black text-slate-400 uppercase tracking-widest block">Langkah 17: Format Keluaran Dokumentasi</label>
-                    <p class="text-[11px] text-slate-400 leading-relaxed">Tuntut AI untuk menjelaskan bagan sistem berupa skema, cara jalankan, hingga setup database.</p>
+                  <div class="flex items-center gap-3">
+                    <div class="p-2 bg-indigo-50 text-indigo-500 dark:bg-indigo-950 rounded-xl"><i data-lucide="book-open" class="w-5 h-5"></i></div>
+                    <h3 class="text-lg font-bold">Langkah 17: Keluaran Dokumentasi Kode</h3>
                   </div>
                   <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-                    <template x-for="item in docsOptions" :key="item">
+                    <template x-for="doc in docsList" :key="doc">
                       <label class="p-3 border border-slate-100 dark:border-slate-800 rounded-xl cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center gap-2">
-                        <input type="checkbox" :value="item" x-model="form.docs" class="rounded text-brand-500">
-                        <span class="text-[10px] font-bold" x-text="item"></span>
+                        <input type="checkbox" :value="doc" x-model="form.docs" class="rounded text-brand-500">
+                        <span class="text-xs font-semibold" x-text="doc"></span>
                       </label>
                     </template>
                   </div>
                 </div>
 
-                <!-- LANGKAH 18: TARGET AI ENGINE -->
+                <!-- LANGKAH 18: Target Engine AI -->
                 <div x-show="currentStep === 18" class="space-y-4">
-                  <div class="space-y-1">
-                    <label class="text-xs font-black text-slate-400 uppercase tracking-widest block">Langkah 18: Model Target AI Utama</label>
-                    <p class="text-[11px] text-slate-400 leading-relaxed">Kecerdasan buatan mana yang akan memproses prompt ini. Prompt disesuaikan dengan behavior LLM tersebut.</p>
+                  <div class="flex items-center gap-3">
+                    <div class="p-2 bg-indigo-50 text-indigo-500 dark:bg-indigo-950 rounded-xl"><i data-lucide="cpu" class="w-5 h-5"></i></div>
+                    <h3 class="text-lg font-bold">Langkah 18: Model Target AI Utama</h3>
                   </div>
+                  <p class="text-xs text-slate-400 font-semibold">Tentukan platform AI yang akan menerima prompt ini agar output disesuaikan dengan format sistem mereka.</p>
                   <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-                    <template x-for="ai in targetAIs" :key="ai">
-                      <button @click="form.targetAI = ai" :class="form.targetAI === ai ? 'bg-indigo-600 text-white shadow-lg' : 'bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700'" class="p-4 rounded-2xl text-xs font-bold transition text-center" x-text="ai"></button>
+                    <template x-for="ai in targetAIList" :key="ai">
+                      <button @click="form.targetAI = ai" :class="form.targetAI === ai ? 'bg-indigo-600 text-white' : 'bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700'" class="p-4 rounded-2xl text-xs font-bold transition" x-text="ai"></button>
                     </template>
                   </div>
                 </div>
 
-                <!-- LANGKAH 19: DETAIL LEVEL -->
+                <!-- LANGKAH 19: Tingkat Kedalaman Prompt -->
                 <div x-show="currentStep === 19" class="space-y-4">
-                  <div class="space-y-1">
-                    <label class="text-xs font-black text-slate-400 uppercase tracking-widest block">Langkah 19: Tingkat Detail Output AI</label>
-                    <p class="text-[11px] text-slate-400 leading-relaxed">Tingkat kerincian penjelasan struktur dan file kode yang Anda butuhkan.</p>
+                  <div class="flex items-center gap-3">
+                    <div class="p-2 bg-indigo-50 text-indigo-500 dark:bg-indigo-950 rounded-xl"><i data-lucide="sliders" class="w-5 h-5"></i></div>
+                    <h3 class="text-lg font-bold">Langkah 19: Ketebalan / Kedetailan Penjelasan</h3>
                   </div>
                   <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
                     <template x-for="lvl in detailLevels" :key="lvl">
-                      <button @click="form.detailLevel = lvl" :class="form.detailLevel === lvl ? 'border-brand-500 bg-brand-50 dark:bg-brand-950/50 text-brand-700 dark:text-brand-300' : 'border-slate-100 dark:border-slate-800'" class="p-4 border rounded-2xl text-xs font-bold transition capitalize text-center" x-text="lvl"></button>
+                      <button @click="form.detailLevel = lvl" :class="form.detailLevel === lvl ? 'border-brand-500 bg-brand-50 dark:bg-brand-950 text-brand-600 dark:text-brand-400' : 'border-slate-100 dark:border-slate-800'" class="p-4 border rounded-2xl font-bold text-xs transition text-center capitalize" x-text="lvl"></button>
                     </template>
                   </div>
                 </div>
 
-                <!-- LANGKAH 20: PERAN AI (PERSONAS) -->
+                <!-- LANGKAH 20: Peran Kepribadian AI -->
                 <div x-show="currentStep === 20" class="space-y-4">
-                  <div class="space-y-1">
-                    <label class="text-xs font-black text-slate-400 uppercase tracking-widest block">Langkah 20: Adopsi Peran Kepribadian AI Specialist</label>
-                    <p class="text-[11px] text-slate-400 leading-relaxed">Pilih beberapa keahlian (multi-select) agar AI menyamar menjadi tim pengembang andal Anda.</p>
+                  <div class="flex items-center gap-3">
+                    <div class="p-2 bg-indigo-50 text-indigo-500 dark:bg-indigo-950 rounded-xl"><i data-lucide="users" class="w-5 h-5"></i></div>
+                    <h3 class="text-lg font-bold">Langkah 20: Peran AI Specialist (Multi-Select)</h3>
                   </div>
+                  <p class="text-xs text-slate-400">Pilih persona profesional yang wajib diadopsi AI secara bersamaan.</p>
                   <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
-                    <template x-for="role in aiRoles" :key="role">
-                      <label class="p-4 border border-slate-100 dark:border-slate-800 rounded-2xl cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center gap-3">
-                        <input type="checkbox" :value="role" x-model="form.aiRoles" class="rounded text-brand-500">
-                        <span class="text-xs font-bold" x-text="role"></span>
+                    <template x-for="persona in aiPersonas" :key="persona">
+                      <label class="p-4 border border-slate-100 dark:border-slate-800 rounded-2xl cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center gap-2">
+                        <input type="checkbox" :value="persona" x-model="form.aiRoles" class="rounded text-brand-500">
+                        <span class="text-xs font-bold" x-text="persona"></span>
                       </label>
                     </template>
                   </div>
                 </div>
 
-                <!-- PREVIOUS & NEXT WIZARD BUTTONS -->
-                <div class="flex items-center justify-between pt-6 border-t border-slate-100 dark:border-slate-800">
-                  <button @click="prevStep()" :disabled="currentStep === 1" class="px-5 py-3 rounded-2xl border border-slate-200 dark:border-slate-700 text-xs font-bold hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed transition flex items-center gap-1.5">
-                    <i data-lucide="chevron-left" class="w-4 h-4"></i> Kembali
+                <!-- Navigation Controls -->
+                <div class="flex justify-between items-center pt-6 border-t border-slate-100 dark:border-slate-800">
+                  <button @click="prevStep()" :disabled="currentStep === 1" class="px-5 py-3 rounded-xl border border-slate-200 dark:border-slate-700 text-sm font-bold text-slate-600 dark:text-slate-300 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-slate-50 dark:hover:bg-slate-800 transition">
+                    Sebelumnya
                   </button>
-                  <button @click="nextStep()" class="px-6 py-3 rounded-2xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-black shadow-lg shadow-brand-500/20 transition flex items-center gap-1.5">
+                  <button @click="nextStep()" class="px-6 py-3 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-sm font-bold shadow-md transition flex items-center gap-2">
                     <span x-text="currentStep === 20 ? 'Buat Prompt Sekarang' : 'Lanjutkan'"></span>
-                    <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                    <i data-lucide="arrow-right" class="w-4 h-4"></i>
                   </button>
                 </div>
 
@@ -779,62 +713,59 @@
             </div>
           </template>
 
-          <!-- ==================== OUTPUT RESULT TAB ==================== -->
+          <!-- ==================== OUTPUT TAB ==================== -->
           <template x-if="activeTab === 'output'">
             <div class="max-w-5xl mx-auto space-y-6">
-              <div class="flex flex-col xl:flex-row justify-between xl:items-center gap-4">
+              <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
-                  <h3 class="text-lg font-black flex items-center gap-2">
-                    <i data-lucide="sparkles" class="w-5 h-5 text-amber-500 animate-spin"></i> Hasil Prompt Profesional
+                  <h3 class="text-xl font-bold flex items-center gap-2">
+                    <i data-lucide="party-popper" class="text-amber-500 w-6 h-6"></i> Prompt Selesai Dibuat!
                   </h3>
-                  <p class="text-[11px] text-slate-400">Salin prompt di bawah ini, kirimkan ke AI target, dan biarkan keajaiban dimulai!</p>
+                  <p class="text-xs text-slate-400">Salin dan masukkan ke dalam platform AI target untuk mendapatkan kode terbaik.</p>
                 </div>
-                <div class="flex flex-wrap gap-2 shrink-0">
-                  <button @click="copyPromptToClipboard()" class="px-4 py-2.5 bg-brand-600 hover:bg-brand-700 text-white font-extrabold rounded-2xl text-xs flex items-center gap-1.5 transition shadow-lg shadow-brand-500/10">
+                <div class="flex flex-wrap gap-2">
+                  <button @click="copyToClipboard()" class="bg-brand-600 hover:bg-brand-700 text-white font-bold px-4 py-2.5 rounded-xl text-xs flex items-center gap-1.5 shadow-sm transition">
                     <i data-lucide="copy" class="w-4 h-4"></i> Copy Prompt
                   </button>
-                  <button @click="downloadAsTXT()" class="px-4 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 font-extrabold rounded-2xl text-xs flex items-center gap-1.5 transition">
-                    <i data-lucide="file-text" class="w-4 h-4"></i> TXT
+                  <button @click="downloadTXT()" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 font-bold px-4 py-2.5 rounded-xl text-xs flex items-center gap-1.5 transition">
+                    <i data-lucide="file-down" class="w-4 h-4"></i> Unduh TXT
                   </button>
-                  <button @click="downloadAsMarkdown()" class="px-4 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 font-extrabold rounded-2xl text-xs flex items-center gap-1.5 transition">
-                    <i data-lucide="file-code" class="w-4 h-4"></i> MD
-                  </button>
-                  <button @click="saveAsCustomTemplate()" class="px-4 py-2.5 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 font-extrabold rounded-2xl text-xs flex items-center gap-1.5 transition">
+                  <button @click="saveAsTemplate()" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-emerald-600 font-bold px-4 py-2.5 rounded-xl text-xs flex items-center gap-1.5 transition">
                     <i data-lucide="save" class="w-4 h-4"></i> Simpan Template
                   </button>
-                  <button @click="activeTab = 'builder'" class="px-4 py-2.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-extrabold rounded-2xl text-xs flex items-center gap-1.5 transition">
-                    <i data-lucide="edit-3" class="w-4 h-4"></i> Edit Kembali
+                  <button @click="activeTab = 'builder'" class="bg-slate-100 dark:bg-slate-800 font-bold px-4 py-2.5 rounded-xl text-xs flex items-center gap-1.5 transition">
+                    <i data-lucide="edit-2" class="w-4 h-4"></i> Edit Kembali
                   </button>
                 </div>
               </div>
 
-              <!-- ANALYSIS STATS -->
+              <!-- Metadata Widgets -->
               <div class="grid grid-cols-3 gap-4">
-                <div class="p-4 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl">
-                  <span class="text-[10px] font-bold text-slate-400 block uppercase tracking-wider">Total Karakter</span>
-                  <p class="text-base md:text-lg font-black mt-1" x-text="generatedPrompt.length"></p>
+                <div class="p-4 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl">
+                  <p class="text-[10px] font-bold text-slate-400 uppercase">Jumlah Karakter</p>
+                  <p class="text-lg font-black" x-text="generatedPrompt.length"></p>
                 </div>
-                <div class="p-4 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl">
-                  <span class="text-[10px] font-bold text-slate-400 block uppercase tracking-wider">Estimasi Token</span>
-                  <p class="text-base md:text-lg font-black text-indigo-500 mt-1" x-text="Math.round(generatedPrompt.length / 4)"></p>
+                <div class="p-4 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl">
+                  <p class="text-[10px] font-bold text-slate-400 uppercase">Estimasi Token AI</p>
+                  <p class="text-lg font-black text-indigo-500" x-text="Math.round(generatedPrompt.length / 4)"></p>
                 </div>
-                <div class="p-4 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl">
-                  <span class="text-[10px] font-bold text-slate-400 block uppercase tracking-wider">Keamanan Level</span>
-                  <p class="text-base md:text-lg font-black text-emerald-500 mt-1">Enterprise Ready</p>
+                <div class="p-4 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl">
+                  <p class="text-[10px] font-bold text-slate-400 uppercase">Target Platform</p>
+                  <p class="text-lg font-black text-emerald-500" x-text="form.platform"></p>
                 </div>
               </div>
 
-              <!-- RAW PROMPT WRAPPER -->
-              <div class="bg-slate-900 dark:bg-slate-950 rounded-3xl overflow-hidden border border-slate-800 shadow-xl">
-                <div class="px-5 py-3 bg-slate-950 flex items-center justify-between border-b border-slate-800">
-                  <div class="flex items-center gap-2">
-                    <span class="w-3.5 h-3.5 rounded-full bg-rose-500 inline-block"></span>
-                    <span class="w-3.5 h-3.5 rounded-full bg-amber-500 inline-block"></span>
-                    <span class="w-3.5 h-3.5 rounded-full bg-emerald-500 inline-block"></span>
+              <!-- Raw Editor View -->
+              <div class="bg-slate-900 border border-slate-850 rounded-3xl overflow-hidden shadow-xl">
+                <div class="px-6 py-4 bg-slate-950 flex items-center justify-between border-b border-slate-800">
+                  <span class="text-xs font-mono text-slate-400">PROMPT_TEMPLATE.md</span>
+                  <div class="flex gap-1">
+                    <span class="w-3 h-3 rounded-full bg-red-500 inline-block"></span>
+                    <span class="w-3 h-3 rounded-full bg-yellow-500 inline-block"></span>
+                    <span class="w-3 h-3 rounded-full bg-green-500 inline-block"></span>
                   </div>
-                  <span class="text-[10px] font-mono text-slate-500 tracking-widest">BOILERPLATE_SPEC.MD</span>
                 </div>
-                <textarea readonly x-model="generatedPrompt" class="w-full h-96 md:h-[450px] p-6 bg-slate-900 text-emerald-400 font-mono text-xs border-none focus:ring-0 leading-relaxed overflow-y-auto resize-none custom-scrollbar"></textarea>
+                <textarea x-model="generatedPrompt" class="w-full h-[500px] p-6 bg-slate-900 text-emerald-400 font-mono text-xs md:text-sm border-none focus:ring-0 leading-relaxed overflow-y-auto resize-none"></textarea>
               </div>
             </div>
           </template>
@@ -842,31 +773,26 @@
           <!-- ==================== TEMPLATES TAB ==================== -->
           <template x-if="activeTab === 'templates'">
             <div class="space-y-6">
-              <div class="max-w-xl space-y-1">
-                <h3 class="text-lg font-black">Boilerplate Template Populer</h3>
-                <p class="text-xs text-slate-400 leading-relaxed">Koleksi cetak biru arsitektur SaaS yang siap pakai. Memilih salah satu akan langsung mengatur seluruh wizard.</p>
+              <div class="max-w-xl">
+                <h3 class="text-lg font-bold">Pilih Template Cepat</h3>
+                <p class="text-xs text-slate-400 leading-relaxed">Gunakan boilerplate industri yang paling populer untuk melompat langsung ke halaman keluaran.</p>
               </div>
-
-              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <template x-for="tpl in staticTemplates" :key="tpl.name">
-                  <div class="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 flex flex-col justify-between hover:shadow-lg hover:-translate-y-1 transition duration-300">
-                    <div class="space-y-4">
-                      <div class="flex items-center justify-between">
-                        <div class="p-3 bg-brand-50 dark:bg-brand-950 text-brand-600 dark:text-brand-400 rounded-2xl shadow-sm">
-                          <i data-lucide="package" class="w-5 h-5"></i>
-                        </div>
-                        <span class="px-2.5 py-1 text-[9px] font-black tracking-widest uppercase bg-brand-100 text-brand-700 dark:bg-brand-950 dark:text-brand-300 rounded-lg" x-text="tpl.tech"></span>
+                  <div class="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-5 space-y-4 hover:shadow-md transition">
+                    <div class="flex justify-between items-start">
+                      <div class="p-2.5 bg-indigo-50 dark:bg-indigo-950/50 text-indigo-500 rounded-xl">
+                        <i data-lucide="layout-template" class="w-5 h-5"></i>
                       </div>
-                      <div>
-                        <h4 class="font-bold text-xs text-slate-800 dark:text-slate-100" x-text="tpl.name"></h4>
-                        <p class="text-[11px] text-slate-400 leading-relaxed mt-2" x-text="tpl.desc"></p>
-                      </div>
+                      <span class="px-2 py-0.5 text-[9px] font-bold bg-emerald-100 text-emerald-700 rounded" x-text="tpl.defaultPlatform"></span>
                     </div>
-                    <div class="pt-6 border-t border-slate-100 dark:border-slate-800 mt-6">
-                      <button @click="applyStaticTemplate(tpl)" class="w-full py-3 bg-slate-50 hover:bg-brand-600 hover:text-white dark:bg-slate-800/50 dark:hover:bg-brand-600 text-xs font-bold rounded-xl transition flex items-center justify-center gap-1.5">
-                        Gunakan Template <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
-                      </button>
+                    <div>
+                      <h4 class="font-bold text-sm text-slate-800 dark:text-white" x-text="tpl.name"></h4>
+                      <p class="text-xs text-slate-400 mt-1 leading-relaxed" x-text="tpl.desc"></p>
                     </div>
+                    <button @click="applyTemplate(tpl)" class="w-full py-2.5 bg-slate-50 hover:bg-brand-50 hover:text-brand-600 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-bold rounded-xl transition">
+                      Gunakan Template
+                    </button>
                   </div>
                 </template>
               </div>
@@ -875,15 +801,13 @@
 
           <!-- ==================== SETTINGS TAB ==================== -->
           <template x-if="activeTab === 'settings'">
-            <div class="max-w-2xl mx-auto bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 md:p-8 space-y-6 shadow-sm">
-              <h3 class="text-base font-black border-b border-slate-100 dark:border-slate-800 pb-3 flex items-center gap-2">
-                <i data-lucide="sliders" class="w-5 h-5 text-brand-600"></i> Pengaturan Default Builder
-              </h3>
-
+            <div class="max-w-2xl mx-auto bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 md:p-8 space-y-6">
+              <h3 class="text-lg font-bold border-b border-slate-100 dark:border-slate-800 pb-3">Konfigurasi Default Builder</h3>
+              
               <div class="space-y-4">
                 <div>
                   <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Default Platform</label>
-                  <select x-model="settings.defaultPlatform" class="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-2xl p-4 text-xs font-semibold focus:ring-2 focus:ring-brand-500">
+                  <select x-model="settings.defaultPlatform" class="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-xl p-3 text-sm">
                     <template x-for="plat in techPlatforms" :key="plat">
                       <option :value="plat" x-text="plat"></option>
                     </template>
@@ -891,35 +815,35 @@
                 </div>
 
                 <div>
-                  <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Default AI Target</label>
-                  <select x-model="settings.defaultAI" class="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-2xl p-4 text-xs font-semibold focus:ring-2 focus:ring-brand-500">
-                    <template x-for="ai in targetAIs" :key="ai">
+                  <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Default Target AI</label>
+                  <select x-model="settings.defaultAI" class="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-xl p-3 text-sm">
+                    <template x-for="ai in targetAIList" :key="ai">
                       <option :value="ai" x-text="ai"></option>
                     </template>
                   </select>
                 </div>
 
                 <div>
-                  <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Default Detail Prompt</label>
-                  <select x-model="settings.defaultDetail" class="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-2xl p-4 text-xs font-semibold focus:ring-2 focus:ring-brand-500">
+                  <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Tingkat Detail Default</label>
+                  <select x-model="settings.defaultDetail" class="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-xl p-3 text-sm">
                     <template x-for="lvl in detailLevels" :key="lvl">
-                      <option :value="lvl" x-text="lvl" class="capitalize"></option>
+                      <option :value="lvl" x-text="lvl"></option>
                     </template>
                   </select>
                 </div>
 
                 <div>
-                  <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Pilih Bahasa Prompt</label>
-                  <select x-model="settings.language" class="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-2xl p-4 text-xs font-semibold focus:ring-2 focus:ring-brand-500">
-                    <option value="id">Bahasa Indonesia (Default)</option>
-                    <option value="en">English (Amerika)</option>
+                  <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Bahasa Interface &amp; Prompt</label>
+                  <select x-model="settings.language" class="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-xl p-3 text-sm">
+                    <option value="id">Bahasa Indonesia</option>
+                    <option value="en">English (US)</option>
                   </select>
                 </div>
               </div>
 
               <div class="pt-4 border-t border-slate-100 dark:border-slate-800">
-                <button @click="saveBuilderSettings()" class="w-full py-3.5 bg-brand-600 hover:bg-brand-700 text-white font-extrabold rounded-2xl text-xs transition shadow-lg shadow-brand-500/20">
-                  Simpan Pengaturan Default
+                <button @click="saveSettings()" class="w-full py-3 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl text-sm transition">
+                  Simpan Konfigurasi Default
                 </button>
               </div>
             </div>
@@ -928,21 +852,21 @@
         </div>
       </div>
 
-      <!-- MOBILE BOTTOM NAVIGATION BAR -->
-      <nav class="lg:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 py-3 px-6 flex justify-between items-center z-40 shadow-2xl">
-        <button @click="activeTab = 'dashboard'" :class="activeTab === 'dashboard' ? 'text-brand-600 dark:text-brand-400' : 'text-slate-400'" class="flex flex-col items-center gap-1">
-          <i data-lucide="layout-grid" class="w-5 h-5"></i>
+      <!-- MOBILE BOTTOM NAVIGATION -->
+      <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 py-2 px-6 flex justify-between items-center z-40">
+        <button @click="activeTab = 'dashboard'" :class="activeTab === 'dashboard' ? 'text-brand-600' : 'text-slate-400'" class="flex flex-col items-center gap-1">
+          <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
           <span class="text-[9px] font-bold">Beranda</span>
         </button>
-        <button @click="startNewPrompt()" :class="activeTab === 'builder' ? 'text-brand-600 dark:text-brand-400' : 'text-slate-400'" class="flex flex-col items-center gap-1">
+        <button @click="startNewPrompt()" :class="activeTab === 'builder' ? 'text-brand-600' : 'text-slate-400'" class="flex flex-col items-center gap-1">
           <i data-lucide="sliders" class="w-5 h-5"></i>
-          <span class="text-[9px] font-bold">Wizard</span>
+          <span class="text-[9px] font-bold">Builder</span>
         </button>
-        <button @click="activeTab = 'templates'" :class="activeTab === 'templates' ? 'text-brand-600 dark:text-brand-400' : 'text-slate-400'" class="flex flex-col items-center gap-1">
-          <i data-lucide="book-open" class="w-5 h-5"></i>
+        <button @click="activeTab = 'templates'" :class="activeTab === 'templates' ? 'text-brand-600' : 'text-slate-400'" class="flex flex-col items-center gap-1">
+          <i data-lucide="layers" class="w-5 h-5"></i>
           <span class="text-[9px] font-bold">Template</span>
         </button>
-        <button @click="activeTab = 'settings'" :class="activeTab === 'settings' ? 'text-brand-600 dark:text-brand-400' : 'text-slate-400'" class="flex flex-col items-center gap-1">
+        <button @click="activeTab = 'settings'" :class="activeTab === 'settings' ? 'text-brand-600' : 'text-slate-400'" class="flex flex-col items-center gap-1">
           <i data-lucide="settings" class="w-5 h-5"></i>
           <span class="text-[9px] font-bold">Setelan</span>
         </button>
@@ -951,98 +875,74 @@
     </main>
   </div>
 
-  <!-- ALPINE STATE MANAGEMENT -->
+  <!-- APPLICATION LOGIC & STATE (Alpine.js integration) -->
   <script>
     function promptApp() {
       return {
         activeTab: 'dashboard',
         currentStep: 1,
         loading: false,
-        darkMode: localStorage.getItem('darkMode') || 'auto',
-        accordionOpen: 1,
+        darkMode: localStorage.getItem('darkMode') === 'true',
         toasts: [],
         generatedPrompt: '',
-        lastTemplateUsed: '',
         
-        // Checklist Arrays
+        // Static Arrays
         techPlatforms: ['Google App Script', 'Google Firebase', 'HTML CSS JavaScript', 'PHP', 'Laravel', 'React', 'Vue', 'Next.js', 'Node.js', 'Flutter Web', 'WordPress', 'PWA', 'Canvas', 'Lainnya'],
         appTypes: ['POS', 'CRM', 'LMS', 'ERP', 'Inventory', 'Laundry', 'Toko Online', 'Landing Page', 'Company Profile', 'Form', 'Survey', 'Booking', 'Email Marketing', 'Sertifikat', 'Chat', 'Blog', 'Sistem Akademik'],
-        gasSpreadsheets: ['Buat Spreadsheet otomatis', 'Buat Sheet otomatis', 'Header otomatis', 'Validasi Data', 'Rumus', 'Data contoh', 'Dropdown', 'Format warna'],
+        gasFeatures: ['Buat Spreadsheet otomatis', 'Buat Sheet otomatis', 'Header otomatis', 'Validasi Data', 'Rumus', 'Data contoh', 'Dropdown', 'Format warna'],
         databases: ['Spreadsheet', 'Firestore', 'Realtime Database', 'MySQL', 'PostgreSQL', 'SQLite', 'Supabase'],
         authMethods: ['Tidak ada', 'Username Password', 'Google Login', 'OTP', 'Email Login'],
         rolesList: ['Super Admin', 'Admin', 'Operator', 'Member', 'Customer', 'Owner', 'Bebas menambah Role'],
         dashboardWidgets: ['Statistik', 'Grafik', 'Card', 'Kalender', 'Shortcut', 'Todo', 'Aktivitas', 'Notifikasi', 'Quick Action'],
-        crudActions: ['Tambah', 'Edit', 'Hapus', 'Detail', 'Import Excel', 'Export Excel', 'Export PDF', 'Print', 'Copy', 'Bulk Delete'],
+        crudOptions: ['Tambah', 'Edit', 'Hapus', 'Detail', 'Import Excel', 'Export Excel', 'Export PDF', 'Print', 'Copy', 'Bulk Delete'],
         searchFeatures: ['Search', 'Filter', 'Sorting', 'Pagination', 'Advanced Search'],
         uiFrameworks: ['Bootstrap', 'Tailwind', 'Material Design'],
         mobileOptions: ['Responsive', 'Mobile First', 'Tablet Friendly', 'PWA', 'Offline Mode', 'Installable'],
-        seoOptions: ['Meta Title', 'Meta Description', 'Open Graph', 'Twitter Card', 'robots.txt', 'sitemap.xml', 'Canonical', 'JSON-LD', 'Schema.org', 'Breadcrumb', 'AI Friendly', 'Google AI Overview Friendly', 'Perplexity Friendly', 'ChatGPT Friendly', 'Semantic HTML'],
+        seoList: ['Meta Title', 'Meta Description', 'Open Graph', 'Twitter Card', 'robots.txt', 'sitemap.xml', 'Canonical', 'JSON-LD', 'Schema.org', 'Breadcrumb', 'AI Friendly', 'Google AI Overview Friendly', 'Perplexity Friendly', 'ChatGPT Friendly', 'Semantic HTML'],
         securityOptions: ['Validasi Input', 'Sanitasi Input', 'Anti XSS', 'Anti SQL Injection', 'CSRF', 'Session Timeout', 'Enkripsi Password', 'Audit Log'],
-        performanceOptions: ['Lazy Loading', 'Cache', 'Compression', 'Minify CSS', 'Minify JS', 'Optimasi Gambar', 'CDN'],
-        componentOptions: ['Sidebar', 'Navbar', 'Footer', 'Modal', 'Toast', 'Loader', 'Skeleton', 'Floating Button', 'Breadcrumb', 'Progress Bar', 'Data Table'],
-        fileUploadOptions: ['Image', 'PDF', 'Excel', 'Audio', 'Video', 'ZIP'],
-        integrationOptions: ['Gmail', 'Google Drive', 'Google Sheets', 'Google Calendar', 'QR Code', 'Barcode', 'WhatsApp', 'Telegram', 'REST API', 'Midtrans', 'Xendit', 'RajaOngkir'],
-        docsOptions: ['README', 'Flowchart', 'ERD', 'Use Case', 'Struktur Folder', 'Cara Install', 'Cara Deploy', 'API Documentation'],
-        targetAIs: ['ChatGPT', 'Gemini', 'Claude', 'Grok', 'DeepSeek', 'Copilot', 'Universal'],
+        perfList: ['Lazy Loading', 'Cache', 'Compression', 'Minify CSS', 'Minify JS', 'Optimasi Gambar', 'CDN'],
+        componentsList: ['Sidebar', 'Navbar', 'Footer', 'Modal', 'Toast', 'Loader', 'Skeleton', 'Floating Button', 'Breadcrumb', 'Progress Bar', 'Data Table'],
+        fileUploads: ['Image', 'PDF', 'Excel', 'Audio', 'Video', 'ZIP'],
+        integrationList: ['Gmail', 'Google Drive', 'Google Sheets', 'Google Calendar', 'QR Code', 'Barcode', 'WhatsApp', 'Telegram', 'REST API', 'Midtrans', 'Xendit', 'RajaOngkir'],
+        docsList: ['README', 'Flowchart', 'ERD', 'Use Case', 'Struktur Folder', 'Cara Install', 'Cara Deploy', 'API Documentation'],
+        targetAIList: ['ChatGPT', 'Gemini', 'Claude', 'Grok', 'DeepSeek', 'Copilot', 'Universal'],
         detailLevels: ['ringkas', 'standar', 'lengkap', 'sangat detail'],
-        aiRoles: ['Software Architect', 'Senior Full Stack Developer', 'Google App Script Expert', 'Firebase Expert', 'UI UX Designer', 'SEO Expert', 'DevOps Engineer', 'Security Engineer'],
-
-        // Form Wizard Titles
-        stepTitles: [
-          'Pilih Platform & Framework Utama',
-          'Tentukan Model & Jenis Aplikasi',
-          'Pengaturan Khusus Google Apps Script',
-          'Spesifikasi Database Pendukung',
-          'Sistem Login & Manajemen Akses',
-          'Desain Dashboard Internal',
-          'Operasi CRUD Data & Ekspor',
-          'Penyaringan & Sistem Pencarian',
-          'Kerangka Framework CSS & Tema',
-          'Kemampuan Mobile & PWA',
-          'Optimasi Mesin Pencari & Ramah AI Bot',
-          'Sistem Proteksi Keamanan',
-          'Akselerasi Kecepatan & Performa',
-          'Boilerplate Komponen Antarmuka',
-          'Batasan Unggahan Berkas Media',
-          'Koneksi Pihak Ketiga & API Gateway',
-          'Arsitektur Dokumentasi Kode',
-          'Target Mesin Kecerdasan Buatan',
-          'Tingkat Kerincian Kode',
-          'Kepribadian Utama Model AI'
-        ],
+        aiPersonas: ['Software Architect', 'Senior Full Stack Developer', 'Google App Script Expert', 'Firebase Expert', 'UI UX Designer', 'SEO Expert', 'DevOps Engineer', 'Security Engineer'],
 
         // Default Form State
         form: {
           platform: 'HTML CSS JavaScript',
+          appName: '',
           appType: 'POS',
-          appName: 'Aplikasi POS Kasir Modern',
-          gasStructure: 'Hanya Code.gs dan Index.html',
-          gasSheets: ['Buat Spreadsheet otomatis', 'Buat Sheet otomatis', 'Header otomatis'],
-          gasHosting: 'HTML Service',
-          gasDeployGuide: true,
-          gasPublishGuide: true,
+          gas: {
+            structure: 'Hanya Code.gs & Index.html',
+            sheetsOptions: [],
+            hostingFrontend: 'HTML Service',
+            deployGuide: true,
+            publishGuide: true
+          },
           database: 'Spreadsheet',
           authMethod: 'Username Password',
-          roles: ['Super Admin', 'Admin', 'Operator'],
-          dashboard: ['Statistik', 'Grafik', 'Card'],
-          crud: ['Tambah', 'Edit', 'Hapus', 'Detail', 'Export Excel', 'Print'],
-          search: ['Search', 'Filter', 'Sorting'],
+          roles: ['Admin'],
+          dashboardItems: ['Statistik', 'Card'],
+          crud: ['Tambah', 'Edit', 'Hapus'],
+          search: ['Search', 'Filter'],
           uiFramework: 'Tailwind',
-          uiModes: ['Dark', 'Light'],
-          mobile: ['Responsive', 'Mobile First', 'Tablet Friendly'],
-          seo: ['Meta Title', 'Meta Description', 'Semantic HTML', 'AI Friendly'],
-          security: ['Validasi Input', 'Sanitasi Input', 'Anti XSS', 'Anti SQL Injection'],
-          performance: ['Lazy Loading', 'Minify CSS', 'Minify JS', 'CDN'],
-          components: ['Sidebar', 'Navbar', 'Footer', 'Modal', 'Toast', 'Data Table'],
-          uploads: ['Image', 'PDF'],
+          uiThemes: ['Light', 'Dark'],
+          mobile: ['Responsive', 'Mobile First'],
+          seo: ['Meta Title', 'Meta Description'],
+          security: ['Validasi Input'],
+          performance: ['Lazy Loading'],
+          components: ['Sidebar', 'Navbar'],
+          uploads: ['Image'],
           integrations: ['REST API'],
-          docs: ['README', 'Struktur Folder', 'Cara Install', 'Cara Deploy'],
+          docs: ['README', 'Struktur Folder'],
           targetAI: 'Universal',
           detailLevel: 'lengkap',
-          aiRoles: ['Software Architect', 'Senior Full Stack Developer']
+          aiRoles: ['Senior Full Stack Developer']
         },
 
-        // Builder Default Settings
+        // Settings State
         settings: {
           defaultPlatform: 'HTML CSS JavaScript',
           defaultAI: 'Universal',
@@ -1050,48 +950,41 @@
           language: 'id'
         },
 
+        // User Data lists (Simulated Local Storage)
         savedPrompts: [],
-
-        // 12 STATIC TEMPLATES PRESETS
+        
         staticTemplates: [
-          { name: 'POS (Point of Sale) Laundry', tech: 'Google App Script', database: 'Spreadsheet', desc: 'Sistem pencatatan kasir, status cucian pelanggan, dan cetak struk otomatis.', data: { appName: 'Aplikasi POS Laundry Wangi', platform: 'Google App Script', appType: 'Laundry', database: 'Spreadsheet', gasStructure: 'Hanya Code.gs dan Index.html', gasSheets: ['Buat Spreadsheet otomatis', 'Buat Sheet otomatis', 'Header otomatis', 'Validasi Data', 'Data contoh'], authMethod: 'Username Password', roles: ['Admin', 'Operator'], dashboard: ['Statistik', 'Card', 'Todo'], crud: ['Tambah', 'Edit', 'Detail', 'Print'], search: ['Search', 'Filter'] } },
-          { name: 'CRM Manajemen Prospek', tech: 'Laravel', database: 'MySQL', desc: 'Kelola pipeline prospek penjualan, follow-up WhatsApp, serta laporan tim lapangan.', data: { appName: 'CRM Prospek Maju Jaya', platform: 'Laravel', appType: 'CRM', database: 'MySQL', authMethod: 'Google Login', roles: ['Super Admin', 'Admin', 'Member'], dashboard: ['Statistik', 'Grafik', 'Shortcut'], crud: ['Tambah', 'Edit', 'Hapus', 'Detail', 'Export Excel', 'Export PDF'], search: ['Search', 'Filter', 'Sorting', 'Advanced Search'] } },
-          { name: 'Portal LMS Sekolah Pintar', tech: 'React', database: 'Supabase', desc: 'LMS interaktif untuk kelas daring, modul materi PDF, dan kuis online siswa.', data: { appName: 'LMS Mandiri Cerdas', platform: 'React', appType: 'LMS', database: 'Supabase', authMethod: 'Username Password', roles: ['Admin', 'Member', 'Operator'], dashboard: ['Statistik', 'Kalender', 'Notifikasi'], crud: ['Tambah', 'Edit', 'Hapus', 'Detail', 'Copy'], search: ['Search', 'Filter', 'Sorting'] } },
-          { name: 'ERP Inventaris Gudang', tech: 'Next.js', database: 'PostgreSQL', desc: 'Pantau stok opname gudang multi-lokasi, alarm stok kritis, dan validasi kode QR.', data: { appName: 'ERP Gudang Multi-Lokasi', platform: 'Next.js', appType: 'Inventory', database: 'PostgreSQL', authMethod: 'Username Password', roles: ['Admin', 'Operator', 'Owner'], dashboard: ['Statistik', 'Grafik', 'Aktivitas'], crud: ['Tambah', 'Edit', 'Detail', 'Import Excel', 'Export Excel', 'Bulk Delete'], search: ['Search', 'Filter', 'Sorting', 'Pagination'] } },
-          { name: 'Toko Online Fashion', tech: 'Next.js', database: 'PostgreSQL', desc: 'E-commerce interaktif dengan integrasi pembayaran Midtrans, ongkir RajaOngkir, dan SEO.', data: { appName: 'GayaKeren Fashion E-Store', platform: 'Next.js', appType: 'Toko Online', database: 'PostgreSQL', authMethod: 'Google Login', roles: ['Super Admin', 'Customer', 'Owner'], dashboard: ['Statistik', 'Grafik', 'Card', 'Notifikasi'], crud: ['Tambah', 'Edit', 'Hapus', 'Detail'], search: ['Search', 'Filter', 'Sorting'], integrations: ['Midtrans', 'RajaOngkir', 'WhatsApp'] } },
-          { name: 'Portofolio Landing Page', tech: 'HTML CSS JavaScript', database: 'Spreadsheet', desc: 'Halaman penawaran premium untuk agensi, responsif dengan SEO AI-friendly.', data: { appName: 'Agensi Kreatif Mandiri', platform: 'HTML CSS JavaScript', appType: 'Landing Page', database: 'Spreadsheet', authMethod: 'Tidak ada', roles: ['Admin'], dashboard: ['Statistik'], crud: ['Detail'], search: ['Search'] } },
-          { name: 'Portal Company Profile', tech: 'WordPress', database: 'MySQL', desc: 'Profil perusahaan formal dengan halaman blog informasi, galeri produk, dan kontak.', data: { appName: 'PT Mandiri Sukses Jaya', platform: 'WordPress', appType: 'Company Profile', database: 'MySQL', authMethod: 'Username Password', roles: ['Super Admin', 'Admin'], dashboard: ['Statistik', 'Notifikasi'], crud: ['Tambah', 'Edit', 'Hapus'], search: ['Search'] } },
-          { name: 'Blog Portal Berita', tech: 'Laravel', database: 'MySQL', desc: 'Portal penerbitan opini publik, optimasi SEO, XML Sitemap, dan meta tags otomatis.', data: { appName: 'Warta Publik Online', platform: 'Laravel', appType: 'Blog', database: 'MySQL', authMethod: 'Email Login', roles: ['Super Admin', 'Admin', 'Member'], dashboard: ['Statistik', 'Grafik', 'Todo'], crud: ['Tambah', 'Edit', 'Hapus', 'Detail'], search: ['Search', 'Filter', 'Sorting'] } },
-          { name: 'Sistem Email Marketing', tech: 'Node.js', database: 'MySQL', desc: 'Kirim buletin otomatis dengan template HTML, integrasi SMTP Gmail, dan pelacakan klik.', data: { appName: 'KirimBulk Blast Marketing', platform: 'Node.js', appType: 'Email Marketing', database: 'MySQL', authMethod: 'Username Password', roles: ['Super Admin', 'Admin'], dashboard: ['Statistik', 'Grafik', 'Quick Action'], crud: ['Tambah', 'Edit', 'Hapus', 'Detail'], search: ['Search', 'Filter'], integrations: ['Gmail'] } },
-          { name: 'Pembuat Sertifikat Digital', tech: 'Google App Script', database: 'Spreadsheet', desc: 'Buat ribuan sertifikat PDF dari sheet baris data secara instan dan kirim otomatis.', data: { appName: 'Sertifikat Otomatis Generator', platform: 'Google App Script', appType: 'Sertifikat', database: 'Spreadsheet', gasStructure: 'Banyak file', gasSheets: ['Buat Spreadsheet otomatis', 'Buat Sheet otomatis', 'Header otomatis', 'Validasi Data', 'Rumus'], authMethod: 'Google Login', roles: ['Admin', 'Operator'], dashboard: ['Statistik', 'Shortcut', 'Quick Action'], crud: ['Tambah', 'Export PDF', 'Print'], search: ['Search', 'Filter'], integrations: ['Gmail', 'Google Drive', 'Google Sheets'] } },
-          { name: 'Kasir Retail UMKM', tech: 'PHP', database: 'SQLite', desc: 'Kasir ringan offline-first untuk toko kelontong atau minimarket non-waralaba.', data: { appName: 'RetailKasir Kelontong Jaya', platform: 'PHP', appType: 'Kasir', database: 'SQLite', authMethod: 'Username Password', roles: ['Admin', 'Operator'], dashboard: ['Statistik', 'Card'], crud: ['Tambah', 'Edit', 'Hapus', 'Print'], search: ['Search', 'Filter'] } },
-          { name: 'Sistem Akademik Kampus', tech: 'Vue', database: 'MySQL', desc: 'Portal KRS mahasiswa, nilai semester akademik, absen dosen, dan kualifikasi cetak transkrip.', data: { appName: 'Sistem Akademik Cerdas Mandiri', platform: 'Vue', appType: 'Sistem Akademik', database: 'MySQL', authMethod: 'Username Password', roles: ['Super Admin', 'Admin', 'Member'], dashboard: ['Statistik', 'Kalender', 'Notifikasi'], crud: ['Tambah', 'Edit', 'Hapus', 'Detail', 'Export PDF', 'Print'], search: ['Search', 'Filter', 'Sorting', 'Advanced Search'] } }
+          { name: 'Kasir Sederhana', desc: 'Aplikasi kasir (POS) ringkas berbasis Google Apps Script dan Sheets.', defaultPlatform: 'Google App Script' },
+          { name: 'CRM UMKM', desc: 'Sistem CRM untuk pengelolaan prospek pelanggan UMKM lokal.', defaultPlatform: 'Laravel' },
+          { name: 'LMS Sekolah', desc: 'Portal ujian belajar online interaktif berbasis Next.js.', defaultPlatform: 'Next.js' }
         ],
 
         init() {
           // Load Saved Prompts from Storage
-          const stored = localStorage.getItem('prompt_builder_saved');
-          if (stored) {
-            this.savedPrompts = JSON.parse(stored);
+          const localData = localStorage.getItem('app_prompts');
+          if (localData) {
+            this.savedPrompts = JSON.parse(localData);
           } else {
-            this.savedPrompts = [];
+            // Seed data
+            this.savedPrompts = [
+              { id: 1, appName: 'Laundry POS Cileungsi', platform: 'Google App Script', fav: true, form: JSON.parse(JSON.stringify(this.form)) }
+            ];
+            this.saveToLocalStorage();
           }
 
-          // Load Builder Settings
-          const storedSettings = localStorage.getItem('prompt_builder_settings');
-          if (storedSettings) {
-            this.settings = JSON.parse(storedSettings);
+          // Load Settings
+          const localSettings = localStorage.getItem('app_settings');
+          if (localSettings) {
+            this.settings = JSON.parse(localSettings);
             this.form.platform = this.settings.defaultPlatform;
             this.form.targetAI = this.settings.defaultAI;
             this.form.detailLevel = this.settings.defaultDetail;
           }
 
-          // Load Template Tracker
-          this.lastTemplateUsed = localStorage.getItem('last_template_used') || '';
-
+          // Render icons dynamically on change
           this.$watch('activeTab', () => {
             this.loading = true;
-            setTimeout(() => {
+            setTimeout(() => { 
               this.loading = false;
               this.$nextTick(() => { lucide.createIcons(); });
             }, 300);
@@ -1100,10 +993,9 @@
           this.$nextTick(() => { lucide.createIcons(); });
         },
 
-        setTheme(theme) {
-          this.darkMode = theme;
-          localStorage.setItem('darkMode', theme);
-          this.addToast(`Tema diatur ke: ${theme}`, 'info');
+        toggleDarkMode() {
+          this.darkMode = !this.darkMode;
+          localStorage.setItem('darkMode', this.darkMode);
         },
 
         addToast(message, type = 'success') {
@@ -1112,11 +1004,7 @@
           this.$nextTick(() => { lucide.createIcons(); });
           setTimeout(() => {
             this.toasts = this.toasts.filter(t => t.id !== id);
-          }, 4000);
-        },
-
-        getFavCount() {
-          return this.savedPrompts.filter(item => item.fav).length;
+          }, 3000);
         },
 
         startNewPrompt() {
@@ -1125,95 +1013,76 @@
         },
 
         prevStep() {
-          if (this.currentStep > 1) {
-            this.currentStep--;
-          }
+          if (this.currentStep > 1) this.currentStep--;
         },
 
         nextStep() {
           if (this.currentStep < 20) {
             this.currentStep++;
-            // Skip GAS step if platform is not GAS
-            if (this.currentStep === 3 && this.form.platform !== 'Google App Script') {
-              this.currentStep++;
-            }
           } else {
-            this.compileSystemPrompt();
+            this.generatePromptMarkdown();
             this.activeTab = 'output';
           }
         },
 
-        toggleFavorite(id) {
-          const item = this.savedPrompts.find(p => p.id === id);
-          if (item) {
-            item.fav = !item.fav;
-            localStorage.setItem('prompt_builder_saved', JSON.stringify(this.savedPrompts));
-            this.addToast(item.fav ? 'Ditambahkan ke favorit!' : 'Dihapus dari favorit!');
+        saveToLocalStorage() {
+          localStorage.setItem('app_prompts', JSON.stringify(this.savedPrompts));
+        },
+
+        saveSettings() {
+          localStorage.setItem('app_settings', JSON.stringify(this.settings));
+          this.addToast('Konfigurasi default berhasil disimpan!');
+        },
+
+        toggleFav(id) {
+          const prompt = this.savedPrompts.find(p => p.id === id);
+          if (prompt) {
+            prompt.fav = !prompt.fav;
+            this.saveToLocalStorage();
+            this.addToast(prompt.fav ? 'Ditambahkan ke favorit' : 'Dihapus dari favorit');
           }
         },
 
         deletePrompt(id) {
           this.savedPrompts = this.savedPrompts.filter(p => p.id !== id);
-          localStorage.setItem('prompt_builder_saved', JSON.stringify(this.savedPrompts));
+          this.saveToLocalStorage();
           this.addToast('Prompt berhasil dihapus', 'error');
         },
 
-        loadPrompt(item) {
-          this.form = JSON.parse(JSON.stringify(item.form));
-          this.compileSystemPrompt();
+        loadSavedPrompt(p) {
+          this.form = JSON.parse(JSON.stringify(p.form));
+          this.generatePromptMarkdown();
           this.activeTab = 'output';
-          this.addToast(`Memuat draf: ${item.appName}`);
+          this.addToast('Berhasil memuat prompt tersimpan');
         },
 
-        applyStaticTemplate(tpl) {
-          // Merge template data into current form state
-          this.form = Object.assign({}, this.form, tpl.data);
-          this.lastTemplateUsed = tpl.name;
-          localStorage.setItem('last_template_used', tpl.name);
-          
-          this.compileSystemPrompt();
+        applyTemplate(tpl) {
+          this.form.appName = tpl.name;
+          this.form.platform = tpl.defaultPlatform;
+          this.generatePromptMarkdown();
           this.activeTab = 'output';
-          this.addToast(`Template "${tpl.name}" Berhasil Diaplikasikan!`);
+          this.addToast('Template diaplikasikan!');
         },
 
-        saveAsCustomTemplate() {
-          const newPrompt = {
+        saveAsTemplate() {
+          const newSaved = {
             id: Date.now(),
             appName: this.form.appName || 'Aplikasi Tanpa Nama',
             platform: this.form.platform,
-            date: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }),
             fav: false,
             form: JSON.parse(JSON.stringify(this.form))
           };
-          this.savedPrompts.unshift(newPrompt);
-          localStorage.setItem('prompt_builder_saved', JSON.stringify(this.savedPrompts));
-          this.addToast('Prompt disimpan ke database lokal!');
+          this.savedPrompts.unshift(newSaved);
+          this.saveToLocalStorage();
+          this.addToast('Prompt disimpan ke Dashboard!');
         },
 
-        saveBuilderSettings() {
-          localStorage.setItem('prompt_builder_settings', JSON.stringify(this.settings));
-          this.form.platform = this.settings.defaultPlatform;
-          this.form.targetAI = this.settings.defaultAI;
-          this.form.detailLevel = this.settings.defaultDetail;
-          this.addToast('Default builder diperbarui!', 'success');
+        copyToClipboard() {
+          navigator.clipboard.writeText(this.generatedPrompt);
+          this.addToast('Prompt disalin ke clipboard!');
         },
 
-        copyPromptToClipboard() {
-          // Fallback clipboard logic to comply with iframe restrictions
-          const textarea = document.createElement('textarea');
-          textarea.value = this.generatedPrompt;
-          document.body.appendChild(textarea);
-          textarea.select();
-          try {
-            document.execCommand('copy');
-            this.addToast('Salin Sukses! Silakan paste di ChatGPT/Claude/DeepSeek.');
-          } catch (err) {
-            this.addToast('Gagal menyalin otomatis.', 'error');
-          }
-          document.body.removeChild(textarea);
-        },
-
-        downloadAsTXT() {
+        downloadTXT() {
           const blob = new Blob([this.generatedPrompt], { type: 'text/plain;charset=utf-8' });
           const url = URL.createObjectURL(blob);
           const a = document.createElement('a');
@@ -1222,170 +1091,89 @@
           document.body.appendChild(a);
           a.click();
           document.body.removeChild(a);
-          this.addToast('Berkas TXT berhasil diunduh!');
+          this.addToast('File TXT berhasil diunduh!');
         },
 
-        downloadAsMarkdown() {
-          const blob = new Blob([this.generatedPrompt], { type: 'text/markdown;charset=utf-8' });
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = `${this.form.appName.toLowerCase().replace(/[^a-z0-9]/g, '_')}_prompt.md`;
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-          this.addToast('Berkas Markdown (.md) diunduh!');
-        },
-
-        compileSystemPrompt() {
+        generatePromptMarkdown() {
           const f = this.form;
-          const s = this.settings;
           
-          let doc = ``;
+          let p = `# SPESIFIKASI PROGRESIVE & PETUNJUK ARSITEKTUR KODE\n\n`;
+          p += `Anda adalah seorang **${f.aiRoles.join(', ')}**. Target AI implementasi Anda adalah **${f.targetAI}**. Saya memerlukan Anda menghasilkan rancangan arsitektur sistem dan menulis kode boilerplate struktural yang memenuhi kriteria di bawah ini.\n\n`;
           
-          // Header & Meta Context
-          doc += `# PROMPT PENGEMBANGAN APLIKASI PROFESIONAL (SYSTEM SPECIFICATION)\n\n`;
-          doc += `## KONTEKS PERAN (PERSONA)\n`;
-          doc += `Anda akan bertindak sebagai ahli pengembang perangkat lunak profesional dengan peran khusus sebagai:\n`;
-          f.aiRoles.forEach(r => {
-            doc += `- **${r}**\n`;
-          });
-          doc += `Target implementasi interpretasi kecerdasan buatan Anda dirancang optimal untuk mesin: **${f.targetAI}**.\n\n`;
-          
-          doc += `## TUJUAN UTAMA PROYEK\n`;
-          doc += `Tolong bangun draf arsitektur sistem, struktur berkas, dan boilerplate kode fungsional yang siap pakai untuk proyek berikut:\n`;
-          doc += `- **Nama Aplikasi:** ${f.appName}\n`;
-          doc += `- **Jenis Aplikasi:** ${f.appType}\n`;
-          doc += `- **Framework Utama (Platform):** ${f.platform}\n`;
-          doc += `- **Database Utama:** ${f.database}\n`;
-          doc += `- **Tingkat Kedalaman Detail:** ${f.detailLevel.toUpperCase()}\n\n`;
+          p += `## INFORMASI UTAMA\n`;
+          p += `- **Nama Aplikasi:** ${f.appName || 'Aplikasi Tanpa Nama'}\n`;
+          p += `- **Jenis Aplikasi:** ${f.appType}\n`;
+          p += `- **Teknologi Utama:** ${f.platform}\n`;
+          p += `- **Sistem Database:** ${f.database}\n`;
+          p += `- **Tingkat Kedetailan Penjelasan:** ${f.detailLevel.toUpperCase()}\n\n`;
 
-          // Google App Script Specific Segment
+          // Google Apps Script Specific Block
           if (f.platform === 'Google App Script') {
-            doc += `## SPESIFIKASI KHUSUS GOOGLE APP SCRIPT\n`;
-            doc += `- **Struktur Penulisan File:** ${f.gasStructure}\n`;
-            doc += `- **Sistem Otomatisasi Google Sheets:**\n`;
-            f.gasSheets.forEach(g => {
-              doc += `  - [x] ${g}\n`;
-            });
-            doc += `- **Model Hosting Frontend:** ${f.gasHosting}\n`;
-            if (f.gasDeployGuide) doc += `- **Deployment:** Sertakan panduan proses deploy di platform Google App Script.\n`;
-            if (f.gasPublishGuide) doc += `- **Publishing:** Sertakan instruksi untuk publish Web App agar dapat digunakan secara publik.\n`;
-            doc += `\n`;
+            p += `## PERSYARATAN KHUSUS GOOGLE APP SCRIPT\n`;
+            p += `- **Aturan Struktur File:** ${f.gas.structure}\n`;
+            p += `- **Pilihan Spreadsheet Otomatis:** ${f.gas.sheetsOptions.join(', ') || 'Manual'}\n`;
+            p += `- **Model Hosting Frontend:** ${f.gas.hostingFrontend}\n`;
+            p += `- **Panduan Deployment:** ${f.gas.deployGuide ? 'Sertakan instruksi deploy lengkap' : 'Tidak perlu'}\n`;
+            p += `- **Panduan Publishing:** ${f.gas.publishGuide ? 'Sertakan instruksi publish web-app lengkap' : 'Tidak perlu'}\n\n`;
           }
 
-          // Auth & User Roles
-          doc += `## MANAJEMEN OTENTIKASI & HAK AKSES (RBAC)\n`;
-          doc += `- **Metode Log-In Keamanan:** ${f.authMethod}\n`;
-          doc += `- **Role Hak Akses yang Wajib Didukung (Role-Based Access Control):**\n`;
-          f.roles.forEach(r => {
-            doc += `  - [x] Peran Pengguna: ${r}\n`;
-          });
-          doc += `\n`;
+          p += `## SISTEM OTENTIKASI & MANAJEMEN AKSES\n`;
+          p += `- **Metode Keamanan Login:** ${f.authMethod}\n`;
+          p += `- **Roles Pengguna:** ${f.roles.join(', ') || 'Tanpa multi-role'}\n\n`;
 
-          // Dashboard Widgets Layout
-          doc += `## SPESIFIKASI BERANDA (DASHBOARD INTERNAL)\n`;
-          doc += `Saat user berhasil login, antarmuka dashboard harus menyertakan widget:\n`;
-          f.dashboard.forEach(w => {
-            doc += `- [x] Widget ${w}\n`;
-          });
-          doc += `\n`;
+          p += `## MODUL DASHBOARD INTERNAL\n`;
+          p += `Tampilan dashboard wajib menyediakan widget sebagai berikut:\n`;
+          f.dashboardItems.forEach(item => { p += `- [x] Widget ${item}\n`; });
+          p += `\n`;
 
-          // CRUD Capability
-          doc += `## MANIPULASI DATA UTAMA (OPERASI CRUD & LAPORAN)\n`;
-          doc += `Sediakan skema kontroler untuk mengelola transaksi data dengan dukungan:\n`;
-          f.crud.forEach(c => {
-            doc += `- [x] Kemampuan ${c}\n`;
-          });
-          doc += `\n`;
+          p += `## OPERASI CRUD DATA\n`;
+          p += `Fitur pengelolaan manipulasi data (CRUD) harus menyertakan kemampuan:\n`;
+          f.crud.forEach(c => { p += `- [x] Kemampuan ${c}\n`; });
+          p += `\n`;
 
-          // Search Capability
-          doc += `## KONTROL QUERY (PENCARIAN & FILTER)\n`;
-          doc += `Sediakan fungsi filter dan sorting untuk mengoptimalkan memori runtime:\n`;
-          f.search.forEach(s => {
-            doc += `- [x] Fitur ${s}\n`;
-          });
-          doc += `\n`;
+          p += `## PENCARIAN & QUERY DATA\n`;
+          f.search.forEach(s => { p += `- [x] Fitur ${s}\n`; });
+          p += `\n`;
 
-          // UI Style
-          doc += `## SPESIFIKASI DESAIN ANTARMUKA (UI / UX)\n`;
-          doc += `- **Framework CSS yang Digunakan:** ${f.uiFramework}\n`;
-          doc += `- **Skema Tema Warna:** ${f.uiModes.join(', ')}\n`;
-          doc += `- **Optimalisasi Mobile Layar Sentuh:**\n`;
-          f.mobile.forEach(m => {
-            doc += `  - [x] Kompatibilitas: ${m}\n`;
-          });
-          doc += `\n`;
+          p += `## SPESIFIKASI UI & TEMA\n`;
+          p += `- **Framework CSS:** ${f.uiFramework}\n`;
+          p += `- **Skema Warna:** ${f.uiThemes.join(', ')}\n`;
+          p += `- **Fitur Dukungan Mobile:** ${f.mobile.join(', ')}\n\n`;
 
-          // SEO & AI Grounding
-          doc += `## STANDAR OPTIMASI SEO & RAMAH AI BOT\n`;
-          doc += `Untuk memaksimalkan discovery web, pasang indikator markup berikut:\n`;
-          f.seo.forEach(s => {
-            doc += `- [x] Protokol SEO: ${s}\n`;
-          });
-          doc += `\n`;
+          p += `## PERSYARATAN SEO & AI READINESS\n`;
+          f.seo.forEach(s => { p += `- [x] Optimasi ${s}\n`; });
+          p += `\n`;
 
-          // Security Guardrails
-          doc += `## PROTOKOL PERTAHANAN KEAMANAN DATA\n`;
-          doc += `Guna menghindari penetrasi celah bug, wajib mengimplementasikan:\n`;
-          f.security.forEach(s => {
-            doc += `- [x] Sanitasi & Validasi: ${s}\n`;
-          });
-          doc += `\n`;
+          p += `## PROTOKOL KEAMANAN\n`;
+          f.security.forEach(s => { p += `- [x] Proteksi ${s}\n`; });
+          p += `\n`;
 
-          // Performance Features
-          doc += `## EFISIENSI & PERFORMA APLIKASI\n`;
-          doc += `Optimalkan waktu rendering aset web dengan menyertakan fitur:\n`;
-          f.performance.forEach(p => {
-            doc += `- [x] Mekanisme Performa: ${p}\n`;
-          });
-          doc += `\n`;
+          p += `## OPTIMASI PERFORMA\n`;
+          f.performance.forEach(s => { p += `- [x] Implementasi ${s}\n`; });
+          p += `\n`;
 
-          // Main UI Components
-          doc += `## KOMPONEN UI UTAMA\n`;
-          doc += `Sediakan kode visual siap pakai untuk elemen antarmuka:\n`;
-          f.components.forEach(c => {
-            doc += `- [x] Komponen UI: ${c}\n`;
-          });
-          doc += `\n`;
+          p += `## KOMPONEN UI UTAMA\n`;
+          f.components.forEach(s => { p += `- [x] Komponen ${s}\n`; });
+          p += `\n`;
 
-          // Media Uploads
-          doc += `## MANAJEMEN UNGGAHAN MEDIA (FILE UPLOADS)\n`;
-          doc += `Sistem backend dan validasi harus mendukung jenis berkas berikut:\n`;
-          f.uploads.forEach(u => {
-            doc += `- [x] Ekstensi Berkas: ${u}\n`;
-          });
-          doc += `\n`;
+          p += `## FORMAT UNGGAHAN BERKAS (FILE UPLOADS)\n`;
+          p += `- **Mendukung format file:** ${f.uploads.join(', ') || 'Tanpa fitur unggahan'}\n\n`;
 
-          // Integrations
-          doc += `## INTEGRASI APIS & LAYANAN PIHAK KETIGA\n`;
-          doc += `Konfigurasikan pustaka kode konektor untuk menghubungkan sistem dengan:\n`;
-          f.integrations.forEach(i => {
-            doc += `- [x] Konektor Pihak Ketiga: ${i}\n`;
-          });
-          doc += `\n`;
+          p += `## EKSTERNAL INTEGRASI & LAYANAN API\n`;
+          p += `- **Koneksi Integrasi:** ${f.integrations.join(', ') || 'Tanpa integrasi eksternal'}\n\n`;
 
-          // Output Docs
-          doc += `## PERSYARATAN DOKUMENTASI AKHIR KODE\n`;
-          doc += `Pada akhir jawaban Anda, wajib melampirkan berkas penjelas berupa:\n`;
-          f.docs.forEach(d => {
-            doc += `- [x] Dokumentasi: ${d}\n`;
-          });
-          doc += `\n`;
+          p += `## PERSYARATAN DOKUMENTASI & STRUKTUR FILE\n`;
+          p += `Wajib menyertakan penjelasan dokumentasi:\n`;
+          f.docs.forEach(s => { p += `- [x] Format ${s}\n`; });
+          p += `\n`;
 
-          // Final Command directives
-          doc += `## INSTRUKSI EKSEKUSI UNTUK AI\n`;
-          doc += `1. **Clean Code:** Pastikan penulisan kode mematuhi kaidah pemrograman bersih (Clean Code), modular, terpisahkan antara logika bisnis (Business Logic) dan tampilan visual (View).\n`;
-          doc += `2. **No Placeholders:** Jangan gunakan komentar seperti '// tulis logika di sini'. Berikan simulasi baris kode tiruan yang aman dan bekerja sempurna.\n`;
-          doc += `3. **Production Ready:** Berikan petunjuk instalasi dependensi, instruksi konfigurasi berkas rahasia (.env), serta struktur direktori yang rapi dan logis.\n`;
-          doc += `\n`;
-          doc += `Harap buat respons dalam **${s.language === 'id' ? 'Bahasa Indonesia yang profesional' : 'English (US)'}** sesuai standar internasional.`;
+          p += `## INSTRUKSI EKSEKUSI UNTUK AI\n`;
+          p += `Berikan boilerplate kode yang bersih, terdokumentasi dengan baik menggunakan standardisasi penamaan file, penanganan pengecualian (exception handling), dan pastikan seluruh kode bersifat modular agar siap dikembangkan lebih lanjut.`;
 
-          this.generatedPrompt = doc;
+          this.generatedPrompt = p;
         }
       }
     }
   </script>
 </body>
 </html>
-
