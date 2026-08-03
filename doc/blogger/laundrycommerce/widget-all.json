@@ -1,0 +1,46 @@
+<div id="waAdminConfigWidget" style="display:none;">
+{
+  "operatingHours": {
+    "open": "08:00",
+    "close": "20:00",
+    "workingDays": [1, 2, 3, 4, 5, 6]
+  },
+  "areas": {
+    "Sunter": {
+      "whatsapp": "081200000000",
+      "shippingFee": 10000
+    },
+    "Sokaraja": {
+      "whatsapp": "088808181008",
+      "shippingFee": 5000
+    },
+    "Cileungsi": {
+      "whatsapp": "085773009666",
+      "shippingFee": 0
+    }
+  },
+  "services": {
+    "Same Day": { "addDays": 0 },
+    "Express": { "addDays": 1 },
+    "Reguler": { "addDays": 3 }
+  },
+  "fragrances": [
+    "Lavender Soft",
+    "Lily Fresh",
+    "Downy Blue",
+    "Fresh Clean",
+    "Tanpa Pewangi / Scents-Free"
+  ],
+  "specialInstructions": [
+    "Pakaian Bayi",
+    "Pisahkan Pakaian Putih",
+    "Jangan Disetrika",
+    "Gantung Pakai Hanger"
+  ],
+  "vouchers": {
+    "BERSIH10": { "type": "percent", "value": 10, "minSpend": 30000 },
+    "PROMO5K": { "type": "nominal", "value": 5000, "minSpend": 25000 },
+    "FREEOK": { "type": "free_shipping", "value": 0, "minSpend": 0 }
+  }
+}
+</div>
