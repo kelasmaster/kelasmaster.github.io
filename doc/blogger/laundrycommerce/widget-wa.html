@@ -1,0 +1,2373 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html>
+<html id='laundryCommerce' lang='id' xmlns='http://www.w3.org/1999/xhtml' xmlns:b='http://www.google.com/2005/gml/b' xmlns:data='http://www.google.com/2005/gml/data' xmlns:expr='http://www.google.com/2005/gml/expr'>
+<head>
+  <meta charset='utf-8'/>
+  <meta content='width=device-width, initial-scale=1, shrink-to-fit=no' name='viewport'/>
+  <title><data:blog.pageTitle/></title>
+
+  <!-- SEO Meta Tags -->
+  <meta content='Jasa layanan laundry &amp; dry cleaning profesional dengan fasilitas antar jemput gratis.' name='description'/>
+  <meta content='laundry, laundry kiloan, cuci sepatu, cuci helm, laundry cileungsi, laundry sokaraja, laundry sunter' name='keywords'/>
+  
+  <b:include data='blog' name='all-head-content'/>
+
+  <!-- Schema.org JSON-LD Structured Data -->
+  <script type='application/ld+json'>
+    {
+      &quot;@context&quot;: &quot;https://schema.org&quot;,
+      &quot;@type&quot;: &quot;LocalBusiness&quot;,
+      &quot;name&quot;: &quot;LaundryCommerce&quot;,
+      &quot;image&quot;: &quot;https://images.unsplash.com/photo-1517677208171-0bc6725a3e60?auto=format&amp;fit=crop&amp;w=800&amp;q=80&quot;,
+      &quot;telephone&quot;: &quot;+6285773009666&quot;,
+      &quot;priceRange&quot;: &quot;Rp&quot;,
+      &quot;address&quot;: {
+        &quot;@type&quot;: &quot;PostalAddress&quot;,
+        &quot;addressLocality&quot;: &quot;Cileungsi&quot;,
+        &quot;addressRegion&quot;: &quot;Jawa Barat&quot;,
+        &quot;addressCountry&quot;: &quot;ID&quot;
+      },
+      &quot;openingHoursSpecification&quot;: {
+        &quot;@type&quot;: &quot;OpeningHoursSpecification&quot;,
+        &quot;dayOfWeek&quot;: [&quot;Monday&quot;, &quot;Tuesday&quot;, &quot;Wednesday&quot;, &quot;Thursday&quot;, &quot;Friday&quot;, &quot;Saturday&quot;],
+        &quot;opens&quot;: &quot;08:00&quot;,
+        &quot;closes&quot;: &quot;20:00&quot;
+      }
+    }
+  </script>
+
+  <!-- CSS Design System -->
+  <style type='text/css'>
+    /* <![CDATA[ */
+    :root {
+      --primary: #1E40AF;        /* Royal Blue */
+      --primary-hover: #1D4ED8;
+      --secondary: #F97316;      /* Orange */
+      --secondary-hover: #EA580C;
+      --bg-body: #FFFFFF;
+      --bg-surface: #F8FAFC;
+      --bg-card: #FFFFFF;
+      --text-main: #0F172A;
+      --text-muted: #64748B;
+      --border-color: #E2E8F0;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      --radius: 12px;
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    [data-theme='dark'] {
+      --bg-body: #0F172A;
+      --bg-surface: #1E293B;
+      --bg-card: #1E293B;
+      --text-main: #F8FAFC;
+      --text-muted: #94A3B8;
+      --border-color: #334155;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.5);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg-body);
+      color: var(--text-main);
+      line-height: 1.6;
+      transition: background-color 0.3s ease, color 0.3s ease;
+      overflow-x: hidden;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    button, input, select, textarea { font: inherit; }
+
+    .container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 1.25rem; }
+
+    /* UI Buttons */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+      padding: 0.65rem 1.25rem; font-weight: 600; border-radius: var(--radius);
+      border: none; cursor: pointer; transition: var(--transition); font-size: 0.9rem;
+    }
+    .btn-primary { background-color: var(--primary); color: #FFFFFF; }
+    .btn-primary:hover { background-color: var(--primary-hover); transform: translateY(-2px); }
+    .btn-secondary { background-color: var(--secondary); color: #FFFFFF; }
+    .btn-secondary:hover { background-color: var(--secondary-hover); transform: translateY(-2px); }
+    .btn-outline { background-color: transparent; border: 2px solid var(--primary); color: var(--primary); }
+    .btn-outline:hover { background-color: var(--primary); color: #FFFFFF; }
+    .btn-block { width: 100%; }
+
+    /* Header & Responsive Title Styling */
+    .site-header {
+      position: sticky; top: 0; z-index: 900;
+      background-color: var(--bg-card); border-bottom: 1px solid var(--border-color);
+      box-shadow: var(--shadow-sm);
+    }
+    .header-wrapper { 
+      display: flex; 
+      align-items: center; 
+      justify-content: space-between; 
+      height: 70px; 
+      gap: 0.75rem; 
+    }
+
+    .logo-brand { 
+      font-size: clamp(1.05rem, 4vw, 1.35rem); 
+      font-weight: 800; 
+      color: var(--primary); 
+      display: flex; 
+      align-items: center; 
+      gap: 0.4rem;
+      line-height: 1.15;
+      text-decoration: none;
+      min-width: 0;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .logo-brand .brand-icon {
+      font-size: 1.25rem;
+      flex-shrink: 0;
+    }
+
+    .logo-brand .brand-text {
+      display: inline-block;
+      white-space: normal;
+      word-break: break-word;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .logo-brand span { color: var(--secondary); }
+
+    .nav-menu { display: flex; align-items: center; gap: 1.5rem; list-style: none; }
+    .nav-link { font-weight: 500; color: var(--text-main); }
+    .nav-link:hover { color: var(--primary); }
+    
+    .header-actions { 
+      display: flex; 
+      align-items: center; 
+      gap: 0.5rem; 
+      flex-shrink: 0;
+    }
+
+    .btn-icon {
+      background: transparent; border: 1px solid var(--border-color); color: var(--text-main);
+      width: 40px; height: 40px; border-radius: 50%; display: inline-flex;
+      align-items: center; justify-content: center; cursor: pointer; position: relative;
+      transition: var(--transition); font-size: 1.1rem; flex-shrink: 0;
+    }
+    .btn-icon:hover { background-color: var(--bg-surface); border-color: var(--primary); color: var(--primary); }
+
+    .cart-count {
+      position: absolute; top: -4px; right: -4px;
+      background-color: var(--secondary); color: white;
+      font-size: 0.7rem; font-weight: 700; width: 20px; height: 20px;
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    }
+    .mobile-toggle { display: none; flex-shrink: 0; }
+
+    /* Overlay & Side Drawers */
+    .drawer-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background-color: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px);
+      z-index: 1000; opacity: 0; visibility: hidden; transition: var(--transition);
+    }
+    .drawer-overlay.active { opacity: 1; visibility: visible; }
+
+    .sidebar-drawer {
+      position: fixed; top: 0; left: -320px; width: 300px; height: 100%;
+      background-color: var(--bg-card); z-index: 1001; box-shadow: var(--shadow-lg);
+      transition: var(--transition); padding: 1.5rem; display: flex; flex-direction: column;
+    }
+    .sidebar-drawer.active { left: 0; }
+
+    .cart-drawer {
+      position: fixed; top: 0; right: -400px; width: 380px; height: 100%;
+      background-color: var(--bg-card); z-index: 1001; box-shadow: var(--shadow-lg);
+      transition: var(--transition); padding: 1.5rem; display: flex; flex-direction: column;
+    }
+    .cart-drawer.active { right: 0; }
+
+    .drawer-header { display: flex; align-items: center; justify-content: space-between; padding-bottom: 1rem; border-bottom: 1px solid var(--border-color); margin-bottom: 1rem; }
+    .drawer-title { font-size: 1.15rem; font-weight: 700; color: var(--primary); }
+
+    .drawer-menu { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
+    .drawer-menu a { display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1rem; border-radius: var(--radius); font-weight: 500; color: var(--text-main); transition: var(--transition); }
+    .drawer-menu a:hover, .drawer-menu a.active { background-color: var(--bg-surface); color: var(--primary); }
+
+    /* Hero Section */
+    .hero-section { padding: 3.5rem 0 2.5rem; background: linear-gradient(135deg, rgba(30,64,175,0.05) 0%, rgba(249,115,22,0.05) 100%); border-bottom: 1px solid var(--border-color); }
+    .hero-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; align-items: center; }
+    .hero-content h1 { font-size: 2.5rem; font-weight: 800; line-height: 1.2; margin-bottom: 1rem; }
+    .hero-content h1 span { color: var(--primary); }
+    .hero-content p { font-size: 1.05rem; color: var(--text-muted); margin-bottom: 1.75rem; }
+    .hero-btns { display: flex; gap: 1rem; flex-wrap: wrap; }
+    .hero-image { width: 100%; height: 320px; border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow-lg); }
+    .hero-image img { width: 100%; height: 100%; object-fit: cover; }
+
+    /* Features Grid */
+    .section-padding { padding: 3.5rem 0; }
+    .section-title { text-align: center; margin-bottom: 2rem; }
+    .section-title h2 { font-size: 1.85rem; font-weight: 700; }
+    .section-title p { color: var(--text-muted); }
+
+    .features-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.25rem; }
+    .feature-card { background-color: var(--bg-card); border: 1px solid var(--border-color); padding: 1.75rem 1.25rem; border-radius: var(--radius); text-align: center; transition: var(--transition); box-shadow: var(--shadow-sm); }
+    .feature-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); border-color: var(--primary); }
+    .feature-icon { width: 50px; height: 50px; background-color: rgba(30, 64, 175, 0.1); color: var(--primary); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 1rem; font-size: 1.4rem; }
+    .feature-card h3 { font-size: 1rem; margin-bottom: 0.4rem; }
+    .feature-card p { font-size: 0.85rem; color: var(--text-muted); }
+
+    /* Promo Slider */
+    .promo-container { position: relative; overflow: hidden; border-radius: var(--radius); box-shadow: var(--shadow-md); }
+    .promo-wrapper { display: flex; transition: transform 0.5s ease-in-out; }
+    .promo-slide { min-width: 100%; height: 220px; position: relative; display: flex; align-items: center; justify-content: center; text-align: center; padding: 2rem; background-size: cover; background-position: center; color: white; }
+    .promo-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(90deg, rgba(30, 64, 175, 0.9) 0%, rgba(15, 23, 42, 0.75) 100%); }
+    .promo-content { position: relative; z-index: 2; max-width: 600px; }
+    .promo-content h3 { font-size: 1.6rem; font-weight: 800; margin-bottom: 0.5rem; }
+    .promo-content p { margin-bottom: 1rem; opacity: 0.9; }
+    .promo-nav { position: absolute; top: 50%; transform: translateY(-50%); width: 100%; display: flex; justify-content: space-between; padding: 0 1rem; z-index: 10; pointer-events: none; }
+    .promo-btn { pointer-events: auto; background: rgba(255,255,255,0.25); border: none; color: white; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; backdrop-filter: blur(4px); transition: var(--transition); font-size: 1rem; }
+    .promo-btn:hover { background: rgba(255,255,255,0.5); }
+
+    /* Catalog Controls */
+    .catalog-controls { display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; justify-content: space-between; margin-bottom: 2rem; }
+    .search-box { position: relative; flex: 1; min-width: 260px; }
+    .search-input { width: 100%; padding: 0.75rem 1rem 0.75rem 2.5rem; border-radius: var(--radius); border: 1px solid var(--border-color); background-color: var(--bg-card); color: var(--text-main); outline: none; transition: var(--transition); }
+    .search-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.15); }
+    .search-icon { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-muted); pointer-events: none; font-size: 0.9rem; }
+    .filter-tags { display: flex; gap: 0.5rem; overflow-x: auto; padding-bottom: 0.25rem; }
+    .tag-btn { padding: 0.5rem 1rem; border-radius: 30px; border: 1px solid var(--border-color); background-color: var(--bg-card); color: var(--text-muted); font-size: 0.85rem; font-weight: 600; cursor: pointer; white-space: nowrap; transition: var(--transition); }
+    .tag-btn.active, .tag-btn:hover { background-color: var(--primary); color: white; border-color: var(--primary); }
+
+    /* Products Grid */
+    .products-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; }
+    .product-card { background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius); overflow: hidden; transition: var(--transition); display: flex; flex-direction: column; position: relative; box-shadow: var(--shadow-sm); }
+    .product-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-md); border-color: var(--primary); }
+    .badge-discount { position: absolute; top: 10px; left: 10px; background-color: var(--secondary); color: white; font-size: 0.75rem; font-weight: 700; padding: 0.25rem 0.6rem; border-radius: 20px; z-index: 2; }
+    .product-thumb { width: 100%; height: 180px; overflow: hidden; background-color: var(--bg-surface); position: relative; }
+    .product-thumb img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
+    .product-card:hover .product-thumb img { transform: scale(1.05); }
+    .product-body { padding: 1.25rem; display: flex; flex-direction: column; flex-grow: 1; }
+    .product-category { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--secondary); margin-bottom: 0.25rem; }
+    .product-title { font-size: 1.05rem; font-weight: 700; color: var(--text-main); margin-bottom: 0.5rem; line-height: 1.3; }
+    .product-rating { display: flex; align-items: center; gap: 0.25rem; font-size: 0.85rem; color: #F59E0B; margin-bottom: 0.75rem; }
+    .product-rating span { color: var(--text-muted); font-size: 0.8rem; }
+    .product-price-wrapper { margin-top: auto; margin-bottom: 1rem; }
+    .price-main { font-size: 1.2rem; font-weight: 800; color: var(--primary); }
+    .price-strike { font-size: 0.85rem; color: var(--text-muted); text-decoration: line-through; margin-left: 0.4rem; }
+
+    /* Pagination Styling */
+    .pagination-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-top: 2.5rem;
+      flex-wrap: wrap;
+    }
+
+    .page-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border-color);
+      background-color: var(--bg-card);
+      color: var(--text-main);
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition);
+    }
+
+    .page-btn:hover, .page-btn.active {
+      background-color: var(--primary);
+      color: #FFFFFF;
+      border-color: var(--primary);
+      transform: translateY(-2px);
+    }
+
+    .page-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* Single Post Layout Styling */
+    .single-post-wrapper {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 2rem;
+      margin-top: 2rem;
+      box-shadow: var(--shadow-sm);
+    }
+    .single-post-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2.5rem;
+    }
+    .single-post-img {
+      width: 100%;
+      height: 380px;
+      border-radius: var(--radius);
+      object-fit: cover;
+      background-color: var(--bg-surface);
+    }
+    .single-post-title {
+      font-size: 2rem;
+      font-weight: 800;
+      margin-bottom: 0.75rem;
+    }
+    .single-post-price-box {
+      background-color: var(--bg-surface);
+      padding: 1rem;
+      border-radius: var(--radius);
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: baseline;
+      gap: 0.75rem;
+    }
+    .single-post-desc {
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+    }
+
+    /* Cart Items */
+    .cart-body { flex: 1; overflow-y: auto; padding: 0.5rem 0; display: flex; flex-direction: column; gap: 1rem; }
+    .cart-empty { text-align: center; padding: 3rem 1rem; color: var(--text-muted); }
+    .cart-item { display: flex; gap: 0.75rem; align-items: center; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border-color); }
+    .cart-item-img { width: 60px; height: 60px; border-radius: 8px; object-fit: cover; background-color: var(--bg-surface); }
+    .cart-item-info { flex: 1; }
+    .cart-item-title { font-size: 0.9rem; font-weight: 700; }
+    .cart-item-price { font-size: 0.85rem; color: var(--primary); font-weight: 600; }
+    .cart-qty-ctrl { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.4rem; }
+    .qty-btn { width: 24px; height: 24px; border-radius: 50%; border: 1px solid var(--border-color); background: var(--bg-surface); color: var(--text-main); cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: 700; }
+    .cart-footer { padding-top: 1rem; border-top: 1px solid var(--border-color); }
+    .cart-subtotal { display: flex; justify-content: space-between; font-size: 1.1rem; font-weight: 800; margin-bottom: 1rem; }
+
+    /* Modal Checkout */
+    .modal-checkout {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background-color: rgba(15, 23, 42, 0.7); backdrop-filter: blur(5px);
+      z-index: 1100; opacity: 0; visibility: hidden; transition: var(--transition);
+      display: flex; align-items: center; justify-content: center; padding: 1rem;
+    }
+    .modal-checkout.active { opacity: 1; visibility: visible; }
+    .checkout-card {
+      background-color: var(--bg-card); width: 100%; max-width: 650px;
+      max-height: 90vh; border-radius: var(--radius); box-shadow: var(--shadow-lg);
+      overflow-y: auto; padding: 1.75rem; position: relative;
+    }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 1rem; border-bottom: 1px solid var(--border-color); margin-bottom: 1.25rem; }
+    .modal-title { font-size: 1.25rem; font-weight: 800; color: var(--primary); }
+
+    .form-group { margin-bottom: 1rem; }
+    .form-label { display: block; font-size: 0.875rem; font-weight: 600; margin-bottom: 0.4rem; }
+    .form-control {
+      width: 100%; padding: 0.65rem 0.85rem; border-radius: 8px; border: 1px solid var(--border-color);
+      background-color: var(--bg-surface); color: var(--text-main); outline: none; transition: var(--transition);
+    }
+    .form-control:focus { border-color: var(--primary); }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .checkbox-group { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem; margin-top: 0.5rem; }
+    .checkbox-label { font-size: 0.85rem; display: flex; align-items: center; gap: 0.4rem; cursor: pointer; }
+
+    .checkout-summary { background-color: var(--bg-surface); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 1rem; margin: 1.25rem 0; font-size: 0.9rem; }
+    .summary-row { display: flex; justify-content: space-between; margin-bottom: 0.5rem; }
+    .summary-row.total { font-weight: 800; font-size: 1.05rem; border-top: 1px solid var(--border-color); padding-top: 0.5rem; margin-bottom: 0; color: var(--primary); }
+
+    .voucher-box { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
+
+    .off-hours-alert {
+      background-color: #FEF3C7; color: #92400E; border: 1px solid #FCD34D;
+      padding: 0.75rem 1rem; border-radius: var(--radius); font-size: 0.85rem;
+      margin-bottom: 1rem; display: none;
+    }
+
+    /* FAQ & Footer */
+    .faq-list { max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; gap: 1rem; }
+    .faq-item { background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius); overflow: hidden; }
+    .faq-question { width: 100%; padding: 1.25rem; text-align: left; background: none; border: none; font-weight: 600; font-size: 1rem; color: var(--text-main); display: flex; align-items: center; justify-content: space-between; cursor: pointer; }
+    .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.3s cubic-bezier(0, 1, 0, 1); padding: 0 1.25rem; color: var(--text-muted); }
+    .faq-item.active .faq-answer { max-height: 200px; padding-bottom: 1.25rem; }
+    .faq-item.active .faq-arrow { transform: rotate(180deg); }
+    .faq-arrow { transition: transform 0.3s ease; }
+
+    .site-footer { background-color: var(--bg-surface); border-top: 1px solid var(--border-color); padding: 3.5rem 0 2rem; margin-top: 4rem; }
+    .footer-grid { display: grid; grid-template-columns: 1.5fr 1fr 1.5fr; gap: 2rem; margin-bottom: 2.5rem; }
+    .footer-col h3 { font-size: 1.1rem; margin-bottom: 1rem; }
+    .footer-col p { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 0.75rem; }
+    .footer-links { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
+    .footer-links a { color: var(--text-muted); font-size: 0.9rem; }
+    .map-container { width: 100%; height: 150px; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border-color); }
+    .map-container iframe { width: 100%; height: 100%; border: 0; }
+    .footer-bottom { text-align: center; padding-top: 1.5rem; border-top: 1px solid var(--border-color); color: var(--text-muted); font-size: 0.85rem; }
+
+    .raw-post-data { display: none; }
+
+    @media (max-width: 992px) {
+      .hero-grid { grid-template-columns: 1fr; text-align: center; }
+      .hero-btns { justify-content: center; }
+      .hero-image { height: 260px; }
+      .features-grid { grid-template-columns: repeat(2, 1fr); }
+      .products-grid { grid-template-columns: repeat(2, 1fr); }
+      .single-post-grid { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 768px) {
+      .nav-menu { display: none; }
+      .mobile-toggle { display: flex; }
+      .header-wrapper { height: 65px; padding: 0 0.5rem; }
+      .logo-brand { font-size: clamp(0.9rem, 3.8vw, 1.15rem); }
+      .btn-icon { width: 36px; height: 36px; font-size: 1rem; }
+      .features-grid { grid-template-columns: 1fr; }
+      .products-grid { grid-template-columns: 1fr; }
+      .form-row { grid-template-columns: 1fr; }
+      .checkbox-group { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 360px) {
+      .logo-brand { font-size: 0.85rem; line-height: 1.1; }
+      .logo-brand .brand-icon { font-size: 1.1rem; }
+    }
+    /* ]]> */
+  </style>
+
+  <b:skin><![CDATA[
+    /* Mandatory Skin Flag */
+  ]]></b:skin>
+</head>
+<body>
+
+  <!-- Drawer Overlay -->
+  <div class='drawer-overlay' id='drawerOverlay'/>
+
+  <!-- Left Sidebar Drawer -->
+  <aside class='sidebar-drawer' id='sidebarDrawer'>
+    <div class='drawer-header'>
+      <span class='drawer-title'>Kategori Layanan</span>
+      <button aria-label='Close Drawer' class='btn-icon' id='btnSidebarClose'>&#10005;</button>
+    </div>
+    <nav>
+      <ul class='drawer-menu'>
+        <li><a class='filter-category-link active' data-category='all' href='javascript:void(0)'>&#9776; Semua Layanan</a></li>
+        <li><a class='filter-category-link' data-category='kiloan' href='javascript:void(0)'>&#9878; Laundry Kiloan</a></li>
+        <li><a class='filter-category-link' data-category='satuan' href='javascript:void(0)'>👕 Laundry Satuan</a></li>
+        <li><a class='filter-category-link' data-category='sepatu' href='javascript:void(0)'>👟 Laundry Sepatu</a></li>
+        <li><a class='filter-category-link' data-category='helm' href='javascript:void(0)'>🬐 Laundry Helm</a></li>
+        <li><a class='filter-category-link' data-category='boneka' href='javascript:void(0)'>🧸 Laundry Boneka</a></li>
+        <li><a class='filter-category-link' data-category='karpet' href='javascript:void(0)'>🗄 Laundry Karpet</a></li>
+      </ul>
+    </nav>
+  </aside>
+
+  <!-- Right Cart Drawer -->
+  <aside class='cart-drawer' id='cartDrawer'>
+    <div class='drawer-header'>
+      <span class='drawer-title'>Keranjang Belanja</span>
+      <button aria-label='Close Cart' class='btn-icon' id='btnCartClose'>&#10005;</button>
+    </div>
+    
+    <div class='cart-body' id='cartBody'>
+      <div class='cart-empty'>Keranjang belanja Anda masih kosong.</div>
+    </div>
+
+    <div class='cart-footer'>
+      <div class='cart-subtotal'>
+        <span>Subtotal:</span>
+        <span id='cartSubtotal'>Rp0</span>
+      </div>
+      <button class='btn btn-primary btn-block' id='btnOpenCheckout'>Lanjut ke Checkout</button>
+    </div>
+  </aside>
+
+  <!-- Modal Form Checkout -->
+  <div class='modal-checkout' id='modalCheckout'>
+    <div class='checkout-card'>
+      <div class='modal-header'>
+        <span class='modal-title'>Form Pemesanan Laundry</span>
+        <button aria-label='Close Modal' class='btn-icon' id='btnCloseCheckout'>&#10005;</button>
+      </div>
+
+      <div class='off-hours-alert' id='offHoursAlert'>
+        &#9200; <strong>Toko Sedang Tutup:</strong> Anda memesan di luar jam operasional (08:00 - 20:00 WIB). Pesanan Anda akan kami proses pada hari operasional berikutnya.
+      </div>
+
+      <form id='formCheckout'>
+        <div class='form-row'>
+          <div class='form-group'>
+            <label class='form-label'>Nama Lengkap *</label>
+            <input class='form-control' id='custName' placeholder='Contoh: Budi Santoso' required='required' type='text'/>
+          </div>
+          <div class='form-group'>
+            <label class='form-label'>Nomor WhatsApp *</label>
+            <input class='form-control' id='custPhone' placeholder='Contoh: 08123456789' required='required' type='tel'/>
+          </div>
+        </div>
+
+        <div class='form-group'>
+          <label class='form-label'>Alamat Penjemputan *</label>
+          <textarea class='form-control' id='custAddress' placeholder='Alamat lengkap, nomor rumah, RT/RW, patokan...' required='required' rows='2'/>
+        </div>
+
+        <div class='form-row'>
+          <div class='form-group'>
+            <label class='form-label'>Area Cabang Terdekat *</label>
+            <select class='form-control' id='custArea'>
+              <!-- Injected via JS -->
+            </select>
+          </div>
+          <div class='form-group'>
+            <label class='form-label'>Jenis Layanan *</label>
+            <select class='form-control' id='custService'>
+              <option value='Reguler'>Reguler (+3 Hari Kerja)</option>
+              <option value='Express'>Express (+1 Hari)</option>
+              <option value='Same Day'>Same Day (Hari Ini)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class='form-row'>
+          <div class='form-group'>
+            <label class='form-label'>Pilihan Pewangi</label>
+            <select class='form-control' id='custFragrance'>
+              <option value='Lavender Soft'>Lavender Soft</option>
+              <option value='Lily Fresh'>Lily Fresh</option>
+              <option value='Downy Blue'>Downy Blue</option>
+              <option value='Fresh Clean'>Fresh Clean</option>
+              <option value='Tanpa Pewangi'>Tanpa Pewangi / Scents-Free</option>
+            </select>
+          </div>
+          <div class='form-group'>
+            <label class='form-label'>Catatan Tambahan</label>
+            <input class='form-control' id='custNotes' placeholder='Contoh: Ada noda oli di celana' type='text'/>
+          </div>
+        </div>
+
+        <div class='form-group'>
+          <label class='form-label'>Instruksi Khusus (Optional)</label>
+          <div class='checkbox-group'>
+            <label class='checkbox-label'><input id='chkBaby' type='checkbox' value='Pakaian Bayi'/> Pakaian Bayi</label>
+            <label class='checkbox-label'><input id='chkSeparate' type='checkbox' value='Pisahkan Pakaian Putih'/> Pisahkan Pakaian Putih</label>
+            <label class='checkbox-label'><input id='chkNoIron' type='checkbox' value='Jangan Disetrika'/> Jangan Disetrika</label>
+            <label class='checkbox-label'><input id='chkHang' type='checkbox' value='Gantung Pakai Hanger'/> Gantung Pakai Hanger</label>
+          </div>
+        </div>
+
+        <div class='form-group'>
+          <label class='form-label'>Kode Voucher / Promo</label>
+          <div class='voucher-box'>
+            <input class='form-control' id='voucherInput' placeholder='Masukkan kode (cth: BERSIH10)' type='text'/>
+            <button class='btn btn-secondary' id='btnApplyVoucher' type='button'>Gunakan</button>
+          </div>
+          <div id='voucherStatus' style='font-size: 0.8rem;'/>
+        </div>
+
+        <div class='checkout-summary'>
+          <div class='summary-row'><span>Subtotal Produk:</span><span id='sumSubtotal'>Rp0</span></div>
+          <div class='summary-row'><span>Ongkir Area:</span><span id='sumShipping'>Rp0</span></div>
+          <div class='summary-row' id='rowDiscount' style='display:none; color: var(--secondary);'><span>Diskon Promo:</span><span id='sumDiscount'>-Rp0</span></div>
+          <div class='summary-row'><span>Estimasi Selesai:</span><strong id='sumEstDate'>-</strong></div>
+          <div class='summary-row total'><span>Grand Total:</span><span id='sumGrandTotal'>Rp0</span></div>
+        </div>
+
+        <button class='btn btn-primary btn-block' style='padding: 0.85rem; font-size: 1rem;' type='submit'>
+          💬 Kirim Pesanan ke WhatsApp
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Header Section -->
+  <header class='site-header'>
+    <div class='container header-wrapper'>
+      <button aria-label='Open Menu' class='btn-icon mobile-toggle' id='btnSidebarOpen'>&#9776;</button>
+
+      <a class='logo-brand' href='/'>
+        <span class='brand-icon'>🧺</span>
+        <span class='brand-text'>
+          <span><data:blog.title/></span>
+        </span>
+      </a>
+
+      <nav>
+        <ul class='nav-menu'>
+          <li><a class='nav-link' href='/'>Beranda</a></li>
+          <li><a class='nav-link' href='/#layanan'>Layanan</a></li>
+          <li><a class='nav-link' href='/#harga'>Daftar Harga</a></li>
+          <li><a class='nav-link' href='/#promo'>Promo</a></li>
+          <li><a class='nav-link' href='/#faq'>FAQ</a></li>
+        </ul>
+      </nav>
+
+      <div class='header-actions'>
+        <button aria-label='Toggle Theme' class='btn-icon' id='btnThemeToggle'>&#9728;</button>
+
+        <button aria-label='Shopping Cart' class='btn-icon' id='btnCartOpen'>
+          🛒
+          <span class='cart-count' id='cartCounter'>0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN BODY LAYOUT ENGINE -->
+  <b:if cond='data:view.isHomepage'>
+    <!-- HERO & PROMO ONLY ON HOMEPAGE -->
+    <section class='hero-section'>
+      <div class='container hero-grid'>
+        <div class='hero-content'>
+          <h1>Cucian Bersih &amp; Wangi <span>Tanpa Repot</span></h1>
+          <p>Layanan laundry profesional siap antar jemput gratis ke lokasi Anda. Pakaian rapi, higienis, dan terawat tepat waktu.</p>
+          <div class='hero-btns'>
+            <a class='btn btn-primary' href='#harga'>Pesan Sekarang</a>
+            <a class='btn btn-outline' href='#layanan'>Lihat Harga</a>
+          </div>
+        </div>
+        <div class='hero-image'>
+          <img alt='Laundry Commerce Banner' src='https://images.unsplash.com/photo-1517677208171-0bc6725a3e60?auto=format&amp;fit=crop&amp;w=800&amp;q=80'/>
+        </div>
+      </div>
+    </section>
+
+    <!-- Keunggulan Section -->
+    <section class='section-padding' id='layanan'>
+      <div class='container'>
+        <div class='section-title'>
+          <h2>Mengapa Memilih Kami?</h2>
+          <p>Komitmen kami memberikan pengalaman cuci pakaian terbaik untuk Anda</p>
+        </div>
+        <div class='features-grid'>
+          <div class='feature-card'><div class='feature-icon'>🚚</div><h3>Gratis Antar Jemput</h3><p>Layanan antar jemput gratis tanpa biaya tambahan untuk area operasional.</p></div>
+          <div class='feature-card'><div class='feature-icon'>&#9889;</div><h3>Proses Cepat</h3><p>Pilihan layanan Same Day &amp; Express agar pakaian langsung siap pakai.</p></div>
+          <div class='feature-card'><div class='feature-icon'>🛡</div><h3>Garansi Bersih</h3><p>Jika hasil kurang bersih atau noda membandel, kami cuci ulang gratis.</p></div>
+          <div class='feature-card'><div class='feature-icon'>&#10024;</div><h3>Pewangi Premium</h3><p>Aroma parfum laundry tahan lama &amp; higienis bagi kulit sensitif.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Promo Slider -->
+    <section class='section-padding' id='promo' style='background-color: var(--bg-surface);'>
+      <div class='container'>
+        <div class='section-title'>
+          <h2>Promo Spesial Hari Ini</h2>
+          <p>Gunakan voucher saat checkout untuk harga lebih hemat</p>
+        </div>
+        <div class='promo-container'>
+          <div class='promo-wrapper' id='promoWrapper'>
+            <div class='promo-slide' style='background-image: url(&quot;https://images.unsplash.com/photo-1545173168-9f1947eebb7f?auto=format&amp;fit=crop&amp;w=1200&amp;q=80&quot;);'>
+              <div class='promo-overlay'/>
+              <div class='promo-content'>
+                <h3>DISKON 10% MEMBER BARU</h3>
+                <p>Gunakan kode voucher: <strong>BERSIH10</strong> (Min. transaksi Rp 30.000)</p>
+                <a class='btn btn-secondary' href='#harga'>Klaim Promo</a>
+              </div>
+            </div>
+            <div class='promo-slide' style='background-image: url(&quot;https://images.unsplash.com/photo-1582735689369-4fe89db7114c?auto=format&amp;fit=crop&amp;w=1200&amp;q=80&quot;);'>
+              <div class='promo-overlay'/>
+              <div class='promo-content'>
+                <h3>POTONGAN LANGSUNG Rp 5.000</h3>
+                <p>Gunakan kode voucher: <strong>PROMO5K</strong> untuk layanan satuan.</p>
+                <a class='btn btn-secondary' href='#harga'>Pakai Sekarang</a>
+              </div>
+            </div>
+          </div>
+          <div class='promo-nav'>
+            <button aria-label='Previous Slide' class='promo-btn' id='promoPrev'>&#10094;</button>
+            <button aria-label='Next Slide' class='promo-btn' id='promoNext'>&#10095;</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Product Catalog Grid Container -->
+    <section class='container section-padding' id='harga'>
+      <div class='section-title'>
+        <h2>Katalog Layanan Laundry</h2>
+        <p>Cari &amp; pilih layanan sesuai dengan kebutuhan pakaian Anda</p>
+      </div>
+
+      <div class='catalog-controls'>
+        <div class='search-box'>
+          <span class='search-icon'>👐</span>
+          <input class='search-input' id='searchInput' placeholder='Cari layanan laundry (cth: Sepatu, Kiloan)...' type='text'/>
+        </div>
+        <div class='filter-tags'>
+          <button class='tag-btn active' data-category='all'>Semua</button>
+          <button class='tag-btn' data-category='kiloan'>Kiloan</button>
+          <button class='tag-btn' data-category='satuan'>Satuan</button>
+          <button class='tag-btn' data-category='sepatu'>Sepatu</button>
+          <button class='tag-btn' data-category='helm'>Helm</button>
+          <button class='tag-btn' data-category='boneka'>Boneka</button>
+          <button class='tag-btn' data-category='karpet'>Karpet</button>
+        </div>
+      </div>
+
+      <div class='products-grid' id='productsGrid'>
+        <!-- Dynamic Injection via JavaScript CatalogEngine -->
+      </div>
+
+      <!-- Pagination Navigation Control Container -->
+      <div class='pagination-wrapper' id='paginationWrapper'>
+        <!-- Injected by CatalogEngine JS -->
+      </div>
+    </section>
+  </b:if>
+
+  <!-- BLOGGER POST ENGINE SECTION -->
+  <main class='container'>
+    <b:section class='main' id='main' showaddelement='yes'>
+      <b:widget id='Blog1' locked='true' title='Postingan Blog' type='Blog' version='1'>
+        <b:widget-settings>
+          <b:widget-setting name='commentLabel'>comments</b:widget-setting>
+          <b:widget-setting name='showShareButtons'>true</b:widget-setting>
+          <b:widget-setting name='authorLabel'>By</b:widget-setting>
+          <b:widget-setting name='style.unittype'>TextAndImage</b:widget-setting>
+          <b:widget-setting name='timestampLabel'>at</b:widget-setting>
+          <b:widget-setting name='reactionsLabel'/>
+          <b:widget-setting name='showAuthorProfile'>false</b:widget-setting>
+          <b:widget-setting name='style.layout'>1x1</b:widget-setting>
+          <b:widget-setting name='showLocation'>true</b:widget-setting>
+          <b:widget-setting name='showTimestamp'>true</b:widget-setting>
+          <b:widget-setting name='postsPerAd'>1</b:widget-setting>
+          <b:widget-setting name='style.bordercolor'>#ffffff</b:widget-setting>
+          <b:widget-setting name='showDateHeader'>true</b:widget-setting>
+          <b:widget-setting name='style.textcolor'>#ffffff</b:widget-setting>
+          <b:widget-setting name='showCommentLink'>true</b:widget-setting>
+          <b:widget-setting name='style.urlcolor'>#ffffff</b:widget-setting>
+          <b:widget-setting name='postLocationLabel'>Location:</b:widget-setting>
+          <b:widget-setting name='showAuthor'>false</b:widget-setting>
+          <b:widget-setting name='style.linkcolor'>#ffffff</b:widget-setting>
+          <b:widget-setting name='style.bgcolor'>#ffffff</b:widget-setting>
+          <b:widget-setting name='showLabels'>true</b:widget-setting>
+          <b:widget-setting name='postLabelsLabel'>Labels:</b:widget-setting>
+          <b:widget-setting name='showBacklinks'>false</b:widget-setting>
+          <b:widget-setting name='showInlineAds'>false</b:widget-setting>
+          <b:widget-setting name='showReactions'>false</b:widget-setting>
+        </b:widget-settings>
+        <b:includable id='main' var='top'>
+          
+          <!-- CONDITIONAL: HOMEPAGE PARSER -->
+          <b:if cond='data:view.isHomepage'>
+            <div class='raw-post-data'>
+              <b:loop values='data:posts' var='post'>
+                <article class='blogger-post-item' expr:id='data:post.id'>
+                  <span class='post-id'><data:post.id/></span>
+                  <span class='post-title'><data:post.title/></span>
+                  <span class='post-url'><data:post.url/></span>
+                  <span class='post-image'>
+                    <b:if cond='data:post.featuredImage'>
+                      <data:post.featuredImage/>
+                    <b:else/>
+                      <b:if cond='data:post.firstImageUrl'>
+                        <data:post.firstImageUrl/>
+                      <b:else/>
+                        https://images.unsplash.com/photo-1545173168-9f1947eebb7f?auto=format&amp;fit=crop&amp;w=600&amp;q=80
+                      </b:if>
+                    </b:if>
+                  </span>
+                  <div class='post-labels'>
+                    <b:loop values='data:post.labels' var='label'>
+                      <span class='post-label-item'><data:label.name/></span>
+                    </b:loop>
+                  </div>
+                  <div class='post-body-content'>
+                    <data:post.body/>
+                  </div>
+                </article>
+              </b:loop>
+            </div>
+          </b:if>
+
+          <!-- CONDITIONAL: SINGLE POST PAGE -->
+          <b:if cond='data:view.isPost'>
+            <b:loop values='data:posts' var='post'>
+              <div class='single-post-wrapper' expr:id='data:post.id'>
+                <div class='single-post-grid'>
+                  <div>
+                    <img class='single-post-img' expr:alt='data:post.title' expr:src='data:post.featuredImage ? data:post.featuredImage : (data:post.firstImageUrl ? data:post.firstImageUrl : &quot;https://images.unsplash.com/photo-1545173168-9f1947eebb7f?auto=format&amp;fit=crop&amp;w=800&amp;q=80&quot;)'/>
+                  </div>
+                  <div>
+                    <h1 class='single-post-title'><data:post.title/></h1>
+                    <div class='single-post-price-box' id='singlePriceContainer'>
+                      <!-- Parsed by JS Engine -->
+                    </div>
+                    <div class='single-post-desc'>
+                      <data:post.body/>
+                    </div>
+                    <button class='btn btn-primary btn-block' id='btnSingleAddToCart' style='padding: 0.85rem; font-size: 1rem;'>
+                      + Tambahkan Ke Keranjang Belanja
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </b:loop>
+          </b:if>
+
+        </b:includable>
+        <b:includable id='backlinkDeleteIcon' var='backlink'/>
+        <b:includable id='backlinks' var='post'/>
+        <b:includable id='comment-form' var='post'>
+  <div class='comment-form'>
+    <a name='comment-form'/>
+    <b:if cond='data:mobile'>
+      <h4 id='comment-post-message'>
+        <a expr:id='data:widget.instanceId + &quot;_comment-editor-toggle-link&quot;' href='javascript:void(0)'><data:postCommentMsg/></a></h4>
+      <p><data:blogCommentMessage/></p>
+      <data:blogTeamBlogMessage/>
+      <a expr:href='data:post.commentFormIframeSrc' id='comment-editor-src'/>
+      <iframe allowtransparency='true' class='blogger-iframe-colorize blogger-comment-from-post' expr:height='data:cmtIframeInitialHeight' frameborder='0' id='comment-editor' name='comment-editor' src='' style='display: none' width='100%'/>
+    <b:else/>
+      <h4 id='comment-post-message'><data:postCommentMsg/></h4>
+      <p><data:blogCommentMessage/></p>
+      <data:blogTeamBlogMessage/>
+      <a expr:href='data:post.commentFormIframeSrc' id='comment-editor-src'/>
+      <iframe allowtransparency='true' class='blogger-iframe-colorize blogger-comment-from-post' expr:height='data:cmtIframeInitialHeight' frameborder='0' id='comment-editor' name='comment-editor' src='' width='100%'/>
+    </b:if>
+    <data:post.cmtfpIframe/>
+    <script type='text/javascript'>
+      BLOG_CMT_createIframe(&#39;<data:post.appRpcRelayPath/>&#39;);
+    </script>
+  </div>
+</b:includable>
+        <b:includable id='commentDeleteIcon' var='comment'>
+  <span expr:class='&quot;item-control &quot; + data:comment.adminClass'>
+    <b:if cond='data:showCmtPopup'>
+      <div class='goog-toggle-button'>
+        <div class='goog-inline-block comment-action-icon'/>
+      </div>
+    <b:else/>
+      <a class='comment-delete' expr:href='data:comment.deleteUrl' expr:title='data:top.deleteCommentMsg'>
+        <img src='https://resources.blogblog.com/img/icon_delete13.gif'/>
+      </a>
+    </b:if>
+  </span>
+</b:includable>
+        <b:includable id='comment_count_picker' var='post'>
+  <a class='comment-link' expr:href='data:post.addCommentUrl' expr:onclick='data:post.addCommentOnclick'>
+    <data:post.commentLabelFull/>:
+  </a>
+</b:includable>
+        <b:includable id='comment_picker' var='post'>
+  <b:if cond='data:post.showThreadedComments'>
+    <b:include data='post' name='threaded_comments'/>
+  <b:else/>
+    <b:include data='post' name='comments'/>
+  </b:if>
+</b:includable>
+        <b:includable id='comments' var='post'>
+  <div class='comments' id='comments'>
+    <a name='comments'/>
+    <b:if cond='data:post.allowComments'>
+      <h4><data:post.commentLabelFull/>:</h4>
+
+      <b:if cond='data:post.commentPagingRequired'>
+        <span class='paging-control-container'>
+          <b:if cond='data:post.hasOlderLinks'>
+            <a expr:class='data:post.oldLinkClass' expr:href='data:post.oldestLinkUrl'><data:post.oldestLinkText/></a>
+              &#160;
+            <a expr:class='data:post.oldLinkClass' expr:href='data:post.olderLinkUrl'><data:post.olderLinkText/></a>
+              &#160;
+          </b:if>
+
+          <data:post.commentRangeText/>
+
+          <b:if cond='data:post.hasNewerLinks'>
+            &#160;
+            <a expr:class='data:post.newLinkClass' expr:href='data:post.newerLinkUrl'><data:post.newerLinkText/></a>
+            &#160;
+            <a expr:class='data:post.newLinkClass' expr:href='data:post.newestLinkUrl'><data:post.newestLinkText/></a>
+          </b:if>
+        </span>
+      </b:if>
+
+      <div expr:id='data:widget.instanceId + &quot;_comments-block-wrapper&quot;'>
+        <dl expr:class='data:post.avatarIndentClass' id='comments-block'>
+          <b:loop values='data:post.comments' var='comment'>
+            <dt expr:class='&quot;comment-author &quot; + data:comment.authorClass' expr:id='data:comment.anchorName'>
+              <b:if cond='data:comment.favicon'>
+                <img expr:src='data:comment.favicon' height='16px' style='margin-bottom:-2px;' width='16px'/>
+              </b:if>
+              <a expr:name='data:comment.anchorName'/>
+              <b:if cond='data:blog.enabledCommentProfileImages'>
+                <data:comment.authorAvatarImage/>
+              </b:if>
+              <b:if cond='data:comment.authorUrl'>
+                <a expr:href='data:comment.authorUrl' rel='nofollow'><data:comment.author/></a>
+              <b:else/>
+                <data:comment.author/>
+              </b:if>
+              <data:commentPostedByMsg/>
+            </dt>
+            <dd class='comment-body' expr:id='data:widget.instanceId + data:comment.cmtBodyIdPostfix'>
+              <b:if cond='data:comment.isDeleted'>
+                <span class='deleted-comment'><data:comment.body/></span>
+              <b:else/>
+                <p>
+                  <data:comment.body/>
+                </p>
+              </b:if>
+            </dd>
+            <dd class='comment-footer'>
+              <span class='comment-timestamp'>
+                <a expr:href='data:comment.url' title='comment permalink'>
+                  <data:comment.timestamp/>
+                </a>
+                <b:include data='comment' name='commentDeleteIcon'/>
+              </span>
+            </dd>
+          </b:loop>
+        </dl>
+      </div>
+
+      <b:if cond='data:post.commentPagingRequired'>
+        <span class='paging-control-container'>
+          <a expr:class='data:post.oldLinkClass' expr:href='data:post.oldestLinkUrl'>
+            <data:post.oldestLinkText/>
+          </a>
+          <a expr:class='data:post.oldLinkClass' expr:href='data:post.olderLinkUrl'>
+            <data:post.olderLinkText/>
+          </a>
+          &#160;
+          <data:post.commentRangeText/>
+          &#160;
+          <a expr:class='data:post.newLinkClass' expr:href='data:post.newerLinkUrl'>
+            <data:post.newerLinkText/>
+          </a>
+          <a expr:class='data:post.newLinkClass' expr:href='data:post.newestLinkUrl'>
+            <data:post.newestLinkText/>
+          </a>
+        </span>
+      </b:if>
+
+      <p class='comment-footer'>
+        <b:if cond='data:post.embedCommentForm'>
+          <b:if cond='data:post.allowNewComments'>
+            <b:include data='post' name='comment-form'/>
+          <b:else/>
+            <data:post.noNewCommentsText/>
+          </b:if>
+        <b:elseif cond='data:post.allowComments'/>
+          <a expr:href='data:post.addCommentUrl' expr:onclick='data:post.addCommentOnclick'><data:postCommentMsg/></a>
+        </b:if>
+      </p>
+    </b:if>
+    <b:if cond='data:showCmtPopup'>
+      <div id='comment-popup'>
+        <iframe allowtransparency='true' frameborder='0' id='comment-actions' name='comment-actions' scrolling='no'>
+        </iframe>
+      </div>
+    </b:if>
+
+  </div>
+</b:includable>
+        <b:includable id='feedLinks'>
+  <b:if cond='data:blog.pageType != &quot;item&quot;'> <!-- Blog feed links -->
+    <b:if cond='data:feedLinks'>
+      <div class='blog-feeds'>
+        <b:include data='feedLinks' name='feedLinksBody'/>
+      </div>
+    </b:if>
+
+  <b:else/> <!--Post feed links -->
+    <div class='post-feeds'>
+      <b:loop values='data:posts' var='post'>
+        <b:include cond='data:post.allowComments and data:post.feedLinks' data='post.feedLinks' name='feedLinksBody'/>
+      </b:loop>
+    </div>
+  </b:if>
+</b:includable>
+        <b:includable id='feedLinksBody' var='links'>
+  <div class='feed-links'>
+  <data:feedLinksMsg/>
+  <b:loop values='data:links' var='f'>
+     <a class='feed-link' expr:href='data:f.url' expr:type='data:f.mimeType' target='_blank'><data:f.name/> (<data:f.feedType/>)</a>
+  </b:loop>
+  </div>
+</b:includable>
+        <b:includable id='iframe_comments' var='post'>
+  <!-- G+ comments, no longer available. The includable is retained for backwards-compatibility. -->
+</b:includable>
+        <b:includable id='mobile-index-post' var='post'>
+  <div class='mobile-date-outer date-outer'>
+    <b:if cond='data:post.dateHeader'>
+      <div class='date-header'>
+        <span><data:post.dateHeader/></span>
+      </div>
+    </b:if>
+
+    <div class='mobile-post-outer'>
+      <a expr:href='data:post.url'>
+        <h3 class='mobile-index-title entry-title' itemprop='name'>
+          <data:post.title/>
+        </h3>
+
+        <div class='mobile-index-arrow'>&amp;rsaquo;</div>
+
+        <div class='mobile-index-contents'>
+          <b:if cond='data:post.thumbnailUrl'>
+            <div class='mobile-index-thumbnail'>
+              <div class='Image'>
+                <img expr:src='data:post.thumbnailUrl'/>
+              </div>
+            </div>
+          </b:if>
+
+          <div class='post-body'>
+            <b:if cond='data:post.snippet'><data:post.snippet/></b:if>
+          </div>
+        </div>
+
+        <div style='clear: both;'/>
+      </a>
+
+      <div class='mobile-index-comment'>
+        <b:include cond='data:blog.pageType != &quot;static_page&quot;                          and data:post.allowComments                          and data:post.numComments != 0' data='post' name='comment_count_picker'/>
+      </div>
+    </div>
+  </div>
+</b:includable>
+        <b:includable id='mobile-main' var='top'>
+    <!-- posts -->
+    <div class='blog-posts hfeed'>
+
+      <b:include data='top' name='status-message'/>
+
+      <b:if cond='data:blog.pageType == &quot;index&quot;'>
+        <b:loop values='data:posts' var='post'>
+          <b:include data='post' name='mobile-index-post'/>
+        </b:loop>
+      <b:else/>
+        <b:loop values='data:posts' var='post'>
+          <b:include data='post' name='mobile-post'/>
+        </b:loop>
+      </b:if>
+    </div>
+
+   <b:include name='mobile-nextprev'/>
+</b:includable>
+        <b:includable id='mobile-nextprev'>
+  <div class='blog-pager' id='blog-pager'>
+    <b:if cond='data:newerPageUrl'>
+      <div class='mobile-link-button' id='blog-pager-newer-link'>
+      <a class='blog-pager-newer-link' expr:href='data:newerPageUrl' expr:id='data:widget.instanceId + &quot;_blog-pager-newer-link&quot;' expr:title='data:newerPageTitle'>&amp;lsaquo;</a>
+      </div>
+    </b:if>
+
+    <b:if cond='data:olderPageUrl'>
+      <div class='mobile-link-button' id='blog-pager-older-link'>
+      <a class='blog-pager-older-link' expr:href='data:olderPageUrl' expr:id='data:widget.instanceId + &quot;_blog-pager-older-link&quot;' expr:title='data:olderPageTitle'>&amp;rsaquo;</a>
+      </div>
+    </b:if>
+
+    <div class='mobile-link-button' id='blog-pager-home-link'>
+    <a class='home-link' expr:href='data:blog.homepageUrl'><data:homeMsg/></a>
+    </div>
+
+    <div class='mobile-desktop-link'>
+      <a class='home-link' expr:href='data:desktopLinkUrl'><data:desktopLinkMsg/></a>
+    </div>
+
+  </div>
+  <div class='clear'/>
+</b:includable>
+        <b:includable id='mobile-post' var='post'>
+  <div class='date-outer'>
+    <b:if cond='data:post.dateHeader'>
+      <h2 class='date-header'><span><data:post.dateHeader/></span></h2>
+    </b:if>
+    <div class='date-posts'>
+      <div class='post-outer'>
+
+        <div class='post hentry uncustomized-post-template' itemscope='itemscope' itemtype='http://schema.org/BlogPosting'>
+          <b:if cond='data:post.thumbnailUrl'>
+            <meta expr:content='data:post.thumbnailUrl' itemprop='image_url'/>
+          </b:if>
+          <meta expr:content='data:blog.blogId' itemprop='blogId'/>
+          <meta expr:content='data:post.id' itemprop='postId'/>
+
+          <a expr:name='data:post.id'/>
+          <b:if cond='data:post.title'>
+            <h3 class='post-title entry-title' itemprop='name'>
+              <b:if cond='data:post.link'>
+                <a expr:href='data:post.link'><data:post.title/></a>
+              <b:elseif cond='data:post.url and data:blog.url != data:post.url'/>
+                <a expr:href='data:post.url'><data:post.title/></a>
+              <b:else/>
+                <data:post.title/>
+              </b:if>
+            </h3>
+          </b:if>
+
+          <div class='post-header'>
+            <div class='post-header-line-1'/>
+          </div>
+
+          <div class='post-body entry-content' expr:id='&quot;post-body-&quot; + data:post.id' itemprop='articleBody'>
+            <data:post.body/>
+            <div style='clear: both;'/> <!-- clear for photos floats -->
+          </div>
+
+          <div class='post-footer'>
+            <div class='post-footer-line post-footer-line-1'>
+              <span class='post-author vcard'>
+                <b:if cond='data:top.showAuthor'>
+                  <b:if cond='data:post.authorProfileUrl'>
+                    <span class='fn' itemprop='author' itemscope='itemscope' itemtype='http://schema.org/Person'>
+                      <meta expr:content='data:post.authorProfileUrl' itemprop='url'/>
+                      <a expr:href='data:post.authorProfileUrl' rel='author' title='author profile'>
+                        <span itemprop='name'><data:post.author/></span>
+                      </a>
+                    </span>
+                  <b:else/>
+                    <span class='fn' itemprop='author' itemscope='itemscope' itemtype='http://schema.org/Person'>
+                      <span itemprop='name'><data:post.author/></span>
+                    </span>
+                  </b:if>
+                </b:if>
+              </span>
+
+              <span class='post-timestamp'>
+                <b:if cond='data:top.showTimestamp'>
+                  <data:top.timestampLabel/>
+                  <b:if cond='data:post.url'>
+                    <meta expr:content='data:post.url.canonical' itemprop='url'/>
+                    <a class='timestamp-link' expr:href='data:post.url' rel='bookmark' title='permanent link'><abbr class='published' expr:title='data:post.timestampISO8601' itemprop='datePublished'><data:post.timestamp/></abbr></a>
+                  </b:if>
+                </b:if>
+              </span>
+
+              <span class='post-comment-link'>
+                <b:include cond='data:blog.pageType not in {&quot;item&quot;,&quot;static_page&quot;}                                  and data:post.allowComments' data='post' name='comment_count_picker'/>
+              </span>
+            </div>
+
+            <div class='post-footer-line post-footer-line-2'>
+              <b:if cond='data:top.showMobileShare'>
+                <div class='mobile-link-button goog-inline-block' id='mobile-share-button'>
+                  <a href='javascript:void(0);'><data:shareMsg/></a>
+                </div>
+              </b:if>
+            </div>
+
+          </div>
+        </div>
+
+        <b:include cond='data:blog.pageType in {&quot;static_page&quot;,&quot;item&quot;}' data='post' name='comment_picker'/>
+      </div>
+    </div>
+  </div>
+</b:includable>
+        <b:includable id='nextprev'>
+  <div class='blog-pager' id='blog-pager'>
+    <b:if cond='data:newerPageUrl'>
+      <span id='blog-pager-newer-link'>
+      <a class='blog-pager-newer-link' expr:href='data:newerPageUrl' expr:id='data:widget.instanceId + &quot;_blog-pager-newer-link&quot;' expr:title='data:newerPageTitle'><data:newerPageTitle/></a>
+      </span>
+    </b:if>
+
+    <b:if cond='data:olderPageUrl'>
+      <span id='blog-pager-older-link'>
+      <a class='blog-pager-older-link' expr:href='data:olderPageUrl' expr:id='data:widget.instanceId + &quot;_blog-pager-older-link&quot;' expr:title='data:olderPageTitle'><data:olderPageTitle/></a>
+      </span>
+    </b:if>
+
+    <a class='home-link' expr:href='data:blog.homepageUrl'><data:homeMsg/></a>
+
+    <b:if cond='data:mobileLinkUrl'>
+      <div class='blog-mobile-link'>
+        <a expr:href='data:mobileLinkUrl'><data:mobileLinkMsg/></a>
+      </div>
+    </b:if>
+
+  </div>
+  <div class='clear'/>
+</b:includable>
+        <b:includable id='post' var='post'>
+  <div class='post hentry uncustomized-post-template' itemprop='blogPost' itemscope='itemscope' itemtype='http://schema.org/BlogPosting'>
+    <b:if cond='data:post.firstImageUrl'>
+      <meta expr:content='data:post.firstImageUrl' itemprop='image_url'/>
+    </b:if>
+    <meta expr:content='data:blog.blogId' itemprop='blogId'/>
+    <meta expr:content='data:post.id' itemprop='postId'/>
+
+    <a expr:name='data:post.id'/>
+    <b:if cond='data:post.title'>
+      <h3 class='post-title entry-title' itemprop='name'>
+      <b:if cond='data:post.link or (data:post.url and data:blog.url != data:post.url)'>
+        <a expr:href='data:post.link ? data:post.link : data:post.url'><data:post.title/></a>
+      <b:else/>
+        <data:post.title/>
+      </b:if>
+      </h3>
+    </b:if>
+
+    <div class='post-header'>
+    <div class='post-header-line-1'/>
+    </div>
+
+    <!-- Then use the post body as the schema.org description, for good G+/FB snippeting. -->
+    <div class='post-body entry-content' expr:id='&quot;post-body-&quot; + data:post.id' expr:itemprop='(data:blog.metaDescription ? &quot;&quot; : &quot;description &quot;) + &quot;articleBody&quot;'>
+      <data:post.body/>
+      <div style='clear: both;'/> <!-- clear for photos floats -->
+    </div>
+
+    <b:if cond='data:post.hasJumpLink'>
+      <div class='jump-link'>
+        <a expr:href='data:post.url + &quot;#more&quot;' expr:title='data:post.title'><data:post.jumpText/></a>
+      </div>
+    </b:if>
+
+    <div class='post-footer'>
+    <div class='post-footer-line post-footer-line-1'>
+      <span class='post-author vcard'>
+        <b:if cond='data:top.showAuthor'>
+          <data:top.authorLabel/>
+            <b:if cond='data:post.authorProfileUrl'>
+              <span class='fn' itemprop='author' itemscope='itemscope' itemtype='http://schema.org/Person'>
+                <meta expr:content='data:post.authorProfileUrl' itemprop='url'/>
+                <a class='g-profile' expr:href='data:post.authorProfileUrl' rel='author' title='author profile'>
+                  <span itemprop='name'><data:post.author/></span>
+                </a>
+              </span>
+            <b:else/>
+              <span class='fn' itemprop='author' itemscope='itemscope' itemtype='http://schema.org/Person'>
+                <span itemprop='name'><data:post.author/></span>
+              </span>
+            </b:if>
+        </b:if>
+      </span>
+
+      <span class='post-timestamp'>
+        <b:if cond='data:top.showTimestamp'>
+          <data:top.timestampLabel/>
+          <b:if cond='data:post.url'>
+            <meta expr:content='data:post.url.canonical' itemprop='url'/>
+            <a class='timestamp-link' expr:href='data:post.url' rel='bookmark' title='permanent link'><abbr class='published' expr:title='data:post.timestampISO8601' itemprop='datePublished'><data:post.timestamp/></abbr></a>
+          </b:if>
+        </b:if>
+      </span>
+
+      <span class='post-comment-link'>
+        <b:include cond='data:blog.pageType not in {&quot;item&quot;,&quot;static_page&quot;}                          and data:post.allowComments' data='post' name='comment_count_picker'/>
+      </span>
+
+      <span class='post-icons'>
+        <!-- email post links -->
+        <b:if cond='data:post.emailPostUrl'>
+          <span class='item-action'>
+          <a expr:href='data:post.emailPostUrl' expr:title='data:top.emailPostMsg'>
+            <img alt='' class='icon-action' height='13' src='https://resources.blogblog.com/img/icon18_email.gif' width='18'/>
+          </a>
+          </span>
+        </b:if>
+
+        <!-- quickedit pencil -->
+        <b:include data='post' name='postQuickEdit'/>
+      </span>
+
+      <!-- share buttons -->
+      <div class='post-share-buttons goog-inline-block'>
+        <b:include cond='data:post.sharePostUrl' data='post' name='shareButtons'/>
+      </div>
+
+      </div>
+
+      <div class='post-footer-line post-footer-line-2'>
+      <span class='post-labels'>
+        <b:if cond='data:top.showPostLabels and data:post.labels'>
+          <data:postLabelsLabel/>
+          <b:loop values='data:post.labels' var='label'>
+            <a expr:href='data:label.url' rel='tag'><data:label.name/></a><b:if cond='not data:label.isLast'>,</b:if>
+          </b:loop>
+        </b:if>
+      </span>
+      </div>
+
+      <div class='post-footer-line post-footer-line-3'>
+      <span class='post-location'>
+        <b:if cond='data:top.showLocation and data:post.location'>
+          <data:postLocationLabel/>
+          <a expr:href='data:post.location.mapsUrl' target='_blank'><data:post.location.name/></a>
+        </b:if>
+      </span>
+      </div>
+      <b:if cond='data:post.authorAboutMe'>
+        <div class='author-profile' itemprop='author' itemscope='itemscope' itemtype='http://schema.org/Person'>
+          <b:if cond='data:post.authorPhoto.url'>
+            <img expr:src='data:post.authorPhoto.url' itemprop='image' width='50px'/>
+          </b:if>
+          <div>
+            <a class='g-profile' expr:href='data:post.authorProfileUrl' itemprop='url' rel='author' title='author profile'>
+              <span itemprop='name'><data:post.author/></span>
+            </a>
+          </div>
+          <span itemprop='description'><data:post.authorAboutMe/></span>
+        </div>
+      </b:if>
+    </div>
+  </div>
+</b:includable>
+        <b:includable id='postQuickEdit' var='post'>
+  <b:if cond='data:post.editUrl'>
+    <span expr:class='&quot;item-control &quot; + data:post.adminClass'>
+      <a expr:href='data:post.editUrl' expr:title='data:top.editPostMsg'>
+        <img alt='' class='icon-action' height='18' src='https://resources.blogblog.com/img/icon18_edit_allbkg.gif' width='18'/>
+      </a>
+    </span>
+  </b:if>
+</b:includable>
+        <b:includable id='shareButtons' var='post'>
+  <b:if cond='data:top.showEmailButton'><a class='goog-inline-block share-button sb-email' expr:href='data:post.sharePostUrl + &quot;&amp;target=email&quot;' expr:title='data:top.emailThisMsg' target='_blank'><span class='share-button-link-text'><data:top.emailThisMsg/></span></a></b:if><b:if cond='data:top.showBlogThisButton'><a class='goog-inline-block share-button sb-blog' expr:href='data:post.sharePostUrl + &quot;&amp;target=blog&quot;' expr:onclick='&quot;window.open(this.href, \&quot;_blank\&quot;, \&quot;height=270,width=475\&quot;); return false;&quot;' expr:title='data:top.blogThisMsg' target='_blank'><span class='share-button-link-text'><data:top.blogThisMsg/></span></a></b:if><b:if cond='data:top.showTwitterButton'><a class='goog-inline-block share-button sb-twitter' expr:href='data:post.sharePostUrl + &quot;&amp;target=twitter&quot;' expr:title='data:top.shareToTwitterMsg' target='_blank'><span class='share-button-link-text'><data:top.shareToTwitterMsg/></span></a></b:if><b:if cond='data:top.showFacebookButton'><a class='goog-inline-block share-button sb-facebook' expr:href='data:post.sharePostUrl + &quot;&amp;target=facebook&quot;' expr:onclick='&quot;window.open(this.href, \&quot;_blank\&quot;, \&quot;height=430,width=640\&quot;); return false;&quot;' expr:title='data:top.shareToFacebookMsg' target='_blank'><span class='share-button-link-text'><data:top.shareToFacebookMsg/></span></a></b:if><b:if cond='data:top.showPinterestButton'><a class='goog-inline-block share-button sb-pinterest' expr:href='data:post.sharePostUrl + &quot;&amp;target=pinterest&quot;' expr:title='data:top.shareToPinterestMsg' target='_blank'><span class='share-button-link-text'><data:top.shareToPinterestMsg/></span></a></b:if>
+</b:includable>
+        <b:includable id='status-message'>
+  <b:if cond='data:navMessage'>
+  <div class='status-msg-wrap'>
+    <div class='status-msg-body'>
+      <data:navMessage/>
+    </div>
+    <div class='status-msg-border'>
+      <div class='status-msg-bg'>
+        <div class='status-msg-hidden'><data:navMessage/></div>
+      </div>
+    </div>
+  </div>
+  <div style='clear: both;'/>
+  </b:if>
+</b:includable>
+        <b:includable id='threaded-comment-form' var='post'>
+  <div class='comment-form'>
+    <a name='comment-form'/>
+    <b:if cond='data:mobile'>
+      <p><data:blogCommentMessage/></p>
+      <data:blogTeamBlogMessage/>
+      <a expr:href='data:post.commentFormIframeSrc' id='comment-editor-src'/>
+      <iframe allowtransparency='true' class='blogger-iframe-colorize blogger-comment-from-post' expr:height='data:cmtIframeInitialHeight' frameborder='0' id='comment-editor' name='comment-editor' src='' style='display: none' width='100%'/>
+    <b:else/>
+      <p><data:blogCommentMessage/></p>
+      <data:blogTeamBlogMessage/>
+      <a expr:href='data:post.commentFormIframeSrc' id='comment-editor-src'/>
+      <iframe allowtransparency='true' class='blogger-iframe-colorize blogger-comment-from-post' expr:height='data:cmtIframeInitialHeight' frameborder='0' id='comment-editor' name='comment-editor' src='' width='100%'/>
+    </b:if>
+    <data:post.cmtfpIframe/>
+    <script type='text/javascript'>
+      BLOG_CMT_createIframe(&#39;<data:post.appRpcRelayPath/>&#39;);
+    </script>
+  </div>
+</b:includable>
+        <b:includable id='threaded_comment_js' var='post'>
+  <script async='async' expr:src='data:post.commentSrc' type='text/javascript'/>
+
+  <script type='text/javascript'>
+    (function() {
+      var items = <data:post.commentJso/>;
+      var msgs = <data:post.commentMsgs/>;
+      var config = <data:post.commentConfig/>;
+
+// <![CDATA[
+      var cursor = null;
+      if (items && items.length > 0) {
+        cursor = parseInt(items[items.length - 1].timestamp) + 1;
+      }
+
+      var bodyFromEntry = function(entry) {
+        var text = (entry &&
+                    ((entry.content && entry.content.$t) ||
+                     (entry.summary && entry.summary.$t))) ||
+            '';
+        if (entry && entry.gd$extendedProperty) {
+          for (var k in entry.gd$extendedProperty) {
+            if (entry.gd$extendedProperty[k].name == 'blogger.contentRemoved') {
+              return '<span class="deleted-comment">' + text + '</span>';
+            }
+          }
+        }
+        return text;
+      }
+
+      var parse = function(data) {
+        cursor = null;
+        var comments = [];
+        if (data && data.feed && data.feed.entry) {
+          for (var i = 0, entry; entry = data.feed.entry[i]; i++) {
+            var comment = {};
+            // comment ID, parsed out of the original id format
+            var id = /blog-(\d+).post-(\d+)/.exec(entry.id.$t);
+            comment.id = id ? id[2] : null;
+            comment.body = bodyFromEntry(entry);
+            comment.timestamp = Date.parse(entry.published.$t) + '';
+            if (entry.author && entry.author.constructor === Array) {
+              var auth = entry.author[0];
+              if (auth) {
+                comment.author = {
+                  name: (auth.name ? auth.name.$t : undefined),
+                  profileUrl: (auth.uri ? auth.uri.$t : undefined),
+                  avatarUrl: (auth.gd$image ? auth.gd$image.src : undefined)
+                };
+              }
+            }
+            if (entry.link) {
+              if (entry.link[2]) {
+                comment.link = comment.permalink = entry.link[2].href;
+              }
+              if (entry.link[3]) {
+                var pid = /.*comments\/default\/(\d+)\?.*/.exec(entry.link[3].href);
+                if (pid && pid[1]) {
+                  comment.parentId = pid[1];
+                }
+              }
+            }
+            comment.deleteclass = 'item-control blog-admin';
+            if (entry.gd$extendedProperty) {
+              for (var k in entry.gd$extendedProperty) {
+                if (entry.gd$extendedProperty[k].name == 'blogger.itemClass') {
+                  comment.deleteclass += ' ' + entry.gd$extendedProperty[k].value;
+                } else if (entry.gd$extendedProperty[k].name == 'blogger.displayTime') {
+                  comment.displayTime = entry.gd$extendedProperty[k].value;
+                }
+              }
+            }
+            comments.push(comment);
+          }
+        }
+        return comments;
+      };
+
+      var paginator = function(callback) {
+        if (hasMore()) {
+          var url = config.feed + '?alt=json&v=2&orderby=published&reverse=false&max-results=50';
+          if (cursor) {
+            url += '&published-min=' + new Date(cursor).toISOString();
+          }
+          window.bloggercomments = function(data) {
+            var parsed = parse(data);
+            cursor = parsed.length < 50 ? null
+                : parseInt(parsed[parsed.length - 1].timestamp) + 1
+            callback(parsed);
+            window.bloggercomments = null;
+          }
+          url += '&callback=bloggercomments';
+          var script = document.createElement('script');
+          script.type = 'text/javascript';
+          script.src = url;
+          document.getElementsByTagName('head')[0].appendChild(script);
+        }
+      };
+      var hasMore = function() {
+        return !!cursor;
+      };
+      var getMeta = function(key, comment) {
+        if ('iswriter' == key) {
+          var matches = !!comment.author
+              && comment.author.name == config.authorName
+              && comment.author.profileUrl == config.authorUrl;
+          return matches ? 'true' : '';
+        } else if ('deletelink' == key) {
+          return config.baseUri + '/comment/delete/'
+               + config.blogId + '/' + comment.id;
+        } else if ('deleteclass' == key) {
+          return comment.deleteclass;
+        }
+        return '';
+      };
+
+      var replybox = null;
+      var replyUrlParts = null;
+      var replyParent = undefined;
+
+      var onReply = function(commentId, domId) {
+        if (replybox == null) {
+          // lazily cache replybox, and adjust to suit this style:
+          replybox = document.getElementById('comment-editor');
+          if (replybox != null) {
+            replybox.height = '250px';
+            replybox.style.display = 'block';
+            replyUrlParts = replybox.src.split('#');
+          }
+        }
+        if (replybox && (commentId !== replyParent)) {
+          replybox.src = '';
+          document.getElementById(domId).insertBefore(replybox, null);
+          replybox.src = replyUrlParts[0]
+              + (commentId ? '&parentID=' + commentId : '')
+              + '#' + replyUrlParts[1];
+          replyParent = commentId;
+        }
+      };
+
+      var hash = (window.location.hash || '#').substring(1);
+      var startThread, targetComment;
+      if (/^comment-form_/.test(hash)) {
+        startThread = hash.substring('comment-form_'.length);
+      } else if (/^c[0-9]+$/.test(hash)) {
+        targetComment = hash.substring(1);
+      }
+
+      // Configure commenting API:
+      var configJso = {
+        'maxDepth': config.maxThreadDepth
+      };
+      var provider = {
+        'id': config.postId,
+        'data': items,
+        'loadNext': paginator,
+        'hasMore': hasMore,
+        'getMeta': getMeta,
+        'onReply': onReply,
+        'rendered': true,
+        'initComment': targetComment,
+        'initReplyThread': startThread,
+        'config': configJso,
+        'messages': msgs
+      };
+
+      var render = function() {
+        if (window.goog && window.goog.comments) {
+          var holder = document.getElementById('comment-holder');
+          window.goog.comments.render(holder, provider);
+        }
+      };
+
+      // render now, or queue to render when library loads:
+      if (window.goog && window.goog.comments) {
+        render();
+      } else {
+        window.goog = window.goog || {};
+        window.goog.comments = window.goog.comments || {};
+        window.goog.comments.loadQueue = window.goog.comments.loadQueue || [];
+        window.goog.comments.loadQueue.push(render);
+      }
+    })();
+// ]]>
+  </script>
+</b:includable>
+        <b:includable id='threaded_comments' var='post'>
+  <div class='comments' id='comments'>
+    <a name='comments'/>
+    <h4><data:post.commentLabelFull/>:</h4>
+
+    <div class='comments-content'>
+      <b:include cond='data:post.embedCommentForm' data='post' name='threaded_comment_js'/>
+      <div id='comment-holder'>
+         <data:post.commentHtml/>
+      </div>
+    </div>
+
+    <p class='comment-footer'>
+      <b:if cond='data:post.allowNewComments'>
+        <b:include data='post' name='threaded-comment-form'/>
+      <b:else/>
+        <data:post.noNewCommentsText/>
+      </b:if>
+    </p>
+
+    <b:if cond='data:showCmtPopup'>
+      <div id='comment-popup'>
+        <iframe allowtransparency='true' frameborder='0' id='comment-actions' name='comment-actions' scrolling='no'>
+        </iframe>
+      </div>
+    </b:if>
+
+    <div id='backlinks-container'>
+    <div expr:id='data:widget.instanceId + &quot;_backlinks-container&quot;'>
+    </div>
+    </div>
+  </div>
+</b:includable>
+      </b:widget>
+      <b:widget id='HTML1' locked='false' title='' type='HTML'>
+        <b:widget-settings>
+          <b:widget-setting name='content'><![CDATA[<div id="waAdminConfigWidget" style="display:none;">
+{
+  "Sunter": {
+    "whatsapp": "081200000000",
+    "shippingFee": 10000
+  },
+  "Sokaraja": {
+    "whatsapp": "088808181008",
+    "shippingFee": 5000
+  },
+  "Cileungsi": {
+    "whatsapp": "085773009666",
+    "shippingFee": 0
+  }
+}
+</div>]]></b:widget-setting>
+        </b:widget-settings>
+        <b:includable id='main'>
+  <!-- only display title if it's non-empty -->
+  <b:if cond='data:title != &quot;&quot;'>
+    <h2 class='title'><data:title/></h2>
+  </b:if>
+  <div class='widget-content'>
+    <data:content/>
+  </div>
+
+  <b:include name='quickedit'/>
+</b:includable>
+      </b:widget>
+    </b:section>
+  </main>
+
+  <!-- FAQ Section -->
+  <b:if cond='data:view.isHomepage'>
+    <section class='section-padding' id='faq' style='background-color: var(--bg-surface);'>
+      <div class='container'>
+        <div class='section-title'>
+          <h2>Pertanyaan Umum (FAQ)</h2>
+          <p>Pertanyaan yang sering ditanyakan seputar layanan kami</p>
+        </div>
+        <div class='faq-list'>
+          <div class='faq-item'>
+            <button class='faq-question'>
+              Bagaimana cara pemesanan via WhatsApp?
+              <span class='faq-arrow'>&#9660;</span>
+            </button>
+            <div class='faq-answer'>
+              <p>Pilih layanan ke keranjang, klik Checkout, pilih area terdekat, dan isi formulir. Pesanan Anda akan dikirim dalam format rapi langsung ke WhatsApp admin cabang.</p>
+            </div>
+          </div>
+          <div class='faq-item'>
+            <button class='faq-question'>
+              Berapa lama estimasi pengerjaan laundry?
+              <span class='faq-arrow'>&#9660;</span>
+            </button>
+            <div class='faq-answer'>
+              <p>Layanan Reguler 3 hari kerja, Express 1 hari (+24 jam), dan Same Day selesai pada hari yang sama untuk penjemputan pagi.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </b:if>
+
+  <!-- Footer -->
+  <footer class='site-footer'>
+    <div class='container footer-grid'>
+      <div class='footer-col'>
+        <h3>LaundryCommerce</h3>
+        <p>Solusi laundry &amp; dry cleaning modern berbasis online dengan standar higienis tinggi dan jaminan tepat waktu.</p>
+        <p><strong>Jam Operasional:</strong><br/>Senin - Sabtu: 08.00 - 20.00 WIB</p>
+      </div>
+      <div class='footer-col'>
+        <h3>Kategori Utama</h3>
+        <ul class='footer-links'>
+          <li><a href='/#harga'>Laundry Kiloan</a></li>
+          <li><a href='/#harga'>Laundry Satuan &amp; Jas</a></li>
+          <li><a href='/#harga'>Cuci Sepatu &amp; Helm</a></li>
+          <li><a href='/#promo'>Voucher Member Baru</a></li>
+        </ul>
+      </div>
+      <div class='footer-col'>
+        <h3>Lokasi Workshop</h3>
+        <p>Pusat operasional dan penerimaan barang:</p>
+        <div class='map-container'>
+          <iframe allowfullscreen='' loading='lazy' src='https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d126888.89531853683!2d106.945281!3d-6.398606!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e699478f6966143%3A0x401e8f1fc37f810!2sCileungsi%2C%20Bogor%20Regency%2C%20West%20Java!5e0!3m2!1sen!2sid!4v1700000000000!5m2!1sen!2sid' title='Google Maps'/>
+        </div>
+      </div>
+    </div>
+    <div class='container footer-bottom'>
+      <p>&#169; <script>document.write(new Date().getFullYear())</script> LaundryCommerce. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Central JavaScript Engine -->
+  <script type='text/javascript'>
+    // <![CDATA[
+    /**
+     * KONFIGURASI TERTANAM (FALLBACK)
+     */
+    let LaundryConfig = {
+      storeName: "LaundryCommerce Professional",
+      currencySymbol: "Rp",
+      operatingHours: { open: "08:00", close: "20:00", workingDays: [1, 2, 3, 4, 5, 6] },
+      areas: {
+        "Sunter": { whatsapp: "081200000000", shippingFee: 10000 },
+        "Sokaraja": { whatsapp: "088808181008", shippingFee: 5000 },
+        "Cileungsi": { whatsapp: "085773009666", shippingFee: 0 }
+      },
+      services: {
+        "Same Day": { addDays: 0 },
+        "Express": { addDays: 1 },
+        "Reguler": { addDays: 3 }
+      },
+      vouchers: {
+        "BERSIH10": { type: "percent", value: 10, minSpend: 30000 },
+        "PROMO5K": { type: "nominal", value: 5000, minSpend: 25000 },
+        "FREEOK": { type: "free_shipping", value: 0, minSpend: 0 }
+      }
+    };
+
+    /**
+     * MEMBACA KONFIGURASI WA ADMIN DARI WIDGET TATA LETAK (LAYOUT)
+     */
+    function loadAdminConfigFromWidget() {
+      const widgetElement = document.getElementById("waAdminConfigWidget");
+      if (widgetElement) {
+        try {
+          const customAreas = JSON.parse(widgetElement.textContent.trim());
+          if (customAreas && typeof customAreas === "object") {
+            LaundryConfig.areas = customAreas;
+          }
+        } catch (e) {
+          console.warn("Format JSON WA Admin pada Widget Layout tidak valid, menggunakan konfigurasi fallback.");
+        }
+      }
+    }
+
+    const FormatUtil = {
+      toRupiah(num) {
+        return "Rp" + Number(num || 0).toLocaleString("id-ID");
+      }
+    };
+
+    const ThemeEngine = {
+      STORAGE_KEY: "lc_theme_preference",
+      init() {
+        const savedTheme = localStorage.getItem(this.STORAGE_KEY);
+        if (savedTheme) {
+          this.applyTheme(savedTheme);
+        } else {
+          const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+          this.applyTheme(prefersDark ? "dark" : "light");
+        }
+        document.getElementById("btnThemeToggle").addEventListener("click", () => {
+          const currentTheme = document.documentElement.getAttribute("data-theme");
+          const newTheme = currentTheme === "dark" ? "light" : "dark";
+          this.applyTheme(newTheme);
+          localStorage.setItem(this.STORAGE_KEY, newTheme);
+        });
+      },
+      applyTheme(theme) {
+        document.documentElement.setAttribute("data-theme", theme);
+      }
+    };
+
+    const CartEngine = {
+      STORAGE_KEY: "lc_shopping_cart",
+      items: [],
+
+      init() {
+        const saved = localStorage.getItem(this.STORAGE_KEY);
+        if (saved) {
+          try { this.items = JSON.parse(saved); } catch (e) { this.items = []; }
+        }
+        this.render();
+      },
+
+      save() {
+        localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.items));
+        this.render();
+      },
+
+      addItem(product) {
+        const existing = this.items.find(i => i.id === product.id);
+        if (existing) {
+          existing.qty += 1;
+        } else {
+          this.items.push({ ...product, qty: 1 });
+        }
+        this.save();
+        document.getElementById("btnCartOpen").click();
+      },
+
+      updateQty(id, delta) {
+        const item = this.items.find(i => i.id === id);
+        if (item) {
+          item.qty += delta;
+          if (item.qty <= 0) this.items = this.items.filter(i => i.id !== id);
+          this.save();
+        }
+      },
+
+      getSubtotal() {
+        return this.items.reduce((sum, i) => sum + (i.price * i.qty), 0);
+      },
+
+      render() {
+        const cartCounter = document.getElementById("cartCounter");
+        const cartBody = document.getElementById("cartBody");
+        const cartSubtotal = document.getElementById("cartSubtotal");
+
+        const totalQty = this.items.reduce((sum, i) => sum + i.qty, 0);
+        cartCounter.textContent = totalQty;
+
+        if (this.items.length === 0) {
+          cartBody.innerHTML = `<div class="cart-empty">Keranjang belanja Anda masih kosong.</div>`;
+          cartSubtotal.textContent = FormatUtil.toRupiah(0);
+          return;
+        }
+
+        cartBody.innerHTML = this.items.map(item => `
+          <div class="cart-item">
+            <img src="${item.image}" class="cart-item-img" alt="${item.title}"/>
+            <div class="cart-item-info">
+              <div class="cart-item-title">${item.title}</div>
+              <div class="cart-item-price">${FormatUtil.toRupiah(item.price)}</div>
+              <div class="cart-qty-ctrl">
+                <button class="qty-btn" onclick="CartEngine.updateQty('${item.id}', -1)">-</button>
+                <span>${item.qty}</span>
+                <button class="qty-btn" onclick="CartEngine.updateQty('${item.id}', 1)">+</button>
+              </div>
+            </div>
+          </div>
+        `).join("");
+
+        cartSubtotal.textContent = FormatUtil.toRupiah(this.getSubtotal());
+      }
+    };
+
+    const CheckoutEngine = {
+      appliedVoucher: null,
+
+      init() {
+        this.populateAreaDropdown();
+        this.bindEvents();
+        this.checkOperatingHours();
+      },
+
+      populateAreaDropdown() {
+        const select = document.getElementById("custArea");
+        if(!select) return;
+        select.innerHTML = Object.keys(LaundryConfig.areas).map(area => `
+          <option value="${area}">${area}</option>
+        `).join("");
+      },
+
+      checkOperatingHours() {
+        const alertBox = document.getElementById("offHoursAlert");
+        if(!alertBox) return;
+        const now = new Date();
+        const hrs = now.getHours();
+        const openHr = parseInt(LaundryConfig.operatingHours.open.split(":")[0]);
+        const closeHr = parseInt(LaundryConfig.operatingHours.close.split(":")[0]);
+
+        if (hrs < openHr || hrs >= closeHr) {
+          alertBox.style.display = "block";
+        } else {
+          alertBox.style.display = "none";
+        }
+      },
+
+      calculateEstDate(serviceName) {
+        const service = LaundryConfig.services[serviceName] || LaundryConfig.services["Reguler"];
+        let target = new Date();
+        let added = 0;
+
+        while (added < service.addDays) {
+          target.setDate(target.getDate() + 1);
+          if (target.getDay() !== 0) {
+            added++;
+          }
+        }
+
+        if (target.getDay() === 0) {
+          target.setDate(target.getDate() + 1);
+        }
+
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        return target.toLocaleDateString('id-ID', options);
+      },
+
+      updateSummary() {
+        const subtotal = CartEngine.getSubtotal();
+        const areaSelect = document.getElementById("custArea");
+        if(!areaSelect) return;
+
+        const areaName = areaSelect.value;
+        const areaInfo = LaundryConfig.areas[areaName] || { shippingFee: 0 };
+        const serviceName = document.getElementById("custService").value;
+
+        let shipping = areaInfo.shippingFee;
+        let discount = 0;
+
+        if (this.appliedVoucher) {
+          const v = LaundryConfig.vouchers[this.appliedVoucher];
+          if (v && subtotal >= v.minSpend) {
+            if (v.type === "percent") discount = (subtotal * v.value) / 100;
+            if (v.type === "nominal") discount = v.value;
+            if (v.type === "free_shipping") shipping = 0;
+          }
+        }
+
+        const grandTotal = Math.max(0, subtotal + shipping - discount);
+
+        document.getElementById("sumSubtotal").textContent = FormatUtil.toRupiah(subtotal);
+        document.getElementById("sumShipping").textContent = FormatUtil.toRupiah(shipping);
+        
+        const rowDisc = document.getElementById("rowDiscount");
+        if (discount > 0) {
+          rowDisc.style.display = "flex";
+          document.getElementById("sumDiscount").textContent = "-" + FormatUtil.toRupiah(discount);
+        } else {
+          rowDisc.style.display = "none";
+        }
+
+        document.getElementById("sumGrandTotal").textContent = FormatUtil.toRupiah(grandTotal);
+        document.getElementById("sumEstDate").textContent = this.calculateEstDate(serviceName);
+      },
+
+      bindEvents() {
+        const modal = document.getElementById("modalCheckout");
+        const overlay = document.getElementById("drawerOverlay");
+
+        document.getElementById("btnOpenCheckout").addEventListener("click", () => {
+          if (CartEngine.items.length === 0) {
+            alert("Keranjang belanja Anda masih kosong.");
+            return;
+          }
+          document.getElementById("cartDrawer").classList.remove("active");
+          modal.classList.add("active");
+          overlay.classList.add("active");
+          this.updateSummary();
+        });
+
+        document.getElementById("btnCloseCheckout").addEventListener("click", () => {
+          modal.classList.remove("active");
+          overlay.classList.remove("active");
+        });
+
+        const custArea = document.getElementById("custArea");
+        if (custArea) custArea.addEventListener("change", () => this.updateSummary());
+        
+        const custService = document.getElementById("custService");
+        if (custService) custService.addEventListener("change", () => this.updateSummary());
+
+        const btnVoucher = document.getElementById("btnApplyVoucher");
+        if (btnVoucher) {
+          btnVoucher.addEventListener("click", () => {
+            const code = document.getElementById("voucherInput").value.trim().toUpperCase();
+            const status = document.getElementById("voucherStatus");
+            const v = LaundryConfig.vouchers[code];
+
+            if (v) {
+              if (CartEngine.getSubtotal() >= v.minSpend) {
+                this.appliedVoucher = code;
+                status.style.color = "green";
+                status.textContent = `✓ Voucher ${code} berhasil dipasang!`;
+              } else {
+                status.style.color = "red";
+                status.textContent = `Minimal belanja ${FormatUtil.toRupiah(v.minSpend)} untuk voucher ini.`;
+              }
+            } else {
+              status.style.color = "red";
+              status.textContent = "Kode voucher tidak ditemukan.";
+            }
+            this.updateSummary();
+          });
+        }
+
+        const formCheckout = document.getElementById("formCheckout");
+        if (formCheckout) {
+          formCheckout.addEventListener("submit", (e) => {
+            e.preventDefault();
+
+            const name = document.getElementById("custName").value;
+            const phone = document.getElementById("custPhone").value;
+            const address = document.getElementById("custAddress").value;
+            const area = document.getElementById("custArea").value;
+            const service = document.getElementById("custService").value;
+            const fragrance = document.getElementById("custFragrance").value;
+            const notes = document.getElementById("custNotes").value || "-";
+
+            const specialInst = [];
+            if (document.getElementById("chkBaby").checked) specialInst.push("Pakaian Bayi");
+            if (document.getElementById("chkSeparate").checked) specialInst.push("Pisahkan Pakaian Putih");
+            if (document.getElementById("chkNoIron").checked) specialInst.push("Jangan Disetrika");
+            if (document.getElementById("chkHang").checked) specialInst.push("Gantung Hanger");
+
+            const areaData = LaundryConfig.areas[area];
+            const estDate = document.getElementById("sumEstDate").textContent;
+            const subtotal = document.getElementById("sumSubtotal").textContent;
+            const shipping = document.getElementById("sumShipping").textContent;
+            const grandTotal = document.getElementById("sumGrandTotal").textContent;
+
+            let msg = `*HALO ADMIN LAUNDRYCOMMERCE (${area.toUpperCase()})* 🧺\n`;
+            msg += `Saya ingin memesan layanan laundry via Website:\n\n`;
+            msg += `👤 *DATA PEMESAN:*\n`;
+            msg += `• Nama: ${name}\n`;
+            msg += `• No. WA: ${phone}\n`;
+            msg += `• Alamat: ${address}\n`;
+            msg += `• Area Cabang: ${area}\n\n`;
+
+            msg += `📦 *RINCIAN ORDER:*\n`;
+            CartEngine.items.forEach((item, idx) => {
+              msg += `${idx + 1}. ${item.title} (${item.qty}x) = ${FormatUtil.toRupiah(item.price * item.qty)}\n`;
+            });
+
+            msg += `\n⚙️ *DETAIL OPTIONAL:*\n`;
+            msg += `• Layanan: ${service}\n`;
+            msg += `• Pewangi: ${fragrance}\n`;
+            msg += `• Instruksi: ${specialInst.length > 0 ? specialInst.join(", ") : "-"}\n`;
+            msg += `• Catatan: ${notes}\n\n`;
+
+            msg += `💰 *RINCIAN BIAYA:*\n`;
+            msg += `• Subtotal: ${subtotal}\n`;
+            msg += `• Ongkir: ${shipping}\n`;
+            if (this.appliedVoucher) msg += `• Voucher: ${this.appliedVoucher}\n`;
+            msg += `• *GRAND TOTAL:* ${grandTotal}\n\n`;
+
+            msg += `🗓️ *ESTIMASI SELESAI:* ${estDate}\n\n`;
+            msg += `Mohon konfirmasi pesanan dan penjemputan cucian saya. Terima kasih!`;
+
+            const waNum = areaData.whatsapp.replace(/^0/, "62");
+            const targetUrl = `https://api.whatsapp.com/send?phone=${waNum}&text=${encodeURIComponent(msg)}`;
+
+            window.open(targetUrl, "_blank");
+          });
+        }
+      }
+    };
+
+    const CatalogEngine = {
+      products: [],
+      currentCategory: "all",
+      searchQuery: "",
+      currentPage: 1,
+      itemsPerPage: 8,
+      maxPagesAllowed: 3,
+
+      init() {
+        this.parseBloggerPosts();
+        this.bindEvents();
+        this.render();
+        this.parseSinglePostPage();
+      },
+
+      parseBloggerPosts() {
+        const rawItems = document.querySelectorAll(".blogger-post-item");
+        if (rawItems.length === 0) {
+          this.products = [];
+          return;
+        }
+
+        const parsed = [];
+        rawItems.forEach(item => {
+          const id = item.querySelector(".post-id")?.textContent.trim() || Math.random().toString();
+          const title = item.querySelector(".post-title")?.textContent.trim() || "Produk Laundry";
+          const url = item.querySelector(".post-url")?.textContent.trim() || "#";
+          const image = item.querySelector(".post-image")?.textContent.trim() || "";
+          const bodyHtml = item.querySelector(".post-body-content")?.innerHTML || "";
+
+          const tempDiv = document.createElement("div");
+          tempDiv.innerHTML = bodyHtml;
+
+          let price = parseInt(tempDiv.querySelector(".price")?.textContent.replace(/\D/g, "")) || 0;
+          let discountPrice = parseInt(tempDiv.querySelector(".discount")?.textContent.replace(/\D/g, "")) || 0;
+          let unit = tempDiv.querySelector(".unit")?.textContent.trim() || "";
+          let rating = tempDiv.querySelector(".rating")?.textContent.trim() || "5.0";
+
+          if (!price) {
+            const numMatches = tempDiv.innerText.match(/\d[\d\.\,]+/g);
+            if (numMatches && numMatches.length > 0) {
+              price = parseInt(numMatches[0].replace(/\D/g, "")) || 0;
+            }
+          }
+
+          const labels = Array.from(item.querySelectorAll(".post-label-item")).map(l => l.textContent.trim().toLowerCase());
+          const category = labels[0] || "semua";
+
+          parsed.push({
+            id,
+            title,
+            url,
+            price,
+            discountPrice,
+            unit,
+            rating,
+            category,
+            categoryName: category.toUpperCase(),
+            image,
+            desc: tempDiv.innerText.substring(0, 80) + "..."
+          });
+        });
+
+        this.products = parsed;
+      },
+
+      parseSinglePostPage() {
+        const priceBox = document.getElementById("singlePriceContainer");
+        const btnAdd = document.getElementById("btnSingleAddToCart");
+        const postWrapper = document.querySelector(".single-post-wrapper");
+
+        if (!postWrapper || !priceBox) return;
+
+        const postId = postWrapper.getAttribute("id");
+        const postTitle = postWrapper.querySelector(".single-post-title")?.textContent.trim() || "";
+        const postImg = postWrapper.querySelector(".single-post-img")?.getAttribute("src") || "";
+        const descHtml = postWrapper.querySelector(".single-post-desc")?.innerHTML || "";
+
+        const tempDiv = document.createElement("div");
+        tempDiv.innerHTML = descHtml;
+
+        let price = parseInt(tempDiv.querySelector(".price")?.textContent.replace(/\D/g, "")) || 0;
+        let discountPrice = parseInt(tempDiv.querySelector(".discount")?.textContent.replace(/\D/g, "")) || 0;
+        let unit = tempDiv.querySelector(".unit")?.textContent.trim() || "";
+
+        if (!price) {
+          const numMatches = tempDiv.innerText.match(/\d[\d\.\,]+/g);
+          if (numMatches && numMatches.length > 0) {
+            price = parseInt(numMatches[0].replace(/\D/g, "")) || 0;
+          }
+        }
+
+        priceBox.innerHTML = `
+          <span class="price-main" style="font-size: 1.8rem;">${FormatUtil.toRupiah(price)}</span>
+          <span style="font-size: 1rem; color: var(--text-muted);">${unit}</span>
+          ${discountPrice > price ? `<span class="price-strike" style="font-size: 1.1rem;">${FormatUtil.toRupiah(discountPrice)}</span>` : ""}
+        `;
+
+        if (btnAdd) {
+          btnAdd.addEventListener("click", () => {
+            CartEngine.addItem({
+              id: postId,
+              title: postTitle,
+              price: price,
+              image: postImg
+            });
+          });
+        }
+      },
+
+      bindEvents() {
+        const searchInput = document.getElementById("searchInput");
+        if (searchInput) {
+          searchInput.addEventListener("input", (e) => {
+            this.searchQuery = e.target.value.toLowerCase();
+            this.currentPage = 1;
+            this.render();
+          });
+        }
+
+        document.querySelectorAll(".tag-btn").forEach(btn => {
+          btn.addEventListener("click", (e) => {
+            document.querySelectorAll(".tag-btn").forEach(b => b.classList.remove("active"));
+            e.target.classList.add("active");
+            this.currentCategory = e.target.getAttribute("data-category");
+            this.currentPage = 1;
+            this.render();
+          });
+        });
+
+        document.querySelectorAll(".filter-category-link").forEach(link => {
+          link.addEventListener("click", (e) => {
+            document.querySelectorAll(".filter-category-link").forEach(l => l.classList.remove("active"));
+            e.target.classList.add("active");
+            this.currentCategory = e.target.getAttribute("data-category");
+            this.currentPage = 1;
+            
+            document.querySelectorAll(".tag-btn").forEach(b => {
+              b.classList.toggle("active", b.getAttribute("data-category") === this.currentCategory);
+            });
+
+            const btnClose = document.getElementById("btnSidebarClose");
+            if (btnClose) btnClose.click();
+            this.render();
+          });
+        });
+      },
+
+      changePage(pageNumber) {
+        this.currentPage = pageNumber;
+        this.render();
+
+        const catalogSec = document.getElementById("harga");
+        if (catalogSec) {
+          catalogSec.scrollIntoView({ behavior: "smooth" });
+        }
+      },
+
+      render() {
+        const grid = document.getElementById("productsGrid");
+        const pagWrapper = document.getElementById("paginationWrapper");
+        if(!grid) return;
+
+        const filtered = this.products.filter(item => {
+          const matchCat = this.currentCategory === "all" || item.category === this.currentCategory;
+          const matchSearch = item.title.toLowerCase().includes(this.searchQuery) || item.desc.toLowerCase().includes(this.searchQuery);
+          return matchCat && matchSearch;
+        });
+
+        if (filtered.length === 0) {
+          grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 3rem; color: var(--text-muted);">
+            Belum ada postingan produk laundry yang ditemukan.
+          </div>`;
+          if (pagWrapper) pagWrapper.innerHTML = "";
+          return;
+        }
+
+        const calculatedPages = Math.ceil(filtered.length / this.itemsPerPage);
+        const totalPages = Math.min(calculatedPages, this.maxPagesAllowed);
+
+        const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+        const endIndex = startIndex + this.itemsPerPage;
+        const paginatedProducts = filtered.slice(startIndex, endIndex);
+
+        grid.innerHTML = paginatedProducts.map(item => {
+          const hasDiscount = item.discountPrice > item.price;
+          const discountPercent = hasDiscount ? Math.round(((item.discountPrice - item.price) / item.discountPrice) * 100) : 0;
+
+          return `
+            <div class="product-card">
+              ${hasDiscount ? `<div class="badge-discount">HEMAT ${discountPercent}%</div>` : ""}
+              <div class="product-thumb">
+                <a href="${item.url}"><img src="${item.image}" alt="${item.title}" loading="lazy"/></a>
+              </div>
+              <div class="product-body">
+                <div class="product-category">${item.categoryName}</div>
+                <h3 class="product-title"><a href="${item.url}">${item.title}</a></h3>
+                <div class="product-rating">
+                  &#9733; <strong>${item.rating}</strong> <span>(Terfavorit)</span>
+                </div>
+                <div class="product-price-wrapper">
+                  <span class="price-main">${FormatUtil.toRupiah(item.price)}</span>
+                  <span style="font-size:0.8rem; color:var(--text-muted);">${item.unit}</span>
+                  ${hasDiscount ? `<span class="price-strike">${FormatUtil.toRupiah(item.discountPrice)}</span>` : ""}
+                </div>
+                <div class="product-actions" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+                  <a href="${item.url}" class="btn btn-outline" style="padding: 0.5rem; font-size: 0.8rem;">Detail</a>
+                  <button class="btn btn-primary" style="padding: 0.5rem; font-size: 0.8rem;" onclick="CatalogEngine.addToCart('${item.id}')">
+                    + Cart
+                  </button>
+                </div>
+              </div>
+            </div>
+          `;
+        }).join("");
+
+        if (pagWrapper) {
+          if (totalPages <= 1) {
+            pagWrapper.innerHTML = "";
+            return;
+          }
+
+          let pagHTML = `
+            <button class="page-btn" ${this.currentPage === 1 ? 'disabled' : ''} onclick="CatalogEngine.changePage(${this.currentPage - 1})">&#10094;</button>
+          `;
+
+          for (let i = 1; i <= totalPages; i++) {
+            pagHTML += `
+              <button class="page-btn ${this.currentPage === i ? 'active' : ''}" onclick="CatalogEngine.changePage(${i})">${i}</button>
+            `;
+          }
+
+          pagHTML += `
+            <button class="page-btn" ${this.currentPage === totalPages ? 'disabled' : ''} onclick="CatalogEngine.changePage(${this.currentPage + 1})">&#10095;</button>
+          `;
+
+          pagWrapper.innerHTML = pagHTML;
+        }
+      },
+
+      addToCart(id) {
+        const prod = this.products.find(p => p.id === id);
+        if (prod) CartEngine.addItem(prod);
+      }
+    };
+
+    const DrawerEngine = {
+      init() {
+        const sidebar = document.getElementById("sidebarDrawer");
+        const cartDrawer = document.getElementById("cartDrawer");
+        const overlay = document.getElementById("drawerOverlay");
+
+        const closeAll = () => {
+          sidebar.classList.remove("active");
+          cartDrawer.classList.remove("active");
+          overlay.classList.remove("active");
+          document.body.style.overflow = "";
+        };
+
+        const btnSideOpen = document.getElementById("btnSidebarOpen");
+        if (btnSideOpen) {
+          btnSideOpen.addEventListener("click", () => {
+            sidebar.classList.add("active");
+            overlay.classList.add("active");
+            document.body.style.overflow = "hidden";
+          });
+        }
+
+        const btnCartOpen = document.getElementById("btnCartOpen");
+        if (btnCartOpen) {
+          btnCartOpen.addEventListener("click", () => {
+            cartDrawer.classList.add("active");
+            overlay.classList.add("active");
+            document.body.style.overflow = "hidden";
+          });
+        }
+
+        const btnSideClose = document.getElementById("btnSidebarClose");
+        if (btnSideClose) btnSideClose.addEventListener("click", closeAll);
+        
+        const btnCartClose = document.getElementById("btnCartClose");
+        if (btnCartClose) btnCartClose.addEventListener("click", closeAll);
+        
+        if (overlay) overlay.addEventListener("click", closeAll);
+      }
+    };
+
+    const PromoSlider = {
+      currentIndex: 0,
+      init() {
+        const wrapper = document.getElementById("promoWrapper");
+        if (!wrapper) return;
+        const total = wrapper.children.length;
+
+        const update = () => { wrapper.style.transform = `translateX(-${this.currentIndex * 100}%)`; };
+        
+        const btnNext = document.getElementById("promoNext");
+        if (btnNext) {
+          btnNext.addEventListener("click", () => {
+            this.currentIndex = (this.currentIndex + 1) % total;
+            update();
+          });
+        }
+
+        const btnPrev = document.getElementById("promoPrev");
+        if (btnPrev) {
+          btnPrev.addEventListener("click", () => {
+            this.currentIndex = (this.currentIndex - 1 + total) % total;
+            update();
+          });
+        }
+
+        setInterval(() => {
+          this.currentIndex = (this.currentIndex + 1) % total;
+          update();
+        }, 5000);
+      }
+    };
+
+    const FAQEngine = {
+      init() {
+        document.querySelectorAll(".faq-item").forEach(item => {
+          item.querySelector(".faq-question").addEventListener("click", () => {
+            const active = item.classList.contains("active");
+            document.querySelectorAll(".faq-item").forEach(i => i.classList.remove("active"));
+            if (!active) item.classList.add("active");
+          });
+        });
+      }
+    };
+
+    document.addEventListener("DOMContentLoaded", () => {
+      loadAdminConfigFromWidget();
+      ThemeEngine.init();
+      DrawerEngine.init();
+      CartEngine.init();
+      CatalogEngine.init();
+      CheckoutEngine.init();
+      PromoSlider.init();
+      FAQEngine.init();
+    });
+    // ]]>
+  </script>
+</body>
+</html>
