@@ -1,0 +1,16 @@
+<div id="waAdminConfigWidget" style="display:none;">
+{
+  "Sunter": {
+    "whatsapp": "081200000000",
+    "shippingFee": 10000
+  },
+  "Sokaraja": {
+    "whatsapp": "088808181008",
+    "shippingFee": 5000
+  },
+  "Cileungsi": {
+    "whatsapp": "085773009666",
+    "shippingFee": 0
+  }
+}
+</div>
