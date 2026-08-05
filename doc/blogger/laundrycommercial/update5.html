@@ -1,0 +1,1710 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html>
+<html id='laundryCommerce' lang='id' xmlns='http://www.w3.org/1999/xhtml' xmlns:b='http://www.google.com/2005/gml/b' xmlns:data='http://www.google.com/2005/gml/data' xmlns:expr='http://www.google.com/2005/gml/expr'>
+<head>
+  <meta charset='utf-8'/>
+  <meta content='width=device-width, initial-scale=1, shrink-to-fit=no' name='viewport'/>
+  
+  <!-- SEO & Dynamic Meta Title -->
+  <b:if cond='data:view.isHomepage'>
+    <title><data:blog.title/> - Jasa Layanan Laundry &amp; Dry Cleaning Profesional</title>
+  <b:else/>
+    <title><data:blog.pageName/> - <data:blog.title/></title>
+  </b:if>
+
+  <!-- SEO Meta Tags -->
+  <meta content='Jasa layanan laundry &amp; dry cleaning profesional dengan fasilitas antar jemput gratis.' name='description'/>
+  <meta content='laundry, laundry kiloan, cuci sepatu, cuci helm, laundry cileungsi, laundry sokaraja, laundry sunter' name='keywords'/>
+  <meta content='index, follow' name='robots'/>
+  <link expr:href='data:blog.canonicalUrl' rel='canonical'/>
+
+  <!-- Open Graph / Facebook -->
+  <meta expr:content='data:blog.pageTitle' property='og:title'/>
+  <meta content='website' property='og:type'/>
+  <meta expr:content='data:blog.canonicalUrl' property='og:url'/>
+  <meta content='Jasa layanan laundry &amp; dry cleaning profesional dengan fasilitas antar jemput.' property='og:description'/>
+
+  <!-- Twitter -->
+  <meta content='summary_large_image' name='twitter:card'/>
+  <meta expr:content='data:blog.pageTitle' name='twitter:title'/>
+  <meta content='Jasa layanan laundry &amp; dry cleaning profesional.' name='twitter:description'/>
+
+  <b:include data='blog' name='all-head-content'/>
+
+  <!-- Schema.org JSON-LD Structured Data -->
+  <script type='application/ld+json'>
+    {
+      "@context": "https://schema.org",
+      "@type": "LocalBusiness",
+      "name": "<data:blog.title/>",
+      "image": "https://images.unsplash.com/photo-1517677208171-0bc6725a3e60?auto=format&amp;fit=crop&amp;w=800&amp;q=80",
+      "telephone": "+6285773009666",
+      "priceRange": "Rp",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Cileungsi",
+        "addressRegion": "Jawa Barat",
+        "addressCountry": "ID"
+      },
+      "openingHoursSpecification": {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+        "opens": "08:00",
+        "closes": "20:00"
+      }
+    }
+  </script>
+
+  <!-- CSS Design System -->
+  <style type='text/css'>
+    /* <![CDATA[ */
+    :root {
+      --primary: #1E40AF;        /* Royal Blue */
+      --primary-hover: #1D4ED8;
+      --secondary: #F97316;      /* Orange */
+      --secondary-hover: #EA580C;
+      --bg-body: #FFFFFF;
+      --bg-surface: #F8FAFC;
+      --bg-card: #FFFFFF;
+      --text-main: #0F172A;
+      --text-muted: #64748B;
+      --border-color: #E2E8F0;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      --radius: 12px;
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    [data-theme='dark'] {
+      --bg-body: #0F172A;
+      --bg-surface: #1E293B;
+      --bg-card: #1E293B;
+      --text-main: #F8FAFC;
+      --text-muted: #94A3B8;
+      --border-color: #334155;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.5);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg-body);
+      color: var(--text-main);
+      line-height: 1.6;
+      transition: background-color 0.3s ease, color 0.3s ease;
+      overflow-x: hidden;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    button, input, select, textarea { font: inherit; }
+
+    .container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 1.25rem; }
+
+    /* UI Buttons */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+      padding: 0.65rem 1.25rem; font-weight: 600; border-radius: var(--radius);
+      border: none; cursor: pointer; transition: var(--transition); font-size: 0.9rem;
+    }
+    .btn-primary { background-color: var(--primary); color: #FFFFFF; }
+    .btn-primary:hover { background-color: var(--primary-hover); transform: translateY(-2px); }
+    .btn-secondary { background-color: var(--secondary); color: #FFFFFF; }
+    .btn-secondary:hover { background-color: var(--secondary-hover); transform: translateY(-2px); }
+    .btn-outline { background-color: transparent; border: 2px solid var(--primary); color: var(--primary); }
+    .btn-outline:hover { background-color: var(--primary); color: #FFFFFF; }
+    .btn-block { width: 100%; }
+
+    /* Header & Responsive Title Styling */
+    .site-header {
+      position: sticky; top: 0; z-index: 900;
+      background-color: var(--bg-card); border-bottom: 1px solid var(--border-color);
+      box-shadow: var(--shadow-sm);
+    }
+    .header-wrapper { display: flex; align-items: center; justify-content: space-between; height: 70px; gap: 0.75rem; }
+
+    .logo-brand { 
+      font-size: clamp(1.05rem, 4vw, 1.35rem); font-weight: 800; color: var(--primary); 
+      display: flex; align-items: center; gap: 0.4rem; line-height: 1.15; text-decoration: none; min-width: 0; flex: 1; overflow: hidden;
+    }
+    .logo-brand .brand-icon { font-size: 1.25rem; flex-shrink: 0; }
+    .logo-brand .brand-text { display: inline-block; white-space: normal; word-break: break-word; overflow: hidden; text-overflow: ellipsis; }
+    .logo-brand span { color: var(--secondary); }
+
+    .nav-menu { display: flex; align-items: center; gap: 1.5rem; list-style: none; }
+    .nav-link { font-weight: 500; color: var(--text-main); }
+    .nav-link:hover { color: var(--primary); }
+    
+    .header-actions { display: flex; align-items: center; gap: 0.5rem; flex-shrink: 0; }
+
+    .btn-icon {
+      background: transparent; border: 1px solid var(--border-color); color: var(--text-main);
+      width: 40px; height: 40px; border-radius: 50%; display: inline-flex;
+      align-items: center; justify-content: center; cursor: pointer; position: relative;
+      transition: var(--transition); font-size: 1.1rem; flex-shrink: 0;
+    }
+    .btn-icon:hover { background-color: var(--bg-surface); border-color: var(--primary); color: var(--primary); }
+
+    .cart-count {
+      position: absolute; top: -4px; right: -4px;
+      background-color: var(--secondary); color: white;
+      font-size: 0.7rem; font-weight: 700; width: 20px; height: 20px;
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    }
+    .mobile-toggle { display: none; flex-shrink: 0; }
+
+    /* Overlay & Side Drawers */
+    .drawer-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background-color: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px);
+      z-index: 1000; opacity: 0; visibility: hidden; transition: var(--transition);
+    }
+    .drawer-overlay.active { opacity: 1; visibility: visible; }
+
+    .sidebar-drawer {
+      position: fixed; top: 0; left: -320px; width: 300px; height: 100%;
+      background-color: var(--bg-card); z-index: 1001; box-shadow: var(--shadow-lg);
+      transition: var(--transition); padding: 1.5rem; display: flex; flex-direction: column;
+    }
+    .sidebar-drawer.active { left: 0; }
+
+    .cart-drawer {
+      position: fixed; top: 0; right: -400px; width: 380px; height: 100%;
+      background-color: var(--bg-card); z-index: 1001; box-shadow: var(--shadow-lg);
+      transition: var(--transition); padding: 1.5rem; display: flex; flex-direction: column;
+    }
+    .cart-drawer.active { right: 0; }
+
+    .drawer-header { display: flex; align-items: center; justify-content: space-between; padding-bottom: 1rem; border-bottom: 1px solid var(--border-color); margin-bottom: 1rem; }
+    .drawer-title { font-size: 1.15rem; font-weight: 700; color: var(--primary); }
+
+    .drawer-menu { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
+    .drawer-menu a { display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1rem; border-radius: var(--radius); font-weight: 500; color: var(--text-main); transition: var(--transition); }
+    .drawer-menu a:hover, .drawer-menu a.active { background-color: var(--bg-surface); color: var(--primary); }
+
+    /* Hero Section */
+    .hero-section { padding: 3.5rem 0 2.5rem; background: linear-gradient(135deg, rgba(30,64,175,0.05) 0%, rgba(249,115,22,0.05) 100%); border-bottom: 1px solid var(--border-color); }
+    .hero-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; align-items: center; }
+    .hero-content h1 { font-size: 2.5rem; font-weight: 800; line-height: 1.2; margin-bottom: 1rem; }
+    .hero-content h1 span { color: var(--primary); }
+    .hero-content p { font-size: 1.05rem; color: var(--text-muted); margin-bottom: 1.75rem; }
+    .hero-btns { display: flex; gap: 1rem; flex-wrap: wrap; }
+    .hero-image { width: 100%; height: 320px; border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow-lg); }
+    .hero-image img { width: 100%; height: 100%; object-fit: cover; }
+
+    /* Section & Controls */
+    .section-padding { padding: 3.5rem 0; }
+    .section-title { text-align: center; margin-bottom: 2rem; }
+    .section-title h2 { font-size: 1.85rem; font-weight: 700; }
+    .section-title p { color: var(--text-muted); }
+
+    .catalog-controls { display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; justify-content: space-between; margin-bottom: 2rem; }
+    .search-box { position: relative; flex: 1; min-width: 260px; }
+    .search-input { width: 100%; padding: 0.75rem 1rem 0.75rem 2.5rem; border-radius: var(--radius); border: 1px solid var(--border-color); background-color: var(--bg-card); color: var(--text-main); outline: none; transition: var(--transition); }
+    .search-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.15); }
+    .search-icon { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-muted); pointer-events: none; font-size: 0.9rem; }
+    .filter-tags { display: flex; gap: 0.5rem; overflow-x: auto; padding-bottom: 0.25rem; }
+    .tag-btn { padding: 0.5rem 1rem; border-radius: 30px; border: 1px solid var(--border-color); background-color: var(--bg-card); color: var(--text-muted); font-size: 0.85rem; font-weight: 600; cursor: pointer; white-space: nowrap; transition: var(--transition); }
+    .tag-btn.active, .tag-btn:hover { background-color: var(--primary); color: white; border-color: var(--primary); }
+
+    /* Products Grid */
+    .products-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; }
+    .product-card { background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius); overflow: hidden; transition: var(--transition); display: flex; flex-direction: column; position: relative; box-shadow: var(--shadow-sm); }
+    .product-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-md); border-color: var(--primary); }
+    .badge-discount { position: absolute; top: 10px; left: 10px; background-color: var(--secondary); color: white; font-size: 0.75rem; font-weight: 700; padding: 0.25rem 0.6rem; border-radius: 20px; z-index: 2; }
+    .product-thumb { width: 100%; height: 180px; overflow: hidden; background-color: var(--bg-surface); position: relative; }
+    .product-thumb img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
+    .product-card:hover .product-thumb img { transform: scale(1.05); }
+    .product-body { padding: 1.25rem; display: flex; flex-direction: column; flex-grow: 1; }
+    .product-category { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--secondary); margin-bottom: 0.25rem; }
+    .product-title { font-size: 1.05rem; font-weight: 700; color: var(--text-main); margin-bottom: 0.5rem; line-height: 1.3; }
+    .product-price-wrapper { margin-top: auto; margin-bottom: 1rem; }
+    .price-main { font-size: 1.2rem; font-weight: 800; color: var(--primary); }
+
+    /* Posts Grid (Maks 4 Post - Tanpa Tombol Keranjang) */
+    .posts-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
+    .post-card { background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius); overflow: hidden; transition: var(--transition); display: flex; flex-direction: column; box-shadow: var(--shadow-sm); }
+    .post-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); border-color: var(--primary); }
+    .post-thumb { width: 100%; height: 200px; overflow: hidden; background-color: var(--bg-surface); }
+    .post-thumb img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease; }
+    .post-card:hover .post-thumb img { transform: scale(1.03); }
+    .post-card-body { padding: 1.25rem; display: flex; flex-direction: column; flex-grow: 1; }
+    .post-card-title { font-size: 1.15rem; font-weight: 700; margin-bottom: 0.5rem; line-height: 1.3; }
+    .post-card-snippet { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1rem; flex-grow: 1; }
+
+    /* Pagination Styling Dinamis */
+    .pagination-wrapper { display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-top: 2.5rem; flex-wrap: wrap; }
+    .page-btn {
+      width: 40px; height: 40px; border-radius: var(--radius);
+      border: 1px solid var(--border-color); background-color: var(--bg-card);
+      color: var(--text-main); font-weight: 700; font-size: 0.9rem; cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center; transition: var(--transition);
+    }
+    .page-btn:hover, .page-btn.active { background-color: var(--primary); color: #FFFFFF; border-color: var(--primary); transform: translateY(-2px); }
+    .page-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+    /* Single Post & Page Detail Layout */
+    .single-post-wrapper {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 2.5rem;
+      margin: 2.5rem auto;
+      max-width: 900px;
+      box-shadow: var(--shadow-sm);
+    }
+    .single-page-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; align-items: start; }
+    .single-post-header { margin-bottom: 1.5rem; text-align: left; }
+    .single-post-title { font-size: 2.25rem; font-weight: 800; line-height: 1.25; margin-bottom: 0.75rem; color: var(--text-main); }
+    
+    .single-post-meta {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .single-post-meta-item { display: inline-flex; align-items: center; gap: 0.35rem; }
+    
+    .single-post-featured-img {
+      width: 100%;
+      max-height: 420px;
+      border-radius: var(--radius);
+      object-fit: cover;
+      margin-bottom: 1.75rem;
+      background-color: var(--bg-surface);
+    }
+    
+    .single-post-content { font-size: 1.05rem; line-height: 1.8; color: var(--text-main); }
+    .single-post-content p { margin-bottom: 1.25rem; }
+    .single-post-content img { max-width: 100%; height: auto; border-radius: var(--radius); margin: 1rem 0; }
+
+    /* Related Posts Section */
+    .related-posts-section { margin-top: 3.5rem; padding-top: 2rem; border-top: 1px solid var(--border-color); }
+    .related-posts-title { font-size: 1.5rem; font-weight: 800; margin-bottom: 1.5rem; color: var(--text-main); }
+    .related-posts-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; }
+    .related-card { background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius); overflow: hidden; display: flex; flex-direction: column; transition: var(--transition); }
+    .related-card:hover { transform: translateY(-4px); border-color: var(--primary); box-shadow: var(--shadow-md); }
+    .related-thumb { width: 100%; height: 140px; overflow: hidden; background-color: var(--bg-surface); }
+    .related-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .related-body { padding: 1rem; display: flex; flex-direction: column; flex-grow: 1; }
+    .related-title { font-size: 0.95rem; font-weight: 700; line-height: 1.3; margin-bottom: 0.5rem; color: var(--text-main); }
+    .related-excerpt { font-size: 0.8rem; color: var(--text-muted); line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+    /* FAQ Interaktif Styling */
+    .faq-list { max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; gap: 1rem; }
+    .faq-item { background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius); overflow: hidden; transition: var(--transition); }
+    .faq-question { width: 100%; padding: 1.25rem; text-align: left; background: none; border: none; font-weight: 600; font-size: 1rem; color: var(--text-main); display: flex; align-items: center; justify-content: space-between; cursor: pointer; }
+    .faq-arrow { transition: transform 0.3s ease; font-size: 0.8rem; }
+    .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.3s cubic-bezier(0, 1, 0, 1), padding 0.3s ease; padding: 0 1.25rem; color: var(--text-muted); font-size: 0.95rem; }
+    .faq-item.active .faq-answer { max-height: 300px; padding-bottom: 1.25rem; }
+    .faq-item.active .faq-arrow { transform: rotate(180deg); }
+
+    /* Cart Drawer Items */
+    .cart-body { flex: 1; overflow-y: auto; padding: 0.5rem 0; display: flex; flex-direction: column; gap: 1rem; }
+    .cart-empty { text-align: center; padding: 3rem 1rem; color: var(--text-muted); }
+    .cart-item { display: flex; gap: 0.75rem; align-items: center; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border-color); }
+    .cart-item-img { width: 60px; height: 60px; border-radius: 8px; object-fit: cover; background-color: var(--bg-surface); }
+    .cart-item-info { flex: 1; }
+    .cart-item-title { font-size: 0.9rem; font-weight: 700; }
+    .cart-item-price { font-size: 0.85rem; color: var(--primary); font-weight: 600; }
+    .cart-qty-ctrl { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.4rem; }
+    .qty-btn { width: 24px; height: 24px; border-radius: 50%; border: 1px solid var(--border-color); background: var(--bg-surface); color: var(--text-main); cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: 700; }
+    .cart-footer { padding-top: 1rem; border-top: 1px solid var(--border-color); }
+    .cart-subtotal { display: flex; justify-content: space-between; font-size: 1.1rem; font-weight: 800; margin-bottom: 1rem; }
+
+    /* Modal Checkout */
+    .modal-checkout {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background-color: rgba(15, 23, 42, 0.7); backdrop-filter: blur(5px);
+      z-index: 1100; opacity: 0; visibility: hidden; transition: var(--transition);
+      display: flex; align-items: center; justify-content: center; padding: 1rem;
+    }
+    .modal-checkout.active { opacity: 1; visibility: visible; }
+    .checkout-card { background-color: var(--bg-card); width: 100%; max-width: 650px; max-height: 90vh; border-radius: var(--radius); box-shadow: var(--shadow-lg); overflow-y: auto; padding: 1.75rem; position: relative; }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 1rem; border-bottom: 1px solid var(--border-color); margin-bottom: 1.25rem; }
+    .modal-title { font-size: 1.25rem; font-weight: 800; color: var(--primary); }
+
+    .form-group { margin-bottom: 1rem; }
+    .form-label { display: block; font-size: 0.875rem; font-weight: 600; margin-bottom: 0.4rem; }
+    .form-control { width: 100%; padding: 0.65rem 0.85rem; border-radius: 8px; border: 1px solid var(--border-color); background-color: var(--bg-surface); color: var(--text-main); outline: none; transition: var(--transition); }
+    .form-control:focus { border-color: var(--primary); }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .checkbox-group { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem; margin-top: 0.5rem; }
+    .checkbox-label { font-size: 0.85rem; display: flex; align-items: center; gap: 0.4rem; cursor: pointer; }
+
+    .checkout-summary { background-color: var(--bg-surface); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 1rem; margin: 1.25rem 0; font-size: 0.9rem; }
+    .summary-row { display: flex; justify-content: space-between; margin-bottom: 0.5rem; }
+    .summary-row.total { font-weight: 800; font-size: 1.05rem; border-top: 1px solid var(--border-color); padding-top: 0.5rem; margin-bottom: 0; color: var(--primary); }
+
+    .voucher-box { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
+    .off-hours-alert { background-color: #FEF3C7; color: #92400E; border: 1px solid #FCD34D; padding: 0.75rem 1rem; border-radius: var(--radius); font-size: 0.85rem; margin-bottom: 1rem; display: none; }
+
+    /* Footer & FAQ */
+    .site-footer { background-color: var(--bg-surface); border-top: 1px solid var(--border-color); padding: 3.5rem 0 2rem; margin-top: 4rem; }
+    .footer-grid { display: grid; grid-template-columns: 1.5fr 1fr 1.5fr; gap: 2rem; margin-bottom: 2.5rem; }
+    .footer-col h3 { font-size: 1.1rem; margin-bottom: 1rem; }
+    .footer-col p { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 0.75rem; }
+    .footer-links { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
+    .footer-links a { color: var(--text-muted); font-size: 0.9rem; }
+    .map-container { width: 100%; height: 150px; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border-color); }
+    .map-container iframe { width: 100%; height: 100%; border: 0; }
+    .footer-bottom { text-align: center; padding-top: 1.5rem; border-top: 1px solid var(--border-color); color: var(--text-muted); font-size: 0.85rem; }
+
+    .raw-data-container { display: none; }
+
+    @media (max-width: 992px) {
+      .hero-grid { grid-template-columns: 1fr; text-align: center; }
+      .hero-btns { justify-content: center; }
+      .hero-image { height: 260px; }
+      .products-grid { grid-template-columns: repeat(2, 1fr); }
+      .posts-grid { grid-template-columns: 1fr; }
+      .related-posts-grid { grid-template-columns: 1fr; }
+      .single-page-grid { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 768px) {
+      .nav-menu { display: none; }
+      .mobile-toggle { display: flex; }
+      .header-wrapper { height: 65px; padding: 0 0.5rem; }
+      .logo-brand { font-size: clamp(0.9rem, 3.8vw, 1.15rem); }
+      .btn-icon { width: 36px; height: 36px; font-size: 1rem; }
+      .products-grid { grid-template-columns: 1fr; }
+      .form-row { grid-template-columns: 1fr; }
+      .checkbox-group { grid-template-columns: 1fr; }
+      .single-post-wrapper { padding: 1.5rem; }
+      .single-post-title { font-size: 1.65rem; }
+    }
+    /* ]]> */
+  </style>
+
+  <b:skin><![CDATA[
+    /* Mandatory Skin Flag */
+  ]]></b:skin>
+</head>
+<body>
+
+  <!-- CONFIGURATION WIDGET (PEMISAH WIDGET UNTUK ATUR KONFIGURASI) -->
+  <div id="waAdminConfigWidget" style="display:none;">
+    {
+      "operatingHours": {
+        "open": "08:00",
+        "close": "20:00",
+        "workingDays": [1, 2, 3, 4, 5, 6]
+      },
+      "areas": {
+        "Sunter": {
+          "whatsapp": "081200000000",
+          "shippingFee": 10000
+        },
+        "Sokaraja": {
+          "whatsapp": "088808181008",
+          "shippingFee": 5000
+        },
+        "Cileungsi": {
+          "whatsapp": "085773009666",
+          "shippingFee": 0
+        }
+      },
+      "services": {
+        "Same Day": { "addDays": 0 },
+        "Express": { "addDays": 1 },
+        "Reguler": { "addDays": 3 }
+      },
+      "fragrances": [
+        "Lavender Soft",
+        "Lily Fresh",
+        "Downy Blue",
+        "Fresh Clean",
+        "Tanpa Pewangi / Scents-Free"
+      ],
+      "specialInstructions": [
+        "Pakaian Bayi",
+        "Pisahkan Pakaian Putih",
+        "Jangan Disetrika",
+        "Gantung Pakai Hanger"
+      ],
+      "vouchers": {
+        "BERSIH10": { "type": "percent", "value": 10, "minSpend": 30000 },
+        "PROMO5K": { "type": "nominal", "value": 5000, "minSpend": 25000 },
+        "FREEOK": { "type": "free_shipping", "value": 0, "minSpend": 0 }
+      }
+    }
+  </div>
+
+  <!-- Drawer Overlay -->
+  <div class='drawer-overlay' id='drawerOverlay'/>
+
+  <!-- Left Sidebar Drawer -->
+  <aside class='sidebar-drawer' id='sidebarDrawer'>
+    <div class='drawer-header'>
+      <span class='drawer-title'>Kategori Layanan</span>
+      <button class='btn-icon' id='btnSidebarClose' aria-label='Close Drawer'>&#10005;</button>
+    </div>
+    <nav>
+      <ul class='drawer-menu'>
+        <li><a class='filter-category-link active' data-category='all' href='javascript:void(0)'>&#9776; Semua Layanan</a></li>
+        <li><a class='filter-category-link' data-category='kiloan' href='javascript:void(0)'>&#9878; Laundry Kiloan</a></li>
+        <li><a class='filter-category-link' data-category='satuan' href='javascript:void(0)'>&#128085; Laundry Satuan</a></li>
+        <li><a class='filter-category-link' data-category='sepatu' href='javascript:void(0)'>&#128095; Laundry Sepatu</a></li>
+        <li><a class='filter-category-link' data-category='helm' href='javascript:void(0)'>&#129808; Laundry Helm</a></li>
+        <li><a class='filter-category-link' data-category='boneka' href='javascript:void(0)'>&#129528; Laundry Boneka</a></li>
+        <li><a class='filter-category-link' data-category='karpet' href='javascript:void(0)'>&#128452; Laundry Karpet</a></li>
+      </ul>
+    </nav>
+  </aside>
+
+  <!-- Right Cart Drawer -->
+  <aside class='cart-drawer' id='cartDrawer'>
+    <div class='drawer-header'>
+      <span class='drawer-title'>Keranjang Belanja</span>
+      <button class='btn-icon' id='btnCartClose' aria-label='Close Cart'>&#10005;</button>
+    </div>
+    
+    <div class='cart-body' id='cartBody'>
+      <div class='cart-empty'>Keranjang belanja Anda masih kosong.</div>
+    </div>
+
+    <div class='cart-footer'>
+      <div class='cart-subtotal'>
+        <span>Subtotal:</span>
+        <span id='cartSubtotal'>Rp0</span>
+      </div>
+      <button class='btn btn-primary btn-block' id='btnOpenCheckout'>Lanjut ke Checkout</button>
+    </div>
+  </aside>
+
+  <!-- Modal Form Checkout -->
+  <div class='modal-checkout' id='modalCheckout'>
+    <div class='checkout-card'>
+      <div class='modal-header'>
+        <span class='modal-title'>Form Pemesanan Laundry</span>
+        <button class='btn-icon' id='btnCloseCheckout' aria-label='Close Modal'>&#10005;</button>
+      </div>
+
+      <div class='off-hours-alert' id='offHoursAlert'>
+        ⏰ <strong>Toko Sedang Tutup:</strong> Anda memesan di luar jam operasional. Pesanan Anda akan kami proses pada hari operasional berikutnya.
+      </div>
+
+      <form id='formCheckout'>
+        <div class='form-row'>
+          <div class='form-group'>
+            <label class='form-label'>Nama Lengkap *</label>
+            <input class='form-control' id='custName' placeholder='Contoh: Budi Santoso' required='required' type='text'/>
+          </div>
+          <div class='form-group'>
+            <label class='form-label'>Nomor WhatsApp *</label>
+            <input class='form-control' id='custPhone' placeholder='Contoh: 08123456789' required='required' type='tel'/>
+          </div>
+        </div>
+
+        <div class='form-group'>
+          <label class='form-label'>Alamat Penjemputan *</label>
+          <textarea class='form-control' id='custAddress' placeholder='Alamat lengkap, nomor rumah, RT/RW, patokan...' required='required' rows='2'/>
+        </div>
+
+        <div class='form-row'>
+          <div class='form-group'>
+            <label class='form-label'>Area Cabang Terdekat *</label>
+            <select class='form-control' id='custArea'>
+              <!-- Injected via JS -->
+            </select>
+          </div>
+          <div class='form-group'>
+            <label class='form-label'>Jenis Layanan *</label>
+            <select class='form-control' id='custService'>
+              <!-- Injected via JS -->
+            </select>
+          </div>
+        </div>
+
+        <div class='form-row'>
+          <div class='form-group'>
+            <label class='form-label'>Pilihan Pewangi</label>
+            <select class='form-control' id='custFragrance'>
+              <!-- Injected via JS -->
+            </select>
+          </div>
+          <div class='form-group'>
+            <label class='form-label'>Catatan Tambahan</label>
+            <input class='form-control' id='custNotes' placeholder='Contoh: Ada noda oli di celana' type='text'/>
+          </div>
+        </div>
+
+        <div class='form-group'>
+          <label class='form-label'>Instruksi Khusus (Optional)</label>
+          <div class='checkbox-group'>
+            <!-- Injected via JS -->
+          </div>
+        </div>
+
+        <div class='form-group'>
+          <label class='form-label'>Kode Voucher / Promo</label>
+          <div class='voucher-box'>
+            <input class='form-control' id='voucherInput' placeholder='Masukkan kode (cth: BERSIH10)' type='text'/>
+            <button class='btn btn-secondary' id='btnApplyVoucher' type='button'>Gunakan</button>
+          </div>
+          <div id='voucherStatus' style='font-size: 0.8rem;'/>
+        </div>
+
+        <div class='checkout-summary'>
+          <div class='summary-row'><span>Subtotal Produk:</span><span id='sumSubtotal'>Rp0</span></div>
+          <div class='summary-row'><span>Ongkir Area:</span><span id='sumShipping'>Rp0</span></div>
+          <div class='summary-row' id='rowDiscount' style='display:none; color: var(--secondary);'><span>Diskon Promo:</span><span id='sumDiscount'>-Rp0</span></div>
+          <div class='summary-row'><span>Estimasi Selesai:</span><strong id='sumEstDate'>-</strong></div>
+          <div class='summary-row total'><span>Grand Total:</span><span id='sumGrandTotal'>Rp0</span></div>
+        </div>
+
+        <button class='btn btn-primary btn-block' style='padding: 0.85rem; font-size: 1rem;' type='submit'>
+          💬 Kirim Pesanan ke WhatsApp
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Header Section -->
+  <header class='site-header'>
+    <div class='container header-wrapper'>
+      <button class='btn-icon mobile-toggle' id='btnSidebarOpen' aria-label='Open Menu'>&#9776;</button>
+
+      <a class='logo-brand' href='/'>
+        <span class='brand-icon'>&#129530;</span>
+        <span class='brand-text'>
+          <span><data:blog.title/></span>
+        </span>
+      </a>
+
+      <nav>
+        <ul class='nav-menu'>
+          <li><a class='nav-link' href='/'>Beranda</a></li>
+          <li><a class='nav-link' href='/#harga'>Katalog Layanan</a></li>
+          <li><a class='nav-link' href='/#blog-posts'>Artikel Blog</a></li>
+          <li><a class='nav-link' href='/#faq'>FAQ</a></li>
+        </ul>
+      </nav>
+
+      <div class='header-actions'>
+        <button class='btn-icon' id='btnThemeToggle' aria-label='Toggle Theme'>&#9728;</button>
+
+        <button class='btn-icon' id='btnCartOpen' aria-label='Shopping Cart'>
+          &#128722;
+          <span class='cart-count' id='cartCounter'>0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN BODY HOMEPAGE LAYOUT -->
+  <b:if cond='data:view.isHomepage'>
+    <!-- HERO SECTION -->
+    <section class='hero-section'>
+      <div class='container hero-grid'>
+        <div class='hero-content'>
+          <h1>Cucian Bersih &amp; Wangi <span>Tanpa Repot</span></h1>
+          <p>Layanan laundry profesional siap antar jemput gratis ke lokasi Anda. Pakaian rapi, higienis, dan terawat tepat waktu.</p>
+          <div class='hero-btns'>
+            <a class='btn btn-primary' href='#harga'>Pesan Sekarang</a>
+            <a class='btn btn-outline' href='#blog-posts'>Baca Artikel</a>
+          </div>
+        </div>
+        <div class='hero-image'>
+          <img alt='Laundry Commerce Banner' src='https://images.unsplash.com/photo-1517677208171-0bc6725a3e60?auto=format&amp;fit=crop&amp;w=800&amp;q=80'/>
+        </div>
+      </div>
+    </section>
+
+    <!-- KATALOG PRODUK / LAYANAN (Maksimal 8 Produk Per Halaman) -->
+    <section class='container section-padding' id='harga'>
+      <div class='section-title'>
+        <h2>Katalog Layanan Laundry</h2>
+        <p>Cari &amp; pilih layanan sesuai dengan kebutuhan pakaian Anda</p>
+      </div>
+
+      <div class='catalog-controls'>
+        <div class='search-box'>
+          <span class='search-icon'>&#128080;</span>
+          <input class='search-input' id='searchProductsInput' placeholder='Cari katalog produk (cth: Sepatu, Kiloan)...' type='text'/>
+        </div>
+        <div class='filter-tags'>
+          <button class='tag-btn active' data-category='all'>Semua</button>
+          <button class='tag-btn' data-category='kiloan'>Kiloan</button>
+          <button class='tag-btn' data-category='satuan'>Satuan</button>
+          <button class='tag-btn' data-category='sepatu'>Sepatu</button>
+          <button class='tag-btn' data-category='helm'>Helm</button>
+          <button class='tag-btn' data-category='boneka'>Boneka</button>
+          <button class='tag-btn' data-category='karpet'>Karpet</button>
+        </div>
+      </div>
+
+      <div class='products-grid' id='productsGrid'>
+        <!-- Dynamic Injection via JavaScript ProductCatalogEngine -->
+      </div>
+
+      <div class='pagination-wrapper' id='productsPagination'>
+        <!-- Injected Dinamis oleh ProductCatalogEngine JS -->
+      </div>
+    </section>
+
+    <!-- SECTION POSTINGAN BLOG / ARTIKEL (Maksimal 4 Post Per Halaman) -->
+    <section class='section-padding' id='blog-posts' style='background-color: var(--bg-surface);'>
+      <div class='container'>
+        <div class='section-title'>
+          <h2>Artikel &amp; Postingan Terakhir</h2>
+          <p>Tips seputar perawatan pakaian, kebersihan, dan info terbaru</p>
+        </div>
+
+        <div class='catalog-controls'>
+          <div class='search-box' style='max-width: 500px; margin: 0 auto;'>
+            <span class='search-icon'>&#128080;</span>
+            <input class='search-input' id='searchPostsInput' placeholder='Cari postingan / artikel blog...' type='text'/>
+          </div>
+        </div>
+
+        <div class='posts-grid' id='postsGrid'>
+          <!-- Dynamic Injection via JavaScript BlogPostsEngine -->
+        </div>
+
+        <div class='pagination-wrapper' id='postsPagination'>
+          <!-- Injected Dinamis oleh BlogPostsEngine JS -->
+        </div>
+      </div>
+    </section>
+  </b:if>
+
+  <!-- BLOGGER POST & PAGES DATA PARSER -->
+  <main class='container'>
+    <b:section class='main' id='main' showaddelement='yes'>
+      
+      <!-- WIDGET BLOG -->
+      <b:widget defaultmaxpost='50' id='Blog1' locked='true' title='Posting Blog' type='Blog'>
+        <b:includable id='main' var='top'>
+
+          <!-- CONDITIONAL 1: SINGLE PAGE (DETAIL PRODUK KATALOG - ADA TOMBOL KERANJANG & HARGA) -->
+          <b:if cond='data:view.isPage'>
+            <b:loop values='data:posts' var='post'>
+              <div class='single-post-wrapper' expr:id='data:post.id'>
+                <div class='single-page-grid'>
+                  <div>
+                    <img class='single-post-featured-img' id='singleProductImg' expr:alt='data:post.title' expr:src='data:post.featuredImage ? data:post.featuredImage : (data:post.firstImageUrl ? data:post.firstImageUrl : "https://images.unsplash.com/photo-1545173168-9f1947eebb7f?auto=format&amp;fit=crop&amp;w=800&amp;q=80")' style='max-height:360px;'/>
+                  </div>
+                  <div>
+                    <h1 class='single-post-title' id='singleProductTitle' style='font-size:1.8rem; margin-bottom:1rem;'><data:post.title/></h1>
+                    
+                    <div id='singlePriceContainer' style='background:var(--bg-surface); padding:1rem; border-radius:var(--radius); margin-bottom:1.5rem;'>
+                      <!-- Parsed by JS Engine -->
+                    </div>
+
+                    <div class='single-post-content' id='singlePostContent' style='font-size:0.95rem; margin-bottom:1.5rem;'>
+                      <data:post.body/>
+                    </div>
+
+                    <button class='btn btn-primary btn-block' id='btnSingleAddToCart' style='padding:0.85rem; font-size:1rem;'>
+                      🛒 + Tambahkan Ke Keranjang Belanja
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </b:loop>
+          </b:if>
+
+          <!-- CONDITIONAL 2: SINGLE POST (ARTIKEL BLOG - TANPA KERANJANG, TANPA HARGA, ADA RELATED POSTS 3 ITEM) -->
+          <b:if cond='data:view.isPost'>
+            <b:loop values='data:posts' var='post'>
+              <article class='single-post-wrapper' expr:id='data:post.id'>
+                <!-- Header Title & Meta -->
+                <header class='single-post-header'>
+                  <h1 class='single-post-title'><data:post.title/></h1>
+                  
+                  <div class='single-post-meta'>
+                    <!-- Author Meta -->
+                    <span class='single-post-meta-item'>
+                      👤 Penulis: <strong><b:if cond='data:post.author.name'><data:post.author.name/><b:else/>Admin LaundryCommerce</b:if></strong>
+                    </span>
+                    
+                    <!-- Date Meta -->
+                    <span class='single-post-meta-item'>
+                      📅 Tanggal: <span><b:if cond='data:post.date'><data:post.date/><b:else/>Terbaru</b:if></span>
+                    </span>
+                  </div>
+                </header>
+
+                <!-- Single Featured Image Only -->
+                <img class='single-post-featured-img' expr:alt='data:post.title' expr:src='data:post.featuredImage ? data:post.featuredImage : (data:post.firstImageUrl ? data:post.firstImageUrl : "https://images.unsplash.com/photo-1545173168-9f1947eebb7f?auto=format&amp;fit=crop&amp;w=1200&amp;q=80")'/>
+
+                <!-- Post Body Article Content (Tanpa Keranjang, Tanpa Harga) -->
+                <div class='single-post-content'>
+                  <data:post.body/>
+                </div>
+
+                <!-- SECTION POSTINGAN TERKAIT / RELATIVE POSTS (3 ITEMS) -->
+                <section class='related-posts-section'>
+                  <h3 class='related-posts-title'>Postingan Terkait Lainnya</h3>
+                  <div class='related-posts-grid' id='relatedPostsGrid'>
+                    <!-- Injected Dynamic via RelatedPostsEngine JS -->
+                  </div>
+                </section>
+              </article>
+            </b:loop>
+          </b:if>
+
+        </b:includable>
+      </b:widget>
+    </b:section>
+  </main>
+
+  <!-- FAQ Section Interaktif -->
+  <b:if cond='data:view.isHomepage'>
+    <section class='section-padding' id='faq'>
+      <div class='container'>
+        <div class='section-title'>
+          <h2>Pertanyaan Umum (FAQ)</h2>
+          <p>Informasi dan pertanyaan yang paling sering ditanyakan pelanggan</p>
+        </div>
+        <div class='faq-list' id='faqListContainer'>
+          
+          <div class='faq-item'>
+            <button class='faq-question' type='button'>
+              <span>Bagaimana cara melakukan pemesanan via WhatsApp?</span>
+              <span class='faq-arrow'>&#9660;</span>
+            </button>
+            <div class='faq-answer'>
+              <p>Cukup pilih produk/layanan yang Anda butuhkan ke dalam keranjang belanja, klik <strong>Checkout</strong>, pilih cabang terdekat dan opsi pewangi/layanan, lalu tekan tombol <strong>Kirim Pesanan ke WhatsApp</strong>. Pesanan Anda otomatis terformat rapi ke WhatsApp admin kami.</p>
+            </div>
+          </div>
+
+          <div class='faq-item'>
+            <button class='faq-question' type='button'>
+              <span>Berapa lama estimasi waktu pengerjaan laundry?</span>
+              <span class='faq-arrow'>&#9660;</span>
+            </button>
+            <div class='faq-answer'>
+              <p>Estimasi disesuaikan dengan jenis layanan yang Anda pilih pada form pemesanan:
+              <br/>• <strong>Same Day:</strong> Selesai pada hari yang sama (Pagi Jemput, Sore Antar).
+              <br/>• <strong>Express:</strong> Pengerjaan 1 Hari kerja (+24 Jam).
+              <br/>• <strong>Reguler:</strong> Pengerjaan standar 3 Hari kerja.</p>
+            </div>
+          </div>
+
+          <div class='faq-item'>
+            <button class='faq-question' type='button'>
+              <span>Apakah ada minimal berat untuk Layanan Kiloan?</span>
+              <span class='faq-arrow'>&#9660;</span>
+            </button>
+            <div class='faq-answer'>
+              <p>Untuk layanan laundry kiloan, minimal transaksi penimbangan adalah <strong>3 kg</strong> per pengerjaan. Jika penimbangan kurang dari 3 kg, tarif tetap dihitung minimal 3 kg.</p>
+            </div>
+          </div>
+
+          <div class='faq-item'>
+            <button class='faq-question' type='button'>
+              <span>Bagaimana jika hasil cucian kurang bersih atau ada noda?</span>
+              <span class='faq-arrow'>&#9660;</span>
+            </button>
+            <div class='faq-answer'>
+              <p>Kami memberikan <strong>Garansi Cuci Ulang Gratis 100%</strong> jika Anda merasa hasil laundry kurang bersih, kurang wangi, atau ada noda yang tertinggal. Silakan hubungi admin kami maksimal 24 jam setelah barang diterima.</p>
+            </div>
+          </div>
+
+          <div class='faq-item'>
+            <button class='faq-question' type='button'>
+              <span>Metode pembayaran apa saja yang diterima?</span>
+              <span class='faq-arrow'>&#9660;</span>
+            </button>
+            <div class='faq-answer'>
+              <p>Kami menerima pembayaran <strong>Tunai (COD)</strong> saat kurir mengantar barang, serta transfer non-tunai via <strong>QRIS, BCA, Mandiri, ShopeePay, OVO, dan GoPay</strong>.</p>
+            </div>
+          </div>
+
+          <div class='faq-item'>
+            <button class='faq-question' type='button'>
+              <span>Apakah pakaian saya akan dicampur dengan milik orang lain?</span>
+              <span class='faq-arrow'>&#9660;</span>
+            </button>
+            <div class='faq-answer'>
+              <p><strong>Sama sekali TIDAK.</strong> Setiap 1 nota / 1 pelanggan diproses secara individual dalam 1 mesin cuci khusus (1 Mesin 1 Pelanggan) demi menjaga higienitas dan mencegah pakaian tertukar.</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+  </b:if>
+
+  <!-- Footer -->
+  <footer class='site-footer'>
+    <div class='container footer-grid'>
+      <div class='footer-col'>
+        <h3>LaundryCommerce</h3>
+        <p>Solusi laundry &amp; dry cleaning modern berbasis online dengan standar higienis tinggi dan jaminan tepat waktu.</p>
+        <p><strong>Jam Operasional:</strong><br/>Senin - Sabtu: 08.00 - 20.00 WIB</p>
+      </div>
+      <div class='footer-col'>
+        <h3>Kategori Utama</h3>
+        <ul class='footer-links'>
+          <li><a href='/#harga'>Laundry Kiloan</a></li>
+          <li><a href='/#harga'>Laundry Satuan &amp; Jas</a></li>
+          <li><a href='/#harga'>Cuci Sepatu &amp; Helm</a></li>
+          <li><a href='/#blog-posts'>Artikel Laundry</a></li>
+        </ul>
+      </div>
+      <div class='footer-col'>
+        <h3>Lokasi Workshop</h3>
+        <p>Pusat operasional dan penerimaan barang:</p>
+        <div class='map-container'>
+          <iframe allowfullscreen='' loading='lazy' title='Google Maps' src='https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d126888.89531853683!2d106.945281!3d-6.398606!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e699478f6966143%3A0x401e8f1fc37f810!2sCileungsi%2C%20Bogor%20Regency%2C%20West%20Java!5e0!3m2!1sen!2sid!4v1700000000000!5m2!1sen!2sid'/>
+        </div>
+      </div>
+    </div>
+    <div class='container footer-bottom'>
+      <p>&#169; <script>document.write(new Date().getFullYear())</script> LaundryCommerce. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Central JavaScript Engine -->
+  <script type='text/javascript'>
+    // <![CDATA[
+    let LaundryConfig = {
+      storeName: "LaundryCommerce Professional",
+      currencySymbol: "Rp",
+      operatingHours: { open: "08:00", close: "20:00", workingDays: [1, 2, 3, 4, 5, 6] },
+      areas: {
+        "Sunter": { whatsapp: "081200000000", shippingFee: 10000 },
+        "Sokaraja": { whatsapp: "088808181008", shippingFee: 5000 },
+        "Cileungsi": { whatsapp: "085773009666", shippingFee: 0 }
+      },
+      services: {
+        "Same Day": { addDays: 0 },
+        "Express": { addDays: 1 },
+        "Reguler": { addDays: 3 }
+      },
+      fragrances: ["Lavender Soft", "Lily Fresh", "Downy Blue", "Fresh Clean", "Tanpa Pewangi / Scents-Free"],
+      specialInstructions: ["Pakaian Bayi", "Pisahkan Pakaian Putih", "Jangan Disetrika", "Gantung Pakai Hanger"],
+      vouchers: {
+        "BERSIH10": { type: "percent", value: 10, minSpend: 30000 },
+        "PROMO5K": { type: "nominal", value: 5000, minSpend: 25000 },
+        "FREEOK": { type: "free_shipping", value: 0, minSpend: 0 }
+      }
+    };
+
+    function loadAdminConfigFromWidget() {
+      const widgetElement = document.getElementById("waAdminConfigWidget");
+      if (widgetElement) {
+        try {
+          const customConfig = JSON.parse(widgetElement.textContent.trim());
+          if (customConfig && typeof customConfig === "object") {
+            LaundryConfig = { ...LaundryConfig, ...customConfig };
+          }
+        } catch (e) {
+          console.warn("Format JSON pada waAdminConfigWidget tidak valid, menggunakan default.");
+        }
+      }
+    }
+
+    const FormatUtil = {
+      toRupiah(num) {
+        return "Rp" + Number(num || 0).toLocaleString("id-ID");
+      }
+    };
+
+    const ThemeEngine = {
+      STORAGE_KEY: "lc_theme_preference",
+      init() {
+        const savedTheme = localStorage.getItem(this.STORAGE_KEY);
+        if (savedTheme) {
+          this.applyTheme(savedTheme);
+        } else {
+          const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+          this.applyTheme(prefersDark ? "dark" : "light");
+        }
+        document.getElementById("btnThemeToggle")?.addEventListener("click", () => {
+          const currentTheme = document.documentElement.getAttribute("data-theme");
+          const newTheme = currentTheme === "dark" ? "light" : "dark";
+          this.applyTheme(newTheme);
+          localStorage.setItem(this.STORAGE_KEY, newTheme);
+        });
+      },
+      applyTheme(theme) {
+        document.documentElement.setAttribute("data-theme", theme);
+      }
+    };
+
+    const CartEngine = {
+      STORAGE_KEY: "lc_shopping_cart",
+      items: [],
+      init() {
+        const saved = localStorage.getItem(this.STORAGE_KEY);
+        if (saved) {
+          try { this.items = JSON.parse(saved); } catch (e) { this.items = []; }
+        }
+        this.render();
+      },
+      save() {
+        localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.items));
+        this.render();
+      },
+      addItem(product) {
+        const existing = this.items.find(i => i.id === product.id);
+        if (existing) {
+          existing.qty += 1;
+        } else {
+          this.items.push({ ...product, qty: 1 });
+        }
+        this.save();
+        document.getElementById("btnCartOpen")?.click();
+      },
+      updateQty(id, delta) {
+        const item = this.items.find(i => i.id === id);
+        if (item) {
+          item.qty += delta;
+          if (item.qty <= 0) this.items = this.items.filter(i => i.id !== id);
+          this.save();
+        }
+      },
+      getSubtotal() {
+        return this.items.reduce((sum, i) => sum + (i.price * i.qty), 0);
+      },
+      render() {
+        const cartCounter = document.getElementById("cartCounter");
+        const cartBody = document.getElementById("cartBody");
+        const cartSubtotal = document.getElementById("cartSubtotal");
+
+        const totalQty = this.items.reduce((sum, i) => sum + i.qty, 0);
+        if (cartCounter) cartCounter.textContent = totalQty;
+
+        if (!cartBody) return;
+
+        if (this.items.length === 0) {
+          cartBody.innerHTML = `<div class="cart-empty">Keranjang belanja Anda masih kosong.</div>`;
+          if (cartSubtotal) cartSubtotal.textContent = FormatUtil.toRupiah(0);
+          return;
+        }
+
+        cartBody.innerHTML = this.items.map(item => `
+          <div class="cart-item">
+            <img src="${item.image}" class="cart-item-img" alt="${item.title}"/>
+            <div class="cart-item-info">
+              <div class="cart-item-title">${item.title}</div>
+              <div class="cart-item-price">${FormatUtil.toRupiah(item.price)}</div>
+              <div class="cart-qty-ctrl">
+                <button class="qty-btn" onclick="CartEngine.updateQty('${item.id}', -1)">-</button>
+                <span>${item.qty}</span>
+                <button class="qty-btn" onclick="CartEngine.updateQty('${item.id}', 1)">+</button>
+              </div>
+            </div>
+          </div>
+        `).join("");
+
+        if (cartSubtotal) cartSubtotal.textContent = FormatUtil.toRupiah(this.getSubtotal());
+      }
+    };
+
+    /**
+     * ENGINE 1: KATALOG PRODUK BERASAL DARI PAGE / HALAMAN
+     * Default Fallback: price 9000, category "Kiloan", unit "1 kg"
+     * Pagination Dinamis: Maksimal 8 Produk Per Halaman (Otomatis Menghitung Seluruh Jumlah Halaman)
+     */
+    const ProductCatalogEngine = {
+      products: [],
+      currentCategory: "all",
+      searchQuery: "",
+      currentPage: 1,
+      itemsPerPage: 8,
+
+      init() {
+        this.fetchPagesData();
+        this.bindEvents();
+        this.parseSinglePageProduct();
+      },
+
+      fetchPagesData() {
+        fetch('/feeds/pages/default?alt=json&max-results=500')
+          .then(res => res.json())
+          .then(data => {
+            if (data.feed && data.feed.entry) {
+              this.products = data.feed.entry.map(entry => {
+                const id = entry.id.$t.split('-').pop() || Math.random().toString();
+                const title = entry.title.$t;
+                let url = "#";
+                if (entry.link) {
+                  const altLink = entry.link.find(l => l.rel === 'alternate');
+                  if (altLink) url = altLink.href;
+                }
+                
+                const contentHtml = entry.content ? entry.content.$t : "";
+                
+                let image = "https://images.unsplash.com/photo-1545173168-9f1947eebb7f?auto=format&fit=crop&w=600&q=80";
+                const imgMatch = contentHtml.match(/<img[^>]+src=["']([^"']+)["']/i);
+                if (imgMatch) image = imgMatch[1];
+
+                let price = 9000;
+                let category = "kiloan";
+                let unit = "1 kg";
+                let discountPrice = 0;
+
+                const commentJsonMatch = contentHtml.match(/<!--\s*(\{[\s\S]*?\})\s*-->/);
+                if (commentJsonMatch) {
+                  try {
+                    const parsedJson = JSON.parse(commentJsonMatch[1]);
+                    if (parsedJson.price !== undefined) price = parseInt(parsedJson.price);
+                    if (parsedJson.category) category = parsedJson.category.toString().toLowerCase();
+                    if (parsedJson.unit) unit = parsedJson.unit;
+                    if (parsedJson.discountPrice) discountPrice = parseInt(parsedJson.discountPrice);
+                  } catch (e) {
+                    console.warn("Error parsing JSON comment on page:", title);
+                  }
+                }
+
+                const tempDiv = document.createElement("div");
+                tempDiv.innerHTML = contentHtml;
+                const desc = tempDiv.innerText.substring(0, 75) + "...";
+
+                return {
+                  id,
+                  title,
+                  url,
+                  price,
+                  discountPrice,
+                  unit,
+                  category,
+                  categoryName: category.toUpperCase(),
+                  image,
+                  desc
+                };
+              });
+            }
+            this.render();
+          })
+          .catch(() => {
+            this.render();
+          });
+      },
+
+      parseSinglePageProduct() {
+        const priceBox = document.getElementById("singlePriceContainer");
+        const btnAdd = document.getElementById("btnSingleAddToCart");
+        const pageWrapper = document.querySelector(".single-post-wrapper");
+
+        if (!pageWrapper || !priceBox) return;
+
+        const postId = pageWrapper.getAttribute("id") || "prod-" + Math.floor(Math.random()*10000);
+        const postTitle = document.getElementById("singleProductTitle")?.textContent.trim() || "Layanan Laundry";
+        const postImg = document.getElementById("singleProductImg")?.getAttribute("src") || "";
+        const descHtml = document.getElementById("singlePostContent")?.innerHTML || "";
+
+        let price = 9000;
+        let category = "Kiloan";
+        let unit = "1 kg";
+        let discountPrice = 0;
+
+        const commentJsonMatch = descHtml.match(/<!--\s*(\{[\s\S]*?\})\s*-->/);
+        if (commentJsonMatch) {
+          try {
+            const parsedJson = JSON.parse(commentJsonMatch[1]);
+            if (parsedJson.price !== undefined) price = parseInt(parsedJson.price);
+            if (parsedJson.category) category = parsedJson.category;
+            if (parsedJson.unit) unit = parsedJson.unit;
+            if (parsedJson.discountPrice) discountPrice = parseInt(parsedJson.discountPrice);
+          } catch (e) {
+            console.warn("Parsing JSON Comment gagal pada single page.");
+          }
+        }
+
+        priceBox.innerHTML = `
+          <div style="display:flex; align-items:baseline; gap:0.5rem;">
+            <span class="price-main" style="font-size:1.8rem; font-weight:800; color:var(--primary);">${FormatUtil.toRupiah(price)}</span>
+            <span style="font-size:1rem; color:var(--text-muted);">/ ${unit}</span>
+            ${discountPrice > price ? `<span class="price-strike" style="font-size:1.1rem; text-decoration:line-through; color:var(--text-muted); margin-left:8px;">${FormatUtil.toRupiah(discountPrice)}</span>` : ""}
+          </div>
+        `;
+
+        if (btnAdd) {
+          btnAdd.addEventListener("click", () => {
+            CartEngine.addItem({
+              id: postId,
+              title: postTitle,
+              price: price,
+              image: postImg
+            });
+          });
+        }
+      },
+
+      bindEvents() {
+        const searchInput = document.getElementById("searchProductsInput");
+        if (searchInput) {
+          searchInput.addEventListener("input", (e) => {
+            this.searchQuery = e.target.value.toLowerCase();
+            this.currentPage = 1;
+            this.render();
+          });
+        }
+
+        document.querySelectorAll(".tag-btn").forEach(btn => {
+          btn.addEventListener("click", (e) => {
+            document.querySelectorAll(".tag-btn").forEach(b => b.classList.remove("active"));
+            e.target.classList.add("active");
+            this.currentCategory = e.target.getAttribute("data-category");
+            this.currentPage = 1;
+            this.render();
+          });
+        });
+      },
+
+      changePage(pageNumber) {
+        this.currentPage = pageNumber;
+        this.render();
+        const catalogSec = document.getElementById("harga");
+        if (catalogSec) catalogSec.scrollIntoView({ behavior: "smooth" });
+      },
+
+      render() {
+        const grid = document.getElementById("productsGrid");
+        const pagWrapper = document.getElementById("productsPagination");
+        if (!grid) return;
+
+        const filtered = this.products.filter(item => {
+          const matchCat = this.currentCategory === "all" || item.category === this.currentCategory;
+          const matchSearch = item.title.toLowerCase().includes(this.searchQuery) || item.desc.toLowerCase().includes(this.searchQuery);
+          return matchCat && matchSearch;
+        });
+
+        if (filtered.length === 0) {
+          grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 3rem; color: var(--text-muted);">Belum ada produk/layanan pada katalog.</div>`;
+          if (pagWrapper) pagWrapper.innerHTML = "";
+          return;
+        }
+
+        const totalPages = Math.ceil(filtered.length / this.itemsPerPage);
+
+        const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+        const paginatedProducts = filtered.slice(startIndex, startIndex + this.itemsPerPage);
+
+        grid.innerHTML = paginatedProducts.map(item => `
+          <div class="product-card">
+            ${item.discountPrice > item.price ? `<div class="badge-discount">PROMO</div>` : ""}
+            <div class="product-thumb">
+              <a href="${item.url}"><img src="${item.image}" alt="${item.title}" loading="lazy"/></a>
+            </div>
+            <div class="product-body">
+              <div class="product-category">${item.categoryName}</div>
+              <h3 class="product-title"><a href="${item.url}">${item.title}</a></h3>
+              <div class="product-price-wrapper">
+                <span class="price-main">${FormatUtil.toRupiah(item.price)}</span>
+                <span style="font-size:0.8rem; color:var(--text-muted);">/ ${item.unit}</span>
+              </div>
+              <div class="product-actions" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+                <a href="${item.url}" class="btn btn-outline" style="padding: 0.5rem; font-size: 0.8rem;">Detail</a>
+                <button class="btn btn-primary" style="padding: 0.5rem; font-size: 0.8rem;" onclick="ProductCatalogEngine.addToCart('${item.id}')">
+                  + Cart
+                </button>
+              </div>
+            </div>
+          </div>
+        `).join("");
+
+        if (pagWrapper) {
+          if (totalPages <= 1) {
+            pagWrapper.innerHTML = "";
+            return;
+          }
+
+          let pagHTML = `<button class="page-btn" ${this.currentPage === 1 ? 'disabled' : ''} onclick="ProductCatalogEngine.changePage(${this.currentPage - 1})">&#10094;</button>`;
+          for (let i = 1; i <= totalPages; i++) {
+            pagHTML += `<button class="page-btn ${this.currentPage === i ? 'active' : ''}" onclick="ProductCatalogEngine.changePage(${i})">${i}</button>`;
+          }
+          pagHTML += `<button class="page-btn" ${this.currentPage === totalPages ? 'disabled' : ''} onclick="ProductCatalogEngine.changePage(${this.currentPage + 1})">&#10095;</button>`;
+
+          pagWrapper.innerHTML = pagHTML;
+        }
+      },
+
+      addToCart(id) {
+        const prod = this.products.find(p => p.id === id);
+        if (prod) CartEngine.addItem(prod);
+      }
+    };
+
+    /**
+     * ENGINE 2: POSTINGAN BLOG / ARTIKEL (DIAMBIL VIA FEED API LENGKAP - MAKSIMAL 4 POST / HALAMAN)
+     * Otomatis Menghitung Seluruh Jumlah Halaman (Termasuk Halaman 4, 5, 6, dst)
+     */
+    const BlogPostsEngine = {
+      posts: [],
+      searchQuery: "",
+      currentPage: 1,
+      itemsPerPage: 4,
+
+      init() {
+        this.fetchPostsData();
+        this.bindEvents();
+      },
+
+      fetchPostsData() {
+        fetch('/feeds/posts/default?alt=json&max-results=500')
+          .then(res => res.json())
+          .then(data => {
+            if (data.feed && data.feed.entry) {
+              this.posts = data.feed.entry.map(entry => {
+                const id = entry.id.$t.split('-').pop() || Math.random().toString();
+                const title = entry.title.$t;
+                let url = "#";
+                if (entry.link) {
+                  const altLink = entry.link.find(l => l.rel === 'alternate');
+                  if (altLink) url = altLink.href;
+                }
+
+                const content = entry.content ? entry.content.$t : (entry.summary ? entry.summary.$t : "");
+
+                let image = "https://images.unsplash.com/photo-1545173168-9f1947eebb7f?auto=format&fit=crop&w=600&q=80";
+                if (entry.media$thumbnail) {
+                  image = entry.media$thumbnail.url.replace('/s72-c/', '/s600/');
+                } else {
+                  const imgMatch = content.match(/<img[^>]+src=["']([^"']+)["']/i);
+                  if (imgMatch) image = imgMatch[1];
+                }
+
+                const tempDiv = document.createElement("div");
+                tempDiv.innerHTML = content;
+                const snippet = tempDiv.innerText.substring(0, 110) + "...";
+
+                return { id, title, url, image, snippet };
+              });
+            }
+            this.render();
+          })
+          .catch(() => {
+            this.render();
+          });
+      },
+
+      bindEvents() {
+        const searchInput = document.getElementById("searchPostsInput");
+        if (searchInput) {
+          searchInput.addEventListener("input", (e) => {
+            this.searchQuery = e.target.value.toLowerCase();
+            this.currentPage = 1;
+            this.render();
+          });
+        }
+      },
+
+      changePage(pageNumber) {
+        this.currentPage = pageNumber;
+        this.render();
+        const postsSec = document.getElementById("blog-posts");
+        if (postsSec) postsSec.scrollIntoView({ behavior: "smooth" });
+      },
+
+      render() {
+        const grid = document.getElementById("postsGrid");
+        const pagWrapper = document.getElementById("postsPagination");
+        if (!grid) return;
+
+        const filtered = this.posts.filter(item => {
+          return item.title.toLowerCase().includes(this.searchQuery) || item.snippet.toLowerCase().includes(this.searchQuery);
+        });
+
+        if (filtered.length === 0) {
+          grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 3rem; color: var(--text-muted);">Belum ada artikel/postingan blog ditemukan.</div>`;
+          if (pagWrapper) pagWrapper.innerHTML = "";
+          return;
+        }
+
+        const totalPages = Math.ceil(filtered.length / this.itemsPerPage);
+
+        const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+        const paginatedPosts = filtered.slice(startIndex, startIndex + this.itemsPerPage);
+
+        grid.innerHTML = paginatedPosts.map(post => `
+          <article class="post-card">
+            <div class="post-thumb">
+              <a href="${post.url}"><img src="${post.image}" alt="${post.title}" loading="lazy"/></a>
+            </div>
+            <div class="post-card-body">
+              <h3 class="post-card-title"><a href="${post.url}">${post.title}</a></h3>
+              <p class="post-card-snippet">${post.snippet}</p>
+              <div>
+                <a href="${post.url}" class="btn btn-outline" style="padding:0.4rem 0.8rem; font-size:0.8rem;">Baca Selengkapnya &rarr;</a>
+              </div>
+            </div>
+          </article>
+        `).join("");
+
+        if (pagWrapper) {
+          if (totalPages <= 1) {
+            pagWrapper.innerHTML = "";
+            return;
+          }
+
+          let pagHTML = `<button class="page-btn" ${this.currentPage === 1 ? 'disabled' : ''} onclick="BlogPostsEngine.changePage(${this.currentPage - 1})">&#10094;</button>`;
+          for (let i = 1; i <= totalPages; i++) {
+            pagHTML += `<button class="page-btn ${this.currentPage === i ? 'active' : ''}" onclick="BlogPostsEngine.changePage(${i})">${i}</button>`;
+          }
+          pagHTML += `<button class="page-btn" ${this.currentPage === totalPages ? 'disabled' : ''} onclick="BlogPostsEngine.changePage(${this.currentPage + 1})">&#10095;</button>`;
+
+          pagWrapper.innerHTML = pagHTML;
+        }
+      }
+    };
+
+    /**
+     * ENGINE 3: RELATED POSTS ENGINE FOR SINGLE POST PAGE (3 ITEMS WITH THUMBNAIL, TITLE & EXCERPT)
+     */
+    const RelatedPostsEngine = {
+      init() {
+        const grid = document.getElementById("relatedPostsGrid");
+        if (!grid) return;
+
+        fetch('/feeds/posts/default?alt=json&max-results=10')
+          .then(res => res.json())
+          .then(data => {
+            if (data.feed && data.feed.entry) {
+              const currentUrl = window.location.pathname;
+              const posts = [];
+
+              data.feed.entry.forEach(entry => {
+                let url = "#";
+                if (entry.link) {
+                  const altLink = entry.link.find(l => l.rel === 'alternate');
+                  if (altLink) url = altLink.href;
+                }
+
+                if (!url.includes(currentUrl)) {
+                  const title = entry.title.$t;
+                  const content = entry.content ? entry.content.$t : (entry.summary ? entry.summary.$t : "");
+                  
+                  let image = "https://images.unsplash.com/photo-1545173168-9f1947eebb7f?auto=format&fit=crop&w=400&q=80";
+                  if (entry.media$thumbnail) {
+                    image = entry.media$thumbnail.url.replace('/s72-c/', '/s600/');
+                  } else {
+                    const imgMatch = content.match(/<img[^>]+src=["']([^"']+)["']/i);
+                    if (imgMatch) image = imgMatch[1];
+                  }
+
+                  const tempDiv = document.createElement("div");
+                  tempDiv.innerHTML = content;
+                  const excerpt = tempDiv.innerText.substring(0, 80) + "...";
+
+                  posts.push({ title, url, image, excerpt });
+                }
+              });
+
+              const relatedList = posts.slice(0, 3);
+              if (relatedList.length === 0) {
+                grid.parentElement.style.display = "none";
+                return;
+              }
+
+              grid.innerHTML = relatedList.map(item => `
+                <a href="${item.url}" class="related-card">
+                  <div class="related-thumb">
+                    <img src="${item.image}" alt="${item.title}" loading="lazy"/>
+                  </div>
+                  <div class="related-body">
+                    <div class="related-title">${item.title}</div>
+                    <div class="related-excerpt">${item.excerpt}</div>
+                  </div>
+                </a>
+              `).join("");
+            } else {
+              grid.parentElement.style.display = "none";
+            }
+          })
+          .catch(() => {
+            if(grid && grid.parentElement) grid.parentElement.style.display = "none";
+          });
+      }
+    };
+
+    /**
+     * ENGINE 4: FAQ ENGINE (TOGGLE EXPAND / COLLAPSE)
+     */
+    const FAQEngine = {
+      init() {
+        const faqItems = document.querySelectorAll("#faqListContainer .faq-item");
+        faqItems.forEach(item => {
+          const btn = item.querySelector(".faq-question");
+          if (btn) {
+            btn.addEventListener("click", () => {
+              const isActive = item.classList.contains("active");
+              faqItems.forEach(i => i.classList.remove("active"));
+              if (!isActive) {
+                item.classList.add("active");
+              }
+            });
+          }
+        });
+      }
+    };
+
+    /**
+     * ENGINE 5: CHECKOUT & FORM PEMESANAN LENGKAP
+     */
+    const CheckoutEngine = {
+      appliedVoucher: null,
+
+      init() {
+        this.populateAreaDropdown();
+        this.populateServiceDropdown();
+        this.populateFragranceDropdown();
+        this.populateSpecialInstructions();
+        this.bindEvents();
+        this.checkOperatingHours();
+      },
+
+      populateAreaDropdown() {
+        const select = document.getElementById("custArea");
+        if (!select || !LaundryConfig.areas) return;
+        select.innerHTML = Object.keys(LaundryConfig.areas).map(area => `<option value="${area}">${area}</option>`).join("");
+      },
+
+      populateServiceDropdown() {
+        const select = document.getElementById("custService");
+        if (!select || !LaundryConfig.services) return;
+        select.innerHTML = Object.keys(LaundryConfig.services).map(srv => {
+          const days = LaundryConfig.services[srv].addDays;
+          const label = days === 0 ? "Hari Ini" : (days === 1 ? "+1 Hari" : `+${days} Hari`);
+          return `<option value="${srv}">${srv} (${label})</option>`;
+        }).join("");
+      },
+
+      populateFragranceDropdown() {
+        const select = document.getElementById("custFragrance");
+        if (!select || !LaundryConfig.fragrances) return;
+        select.innerHTML = LaundryConfig.fragrances.map(f => `<option value="${f}">${f}</option>`).join("");
+      },
+
+      populateSpecialInstructions() {
+        const container = document.querySelector(".checkbox-group");
+        if (!container || !LaundryConfig.specialInstructions) return;
+        container.innerHTML = LaundryConfig.specialInstructions.map(inst => `
+          <label class="checkbox-label">
+            <input type="checkbox" class="chk-inst" value="${inst}"/> ${inst}
+          </label>
+        `).join("");
+      },
+
+      checkOperatingHours() {
+        const alertBox = document.getElementById("offHoursAlert");
+        if (!alertBox) return;
+        const now = new Date();
+        const hrs = now.getHours();
+        const openHr = parseInt(LaundryConfig.operatingHours.open.split(":")[0]);
+        const closeHr = parseInt(LaundryConfig.operatingHours.close.split(":")[0]);
+
+        if (hrs < openHr || hrs >= closeHr) {
+          alertBox.style.display = "block";
+        } else {
+          alertBox.style.display = "none";
+        }
+      },
+
+      calculateEstDate(serviceName) {
+        const service = LaundryConfig.services[serviceName] || { addDays: 3 };
+        let target = new Date();
+        let added = 0;
+
+        while (added < service.addDays) {
+          target.setDate(target.getDate() + 1);
+          if (target.getDay() !== 0) {
+            added++;
+          }
+        }
+        if (target.getDay() === 0) {
+          target.setDate(target.getDate() + 1);
+        }
+
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        return target.toLocaleDateString('id-ID', options);
+      },
+
+      updateSummary() {
+        const subtotal = CartEngine.getSubtotal();
+        const areaSelect = document.getElementById("custArea");
+        if (!areaSelect) return;
+
+        const areaName = areaSelect.value;
+        const areaInfo = LaundryConfig.areas[areaName] || { shippingFee: 0 };
+        const serviceSelect = document.getElementById("custService");
+        const serviceName = serviceSelect ? serviceSelect.value : "Reguler";
+
+        let shipping = areaInfo.shippingFee;
+        let discount = 0;
+
+        if (this.appliedVoucher) {
+          const v = LaundryConfig.vouchers[this.appliedVoucher];
+          if (v && subtotal >= v.minSpend) {
+            if (v.type === "percent") discount = (subtotal * v.value) / 100;
+            if (v.type === "nominal") discount = v.value;
+            if (v.type === "free_shipping") shipping = 0;
+          }
+        }
+
+        const grandTotal = Math.max(0, subtotal + shipping - discount);
+
+        document.getElementById("sumSubtotal").textContent = FormatUtil.toRupiah(subtotal);
+        document.getElementById("sumShipping").textContent = FormatUtil.toRupiah(shipping);
+        
+        const rowDisc = document.getElementById("rowDiscount");
+        if (discount > 0) {
+          rowDisc.style.display = "flex";
+          document.getElementById("sumDiscount").textContent = "-" + FormatUtil.toRupiah(discount);
+        } else {
+          rowDisc.style.display = "none";
+        }
+
+        document.getElementById("sumGrandTotal").textContent = FormatUtil.toRupiah(grandTotal);
+        document.getElementById("sumEstDate").textContent = this.calculateEstDate(serviceName);
+      },
+
+      bindEvents() {
+        const modal = document.getElementById("modalCheckout");
+        const overlay = document.getElementById("drawerOverlay");
+
+        document.getElementById("btnOpenCheckout")?.addEventListener("click", () => {
+          if (CartEngine.items.length === 0) {
+            alert("Keranjang belanja Anda masih kosong.");
+            return;
+          }
+          document.getElementById("cartDrawer").classList.remove("active");
+          modal.classList.add("active");
+          overlay.classList.add("active");
+          this.updateSummary();
+        });
+
+        document.getElementById("btnCloseCheckout")?.addEventListener("click", () => {
+          modal.classList.remove("active");
+          overlay.classList.remove("active");
+        });
+
+        document.getElementById("custArea")?.addEventListener("change", () => this.updateSummary());
+        document.getElementById("custService")?.addEventListener("change", () => this.updateSummary());
+
+        document.getElementById("btnApplyVoucher")?.addEventListener("click", () => {
+          const code = document.getElementById("voucherInput").value.trim().toUpperCase();
+          const status = document.getElementById("voucherStatus");
+          const v = LaundryConfig.vouchers[code];
+
+          if (v) {
+            if (CartEngine.getSubtotal() >= v.minSpend) {
+              this.appliedVoucher = code;
+              status.style.color = "green";
+              status.textContent = `✓ Voucher ${code} berhasil dipasang!`;
+            } else {
+              status.style.color = "red";
+              status.textContent = `Minimal belanja ${FormatUtil.toRupiah(v.minSpend)} untuk voucher ini.`;
+            }
+          } else {
+            status.style.color = "red";
+            status.textContent = "Kode voucher tidak ditemukan.";
+          }
+          this.updateSummary();
+        });
+
+        document.getElementById("formCheckout")?.addEventListener("submit", (e) => {
+          e.preventDefault();
+
+          const name = document.getElementById("custName").value;
+          const phone = document.getElementById("custPhone").value;
+          const address = document.getElementById("custAddress").value;
+          const area = document.getElementById("custArea").value;
+          const service = document.getElementById("custService").value;
+          const fragrance = document.getElementById("custFragrance").value;
+          const notes = document.getElementById("custNotes").value || "-";
+
+          const specialInst = [];
+          document.querySelectorAll(".chk-inst:checked").forEach(chk => {
+            specialInst.push(chk.value);
+          });
+
+          const areaData = LaundryConfig.areas[area];
+          const estDate = document.getElementById("sumEstDate").textContent;
+          const subtotal = document.getElementById("sumSubtotal").textContent;
+          const shipping = document.getElementById("sumShipping").textContent;
+          const grandTotal = document.getElementById("sumGrandTotal").textContent;
+
+          let msg = `*HALO ADMIN LAUNDRYCOMMERCE (${area.toUpperCase()})* 🧺\n`;
+          msg += `Saya ingin memesan layanan laundry via Website:\n\n`;
+          msg += `👤 *DATA PEMESAN:*\n`;
+          msg += `• Nama: ${name}\n`;
+          msg += `• No. WA: ${phone}\n`;
+          msg += `• Alamat: ${address}\n`;
+          msg += `• Area Cabang: ${area}\n\n`;
+
+          msg += `📦 *RINCIAN ORDER:*\n`;
+          CartEngine.items.forEach((item, idx) => {
+            msg += `${idx + 1}. ${item.title} (${item.qty}x) = ${FormatUtil.toRupiah(item.price * item.qty)}\n`;
+          });
+
+          msg += `\n⚙️ *DETAIL OPTIONAL:*\n`;
+          msg += `• Layanan: ${service}\n`;
+          msg += `• Pewangi: ${fragrance}\n`;
+          msg += `• Instruksi: ${specialInst.length > 0 ? specialInst.join(", ") : "-"}\n`;
+          msg += `• Catatan: ${notes}\n\n`;
+
+          msg += `💰 *RINCIAN BIAYA:*\n`;
+          msg += `• Subtotal: ${subtotal}\n`;
+          msg += `• Ongkir: ${shipping}\n`;
+          if (this.appliedVoucher) msg += `• Voucher: ${this.appliedVoucher}\n`;
+          msg += `• *GRAND TOTAL:* ${grandTotal}\n\n`;
+
+          msg += `🗓️ *ESTIMASI SELESAI:* ${estDate}\n\n`;
+          msg += `Mohon konfirmasi pesanan dan penjemputan cucian saya. Terima kasih!`;
+
+          const waNum = areaData.whatsapp.replace(/^0/, "62");
+          window.open(`https://api.whatsapp.com/send?phone=${waNum}&text=${encodeURIComponent(msg)}`, "_blank");
+        });
+      }
+    };
+
+    const DrawerEngine = {
+      init() {
+        const sidebar = document.getElementById("sidebarDrawer");
+        const cartDrawer = document.getElementById("cartDrawer");
+        const overlay = document.getElementById("drawerOverlay");
+
+        const closeAll = () => {
+          sidebar.classList.remove("active");
+          cartDrawer.classList.remove("active");
+          overlay.classList.remove("active");
+        };
+
+        document.getElementById("btnSidebarOpen")?.addEventListener("click", () => {
+          sidebar.classList.add("active");
+          overlay.classList.add("active");
+        });
+
+        document.getElementById("btnCartOpen")?.addEventListener("click", () => {
+          cartDrawer.classList.add("active");
+          overlay.classList.add("active");
+        });
+
+        document.getElementById("btnSidebarClose")?.addEventListener("click", closeAll);
+        document.getElementById("btnCartClose")?.addEventListener("click", closeAll);
+        overlay?.addEventListener("click", closeAll);
+      }
+    };
+
+    document.addEventListener("DOMContentLoaded", () => {
+      loadAdminConfigFromWidget();
+      ThemeEngine.init();
+      DrawerEngine.init();
+      CartEngine.init();
+      ProductCatalogEngine.init();
+      BlogPostsEngine.init();
+      RelatedPostsEngine.init();
+      FAQEngine.init();
+      CheckoutEngine.init();
+    });
+    // ]]>
+  </script>
+</body>
+</html>
